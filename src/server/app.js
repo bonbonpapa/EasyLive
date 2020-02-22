@@ -1,4 +1,5 @@
 const express = require("express"),
+  multer = require("multer"),
   config = require("./config/default.js"),
   port = 4000,
   shortid = require("shortid"),
@@ -14,6 +15,11 @@ MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
   dbo = client.db("media-board");
 });
 
+let upload = multer({
+  dest: __dirname + "/uploads/"
+});
+
+let messages = [];
 let stream_key = "";
 // Add this on the top of app.js file
 // next to all imports
@@ -24,6 +30,7 @@ const node_media_server = require("./media_server.js");
 
 app.use("/", express.static("public"));
 app.use("/uploads", express.static("uploads"));
+app.use("/images", express.static(__dirname + "/uploads"));
 
 app.get("/stream_key", (req, res) => {
   res.json({ stream_key: stream_key });
@@ -50,13 +57,6 @@ app.get("/info", (req, res) => {
     }
 
     res.json([{ username: "pi", stream_key: stream_key }]);
-
-    // User.find(query, (err, users) => {
-    //   if (err) return;
-    //   if (users) {
-    //     res.json(users);
-    //   }
-    // });
   }
 });
 
@@ -74,6 +74,45 @@ app.get("/all-items", (req, res) => {
       // console.log("Items", items);
       res.send(JSON.stringify({ success: true, items: items }));
     });
+});
+
+app.get("/messages", function(req, res) {
+  res.send(
+    JSON.stringify({
+      success: true,
+      messages: messages
+    })
+  );
+});
+
+app.post("/newmessage", upload.array("images", 9), (req, res) => {
+  console.log("*** inside new message");
+  console.log("body", req.body);
+
+  let files = req.files;
+  console.log("uploaded files", files);
+  let frontendPaths;
+
+  frontendPaths = files.map(file => {
+    return "/images/" + file.filename;
+  });
+  console.log(frontendPaths);
+
+  const msg = req.body.msg;
+
+  const time = req.body.date;
+  let newMsg = {
+    username: "pi",
+    message: msg,
+    msgtime: time,
+    imgs_path: frontendPaths
+  };
+  console.log("new message", newMsg);
+  let room = req.body.roomName;
+  messages = messages.concat(newMsg);
+
+  console.log("updated messages", messages);
+  res.send(JSON.stringify({ success: true }));
 });
 
 app.get("/test", (req, res) => {

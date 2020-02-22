@@ -27,7 +27,7 @@ class AllItems extends Component {
   };
 
   render = () => {
-    let results = this.props.items;
+    let results = this.props.items.slice(0, 4);
     return (
       <Main>
         {results.map(item => (
