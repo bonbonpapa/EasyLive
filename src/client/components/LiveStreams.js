@@ -1,10 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-//import "./LiveStreams.scss";
 import config from "../../server/config/default.js";
 
-export default class LiveStreams extends React.Component {
+export default class LiveStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {

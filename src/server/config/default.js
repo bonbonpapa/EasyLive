@@ -28,6 +28,10 @@ const config = {
         }
       ]
     }
+  },
+  mongodb_url: {
+    url:
+      "mongodb+srv://bob:bobnosue@cluster0-peipd.mongodb.net/test?retryWrites=true&w=majority"
   }
 };
 

@@ -3,7 +3,16 @@ const express = require("express"),
   port = 4000,
   shortid = require("shortid"),
   app = express(),
+  MongoDb = require("mongodb"),
+  MongoClient = MongoDb.MongoClient,
+  ObjectID = MongoDb.ObjectID,
   thumbnail_generator = require("./cron/thumbnails.js");
+
+let dbo = undefined;
+let url = config.mongodb_url.url;
+MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+  dbo = client.db("media-board");
+});
 
 let stream_key = "";
 // Add this on the top of app.js file
@@ -14,6 +23,7 @@ const node_media_server = require("./media_server.js");
 // file where we start our web server
 
 app.use("/", express.static("public"));
+app.use("/uploads", express.static("uploads"));
 
 app.get("/stream_key", (req, res) => {
   res.json({ stream_key: stream_key });
@@ -48,6 +58,22 @@ app.get("/info", (req, res) => {
     //   }
     // });
   }
+});
+
+app.get("/all-items", (req, res) => {
+  console.log("request to /all-items");
+  dbo
+    .collection("items")
+    .find({})
+    .toArray((err, items) => {
+      if (err) {
+        console.log("error", err);
+        res.send(JSON.stringify({ success: false }));
+        return;
+      }
+      // console.log("Items", items);
+      res.send(JSON.stringify({ success: true, items: items }));
+    });
 });
 
 app.get("/test", (req, res) => {

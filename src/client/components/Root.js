@@ -1,28 +1,33 @@
-import React from "react";
-import { Router, Route } from "react-router-dom";
+import React, { Component } from "react";
+import { BrowserRouter, Route } from "react-router-dom";
 import Navbar from "./Navbar.js";
 import LiveStreams from "./LiveStreams.js";
 import Settings from "./Settings.js";
-
+import styled from "styled-components";
 import VideoPlayer from "./VideoPlayer.js";
-const customHistory = require("history").createBrowserHistory();
+import LiveSell from "./LiveSell.js";
 
-export default class Root extends React.Component {
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-rows: 100px 1fr;
+`;
+
+export default class Root extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
     return (
-      <Router history={customHistory}>
-        <div>
+      <BrowserRouter>
+        <Wrapper>
           <Navbar />
           <Route exact path="/" render={props => <LiveStreams {...props} />} />
 
           <Route
             exact
             path="/stream/:username"
-            render={props => <VideoPlayer {...props} />}
+            render={props => <LiveSell {...props} />}
           />
 
           <Route
@@ -30,8 +35,8 @@ export default class Root extends React.Component {
             path="/settings"
             render={props => <Settings {...props} />}
           />
-        </div>
-      </Router>
+        </Wrapper>
+      </BrowserRouter>
     );
   }
 }
