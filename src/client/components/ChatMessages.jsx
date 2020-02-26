@@ -1,28 +1,36 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import socketIOClient from "socket.io-client";
+
 class UnconnectedChatMessages extends Component {
   constructor(props) {
     super(props);
+    this.state = { endpoint: "localhost:80" };
   }
   componentDidMount = () => {
-    this.internvalMessage = setInterval(this.updateMessages, 500);
+    //  this.internvalMessage = setInterval(this.updateMessages, 500);
+    const { endpoint } = this.state;
+    const socket = socketIOClient(endpoint);
+    socket.on("messages", data => {
+      this.props.dispatch({ type: "set-messages", messages: data });
+    });
   };
-  componentWillUnmount = () => {
-    clearInterval(this.internvalMessage);
-  };
-  updateMessages = async () => {
-    let response = await fetch("/messages");
-    let responseBody = await response.text();
+  // componentWillUnmount = () => {
+  //   clearInterval(this.internvalMessage);
+  // };
+  // updateMessages = async () => {
+  //   let response = await fetch("/messages");
+  //   let responseBody = await response.text();
 
-    let parsed = JSON.parse(responseBody);
+  //   let parsed = JSON.parse(responseBody);
 
-    if (parsed.success) {
-      this.props.dispatch({
-        type: "set-messages",
-        messages: parsed.messages
-      });
-    }
-  };
+  //   if (parsed.success) {
+  //     this.props.dispatch({
+  //       type: "set-messages",
+  //       messages: parsed.messages
+  //     });
+  //   }
+  // };
 
   render = () => {
     let msgToElement = (e, idx) => (
@@ -47,14 +55,6 @@ class UnconnectedChatMessages extends Component {
           )}
         </div>
       </li>
-    );
-    const usertoElement = (e, idx) => <li key={e + idx}>{e}</li>;
-
-    //based on the returned messages list to generate the active users who have posts
-
-    console.log(
-      "messages in the ChatMessages component props",
-      this.props.messages
     );
 
     let roomMessages = this.props.messages;

@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import socketIOClient from "socket.io-client";
 
 class ChatForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { message: "", images: [] };
+    this.state = { message: "", images: [], endpoint: "localhost:80" };
   }
   handleMessageChange = event => {
     console.log("new message", event.target.value);
@@ -39,6 +40,12 @@ class ChatForm extends Component {
     });
     // after the message was submitted, set the state to empty.
     this.setState({ message: "", images: [] });
+
+    const { endpoint } = this.state;
+    const socket = socketIOClient(endpoint);
+    socket.on("messages", data => {
+      this.props.dispatch({ type: "set-messages", messages: data });
+    });
   };
 
   render = () => {

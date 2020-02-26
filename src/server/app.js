@@ -4,6 +4,9 @@ const express = require("express"),
   port = 4000,
   shortid = require("shortid"),
   app = express(),
+  http = require("http"),
+  socketIo = require("socket.io"),
+  socketPort = 80,
   MongoDb = require("mongodb"),
   MongoClient = MongoDb.MongoClient,
   ObjectID = MongoDb.ObjectID,
@@ -19,6 +22,11 @@ let upload = multer({
   dest: __dirname + "/uploads/"
 });
 
+const server = http.Server(app);
+const io = socketIo(server);
+
+server.listen(socketPort, () => console.log(`Listening on port ${socketPort}`));
+
 let messages = [];
 let stream_key = "";
 // Add this on the top of app.js file
@@ -31,6 +39,16 @@ const node_media_server = require("./media_server.js");
 app.use("/", express.static("public"));
 app.use("/uploads", express.static("uploads"));
 app.use("/images", express.static(__dirname + "/uploads"));
+
+app.get("/", function(req, res) {
+  res.sendFile(__dirname + "/index.html");
+});
+
+io.on("connection", function(socket) {
+  console.log("New client connected");
+  socket.emit("messages", messages);
+  socket.on("disconnect", () => console.log("Client disconnected"));
+});
 
 app.get("/stream_key", (req, res) => {
   res.json({ stream_key: stream_key });
