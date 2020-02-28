@@ -1,20 +1,19 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import socketIOClient from "socket.io-client";
 
 class UnconnectedChatMessages extends Component {
   constructor(props) {
     super(props);
-    this.state = { endpoint: "localhost:80" };
+    // this.state = { endpoint: "localhost:80" };
   }
-  componentDidMount = () => {
-    //  this.internvalMessage = setInterval(this.updateMessages, 500);
-    const { endpoint } = this.state;
-    const socket = socketIOClient(endpoint);
-    socket.on("messages", data => {
-      this.props.dispatch({ type: "set-messages", messages: data });
-    });
-  };
+  // componentDidMount = () => {
+  //   //  this.internvalMessage = setInterval(this.updateMessages, 500);
+  //   const { endpoint } = this.state;
+  //   const socket = socketIOClient(endpoint);
+  //   socket.on("messages", data => {
+  //     this.props.dispatch({ type: "set-messages", messages: data });
+  //   });
+  // };
   // componentWillUnmount = () => {
   //   clearInterval(this.internvalMessage);
   // };

@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import socketIOClient from "socket.io-client";
+
+import PropTypes from "prop-types";
 
 class ChatForm extends Component {
+  static propTypes = {
+    onSubmitMessage: PropTypes.func.isRequired
+  };
   constructor(props) {
     super(props);
-    this.state = { message: "", images: [], endpoint: "localhost:80" };
+    this.state = { message: "", images: [] };
   }
   handleMessageChange = event => {
     console.log("new message", event.target.value);
@@ -40,18 +44,17 @@ class ChatForm extends Component {
     });
     // after the message was submitted, set the state to empty.
     this.setState({ message: "", images: [] });
-
-    const { endpoint } = this.state;
-    const socket = socketIOClient(endpoint);
-    socket.on("messages", data => {
-      this.props.dispatch({ type: "set-messages", messages: data });
-    });
+  };
+  handleSubmitSocket = event => {
+    event.preventDefault();
+    this.props.onSubmitMessage(this.state.message);
+    this.setState({ message: "" });
   };
 
   render = () => {
     return (
       <div className="chat-message">
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmitSocket}>
           <div>
             <textarea
               name="message-to-send"

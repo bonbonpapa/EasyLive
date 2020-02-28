@@ -44,10 +44,29 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
+let clients = 0;
 io.on("connection", function(socket) {
+  clients++;
+  io.sockets.emit("broadcast", { messages: messages });
   console.log("New client connected");
-  socket.emit("messages", messages);
-  socket.on("disconnect", () => console.log("Client disconnected"));
+
+  socket.on("messages", function() {
+    io.sockets.emit("broadcast", { messages: messages });
+    console.log("messages from clinet and then broadcat the messages");
+  });
+  socket.on("clientEvent", function(data) {
+    messages = messages.concat(data);
+    io.sockets.emit("broadcast", { messages: messages });
+    console.log(data);
+  });
+
+  socket.on("disconnect", function() {
+    clients--;
+    io.socket.emit("broadcast", {
+      description: clients + " clients connected!"
+    });
+    console.log("Client disconnected");
+  });
 });
 
 app.get("/stream_key", (req, res) => {
