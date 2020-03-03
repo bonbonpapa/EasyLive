@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
-import Navbar from "./Navbar.js";
+import NavbarNoStyle from "./NavbarNoStyle.js";
 import LiveStreams from "./LiveStreams.js";
 import Settings from "./Settings.js";
 import styled from "styled-components";
@@ -21,7 +21,7 @@ export default class Root extends Component {
     return (
       <BrowserRouter>
         <Wrapper>
-          <Navbar />
+          <NavbarNoStyle />
           <Route exact path="/" render={props => <LiveStreams {...props} />} />
 
           <Route
