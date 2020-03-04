@@ -1,18 +1,22 @@
 import React, { Component } from "react";
 import "./CarouelItem.css";
-
 import styled from "styled-components";
-import Card from "@material-ui/core/Card";
 
-const ItemCard = styled(Card)`
+const Main = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+`;
+const ItemCard = styled.div`
   img {
     width: 200px;
     height: 200px;
-    float: left;
     object-fit: cover;
   }
 `;
 const Info = styled.div`
+  display: flex;
+  flex-direction: column;
   justify-content: center;
 `;
 
@@ -44,56 +48,27 @@ class CarouselRightArrow extends Component {
   }
 }
 
-class CarouselIndicator extends Component {
-  render() {
-    return (
-      <li>
-        <a
-          className={
-            this.props.index == this.props.activeIndex
-              ? "carousel__indicator carousel__indicator--active"
-              : "carousel__indicator"
-          }
-          onClick={this.props.onClick}
-        />
-      </li>
-    );
-  }
-}
-
 class CarouselSlide extends Component {
   render() {
     const { description, price, defaultPaths } = this.props.slide;
     return (
-      <ItemCard
-        className={
-          this.props.index == this.props.activeIndex
-            ? "carousel__slide carousel__slide--active"
-            : "carousel__slide"
-        }
-      >
-        <div>
-          <img src={defaultPaths.frontendPath} />
-        </div>
-        <Info>
-          <div>{description}</div>
-          <div>{price} $</div>
-        </Info>
-
-        {/* <p className="carousel-slide__content">
-          {this.props.slide.description}
-        </p>
-
-        <p>
-          <strong className="carousel-slide__author">
-            {this.props.slide._id}
-          </strong>
-          ,{" "}
-          <small className="carousel-slide__source">
-            {this.props.slide.price}
-          </small>
-        </p> */}
-      </ItemCard>
+      <div>
+        <ItemCard
+          className={
+            this.props.index === this.props.activeIndex
+              ? "carousel__slide carousel__slide--active"
+              : "carousel__slide"
+          }
+        >
+          <div>
+            <img src={defaultPaths.frontendPath} />
+          </div>
+          <Info>
+            <div>{description}</div>
+            <div>{price} $</div>
+          </Info>
+        </ItemCard>
+      </div>
     );
   }
 }
@@ -170,20 +145,32 @@ export default class CarouselItem extends Component {
               />
             ))}
           </ul>
-
-          <CarouselRightArrow onClick={e => this.goToNextSlide(e)} />
-
-          {/* <ul className="carousel__indicators">
+        </div>
+        <div className="carousel">
+          <ul className="carousel__slides">
             {this.props.slides.map((slide, index) => (
-              <CarouselIndicator
+              <CarouselSlide
                 key={index}
                 index={index}
                 activeIndex={this.state.activeIndex}
-                isActive={this.state.activeIndex == index}
-                onClick={e => this.goToSlide(index)}
+                slide={slide}
               />
             ))}
-          </ul> */}
+          </ul>
+        </div>
+        <div className="carousel">
+          <ul className="carousel__slides">
+            {this.props.slides.map((slide, index) => (
+              <CarouselSlide
+                key={index}
+                index={index}
+                activeIndex={this.state.activeIndex}
+                slide={slide}
+              />
+            ))}
+          </ul>
+
+          <CarouselRightArrow onClick={e => this.goToNextSlide(e)} />
         </div>
       </div>
     );
