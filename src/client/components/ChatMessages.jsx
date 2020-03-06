@@ -4,32 +4,7 @@ import { connect } from "react-redux";
 class UnconnectedChatMessages extends Component {
   constructor(props) {
     super(props);
-    // this.state = { endpoint: "localhost:80" };
   }
-  // componentDidMount = () => {
-  //   //  this.internvalMessage = setInterval(this.updateMessages, 500);
-  //   const { endpoint } = this.state;
-  //   const socket = socketIOClient(endpoint);
-  //   socket.on("messages", data => {
-  //     this.props.dispatch({ type: "set-messages", messages: data });
-  //   });
-  // };
-  // componentWillUnmount = () => {
-  //   clearInterval(this.internvalMessage);
-  // };
-  // updateMessages = async () => {
-  //   let response = await fetch("/messages");
-  //   let responseBody = await response.text();
-
-  //   let parsed = JSON.parse(responseBody);
-
-  //   if (parsed.success) {
-  //     this.props.dispatch({
-  //       type: "set-messages",
-  //       messages: parsed.messages
-  //     });
-  //   }
-  // };
 
   render = () => {
     let msgToElement = (e, idx) => (

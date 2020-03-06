@@ -6,14 +6,40 @@ import CarouelItem, { carouselSlidesData } from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
 import styled from "styled-components";
 
+const LiveWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 const Wrapper = styled.div`
+  overflow: hidden;
   display: grid;
-  grid-template-columns: 80% 20%;
+  grid-template-areas:
+    "player chat"
+    "carousel chat";
   margin: 5px 50px 50px 50px;
 `;
-const Container = styled.div`
-  display: grid;
-  grid-template-rows: auto auto;
+const PlayerContainer = styled.div`
+  grid-area: player;
+  width: 60vw;
+  min-width: 600px;
+  height: 33.75vw;
+  min-height: 337.5px;
+`;
+const CarouselContainer = styled.div`
+  grid-area: carousel;
+  height: 160px;
+  width: 60vw;
+  min-width: 600px;
+`;
+const ChatContainer = styled.div`
+  grid-area: chat;
+  width: 23vw;
+  min-width: 300px;
+  height: calc(33.75vw + 160px);
+  min-height: calc(337.5px + 160px);
+  display: flex;
+  align-items: flex-end;
 `;
 
 export default function LiveSell(props) {
@@ -34,12 +60,18 @@ export default function LiveSell(props) {
     reload();
   }, [setItems]);
   return (
-    <Wrapper>
-      <Container>
-        <VideoPlayer {...props} />
-        <CarouelItem slides={items} />
-      </Container>
-      <ChatRoom />
-    </Wrapper>
+    <LiveWrapper>
+      <Wrapper>
+        <PlayerContainer>
+          <VideoPlayer {...props} />
+        </PlayerContainer>
+        <CarouselContainer>
+          <CarouelItem slides={items} />
+        </CarouselContainer>
+        <ChatContainer>
+          <ChatRoom />
+        </ChatContainer>
+      </Wrapper>
+    </LiveWrapper>
   );
 }

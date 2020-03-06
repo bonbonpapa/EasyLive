@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 const Main = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px;
 `;
 const ItemCard = styled.div`
@@ -24,7 +24,6 @@ class CarouselLeftArrow extends Component {
   render() {
     return (
       <a
-        href="#"
         className="carousel__arrow carousel__arrow--left"
         onClick={this.props.onClick}
       >
@@ -38,7 +37,6 @@ class CarouselRightArrow extends Component {
   render() {
     return (
       <a
-        href="#"
         className="carousel__arrow carousel__arrow--right"
         onClick={this.props.onClick}
       >
@@ -53,13 +51,7 @@ class CarouselSlide extends Component {
     const { description, price, defaultPaths } = this.props.slide;
     return (
       <div>
-        <ItemCard
-          className={
-            this.props.index === this.props.activeIndex
-              ? "carousel__slide carousel__slide--active"
-              : "carousel__slide"
-          }
-        >
+        <ItemCard className="carousel__slide carousel__slide--active">
           <div>
             <img src={defaultPaths.frontendPath} />
           </div>
@@ -130,13 +122,16 @@ export default class CarouselItem extends Component {
   }
 
   render = () => {
+    let results = this.props.slides.slice(
+      this.state.activeIndex,
+      this.state.activeIndex + 3
+    );
     return (
       <div class="carousel-container">
-        <div className="carousel">
+        <div class="carousel">
           <CarouselLeftArrow onClick={e => this.goToPrevSlide(e)} />
-
-          <ul className="carousel__slides">
-            {this.props.slides.map((slide, index) => (
+          <Main>
+            {results.map((slide, index) => (
               <CarouselSlide
                 key={index}
                 index={index}
@@ -144,38 +139,10 @@ export default class CarouselItem extends Component {
                 slide={slide}
               />
             ))}
-          </ul>
-        </div>
-        <div className="carousel">
-          <ul className="carousel__slides">
-            {this.props.slides.map((slide, index) => (
-              <CarouselSlide
-                key={index}
-                index={index}
-                activeIndex={this.state.activeIndex}
-                slide={slide}
-              />
-            ))}
-          </ul>
-        </div>
-        <div className="carousel">
-          <ul className="carousel__slides">
-            {this.props.slides.map((slide, index) => (
-              <CarouselSlide
-                key={index}
-                index={index}
-                activeIndex={this.state.activeIndex}
-                slide={slide}
-              />
-            ))}
-          </ul>
-
+          </Main>
           <CarouselRightArrow onClick={e => this.goToNextSlide(e)} />
         </div>
       </div>
     );
   };
 }
-
-// Render Carousel component
-//  render(<Carousel slides={carouselSlidesData} />, carouselContainer);
