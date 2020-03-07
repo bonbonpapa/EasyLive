@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import VideoPlayer from "./VideoPlayer.js";
-import AllItems from "./AllItems.jsx";
-import CarouelItem, { carouselSlidesData } from "./CarouelItem.jsx";
+import CarouelItem from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
 import styled from "styled-components";
 

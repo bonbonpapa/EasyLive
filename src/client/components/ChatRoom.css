@@ -13,7 +13,7 @@
   padding: 30px 30px 20px;
   border-bottom: 2px solid white;
   overflow-y: scroll;
-  /* height: 660px; */
+  height: 660px;
   align-items: stretch;
 }
 .chat .chat-history .message-data {
@@ -74,6 +74,11 @@
 }
 .chat .chat-message button:hover {
   color: #75b1e8;
+}
+.online {
+  color: #86bb71;
+  margin-right: 3px;
+  font-size: 10px;
 }
 
 .clearfix:after {

@@ -6,6 +6,7 @@ import Settings from "./Settings.js";
 import styled from "styled-components";
 import VideoPlayer from "./VideoPlayer.js";
 import LiveSell from "./LiveSell.js";
+import Sign from "./Sign.jsx";
 
 const Wrapper = styled.div`
   display: grid;
@@ -29,6 +30,7 @@ export default class Root extends Component {
             path="/stream/:username"
             render={props => <LiveSell {...props} />}
           />
+          <Route exact path="/Sign" render={() => <Sign />} />
 
           <Route
             exact

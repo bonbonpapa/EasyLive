@@ -2,24 +2,14 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-// const NavTag = styled.nav`
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding: 20px;
-//   margin-bottom: 20px;
-//   background: white;
-// `;
-
 export default class NavbarNoStyle extends Component {
   render() {
     return (
-      <nav className="navbar">
-        <div className="container">
+      <div className="navbar">
+        <div className="nav_container">
           <Link to={"/"} className={"navbar-brand"}>
             NodeStream
           </Link>
-
           <div className="nav-right">
             <ul className="navbar-nav">
               <li className="nav-item ">
@@ -31,20 +21,20 @@ export default class NavbarNoStyle extends Component {
                 <a
                   className="nav-link"
                   target="_blank"
-                  href="https://github.com/waleedahmad"
+                  href="https://github.com/bonbonpapa"
                 >
                   Github
                 </a>
               </li>
               <li className="nav-item ">
-                <a className="nav-link" href="/Logout">
-                  Logout
-                </a>
+                <Link className={"nav-link"} to={"/Sign"}>
+                  Sign In/ Sign Out
+                </Link>
               </li>
             </ul>
           </div>
         </div>
-      </nav>
+      </div>
     );
   }
 }

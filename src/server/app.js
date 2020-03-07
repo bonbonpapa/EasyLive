@@ -38,6 +38,7 @@ const node_media_server = require("./media_server.js");
 
 app.use("/", express.static("public"));
 app.use("/uploads", express.static("uploads"));
+app.use("/thumbnails", express.static("server/thumbnails"));
 app.use("/images", express.static(__dirname + "/uploads"));
 
 app.get("/", function(req, res) {

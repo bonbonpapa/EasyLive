@@ -1,7 +1,18 @@
 import React, { Component } from "react";
 import axios from "axios";
+import styled from "styled-components";
+import Card from "@material-ui/core/Card";
 import { Link } from "react-router-dom";
 import config from "../../server/config/default.js";
+
+const LiveCard = styled(Card)`
+  max-width: 345px;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 
 export default class LiveStreams extends Component {
   constructor(props) {
@@ -48,29 +59,25 @@ export default class LiveStreams extends Component {
   render() {
     let streams = this.state.live_streams.map((stream, index) => {
       return (
-        <div
-          className="stream col-xs-12 col-sm-12 col-md-3 col-lg-4"
-          key={index}
-        >
+        <LiveCard className="stream" key={index}>
           <span className="live-label">LIVE</span>
           <Link to={"/stream/" + stream.username}>
             <div className="stream-thumbnail">
-              <img src={"/thumbnails/" + stream.stream_key + ".png"} />
+              {/* <img src={"/thumbnails/" + stream.stream_key + ".png"} /> */}
+              <img src="https://www.rosen-group.com/.imaging/stk/rosen-website/gallery-zoom/dms/rosen-website/rosen-pictures/company/insight/news/latest-news/2018/Live-Stream/LiveStreaming_Button_PTC2018/document/LiveStreaming_Button_PTC2018.png" />
             </div>
           </Link>
 
           <span className="username">
             <Link to={"/stream/" + stream.username}>{stream.username}</Link>
           </span>
-        </div>
+        </LiveCard>
       );
     });
 
     return (
-      <div className="container mt-5">
+      <div>
         <h4>Live Streams</h4>
-        <hr className="my-4" />
-
         <div className="streams row">{streams}</div>
       </div>
     );
