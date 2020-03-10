@@ -2,13 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 class UnconnectedChatMessages extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render = () => {
     let msgToElement = (e, idx) => (
-      <li key={e.username + idx}>
+      <li key={idx.toString()}>
         <div className="message-data">
           <span className="message-data-name">
             <i className="fa fa-circle online"></i>
@@ -24,7 +20,7 @@ class UnconnectedChatMessages extends Component {
             ""
           ) : (
             <div>
-              <img src={e.imgs_path[0]} height="100px"></img>
+              <img src={e.imgs_path[0]} height="100px" alt="chat image"></img>
             </div>
           )}
         </div>
@@ -40,7 +36,7 @@ class UnconnectedChatMessages extends Component {
 
     return (
       <div className="chat-history">
-        <ul>
+        <ul className="chat-ul">
           {roomMessages.map((e, idx) => {
             return msgToElement(e, idx);
           })}

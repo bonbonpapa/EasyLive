@@ -64,7 +64,10 @@ export default class LiveStreams extends Component {
           <Link to={"/stream/" + stream.username}>
             <div className="stream-thumbnail">
               {/* <img src={"/thumbnails/" + stream.stream_key + ".png"} /> */}
-              <img src="https://www.rosen-group.com/.imaging/stk/rosen-website/gallery-zoom/dms/rosen-website/rosen-pictures/company/insight/news/latest-news/2018/Live-Stream/LiveStreaming_Button_PTC2018/document/LiveStreaming_Button_PTC2018.png" />
+              <img
+                alt="video"
+                src="https://www.rosen-group.com/.imaging/stk/rosen-website/gallery-zoom/dms/rosen-website/rosen-pictures/company/insight/news/latest-news/2018/Live-Stream/LiveStreaming_Button_PTC2018/document/LiveStreaming_Button_PTC2018.png"
+              />
             </div>
           </Link>
 

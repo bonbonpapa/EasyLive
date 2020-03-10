@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
@@ -30,6 +31,9 @@ const CarouselContainer = styled.div`
   height: 160px;
   width: 60vw;
   min-width: 600px;
+  border: 1px #ddd solid;
+  border-top: none;
+  background: #fff;
 `;
 const ChatContainer = styled.div`
   grid-area: chat;
@@ -38,7 +42,6 @@ const ChatContainer = styled.div`
   height: calc(33.75vw + 160px);
   min-height: calc(337.5px + 160px);
   display: flex;
-  align-items: flex-end;
 `;
 
 export default function LiveSell(props) {
@@ -47,17 +50,21 @@ export default function LiveSell(props) {
 
   useEffect(() => {
     async function reload() {
-      let response = await fetch("/all-items");
-      let body = await response.text();
-      console.log("/all-items response", body);
-      body = JSON.parse(body);
+      let response = await axios("/all-items");
+
+      let body = response.data;
+      console.log("Response from get all items: ", body);
+      // console.log("/all-items response", body);
+      // body = JSON.parse(body);
       if (body.success) {
-        dispatch({ type: "set-items", content: body.items });
         setItems(body.items);
       }
     }
     reload();
-  }, [setItems]);
+  }, []);
+
+  dispatch({ type: "set-items", content: items });
+
   return (
     <LiveWrapper>
       <Wrapper>

@@ -1,8 +1,8 @@
-ul {
+/* ul {
   padding: 0;
   margin: 0;
   list-style-type: none;
-}
+} */
 
 .carousel-container {
   display: -webkit-box;
@@ -12,11 +12,13 @@ ul {
   flex-direction: column;
   -webkit-box-pack: center;
   justify-content: center;
-  min-height: 210px;
+  height: 160px;
 }
 
 .carousel {
   position: relative;
+  overflow: hidden;
+  display: block;
 }
 
 .carousel__slide {
@@ -35,29 +37,13 @@ ul {
 }
 .carousel__slide--active {
   display: flex;
-}
-
-.carousel-slide__content {
-  margin-bottom: 19px;
-  font-family: "Open Sans", "Trebuchet MS", sans-serif;
-  font-size: 16px;
-}
-@media (max-width: 991px) {
-  .carousel-slide__content {
-    font-size: 18px;
-  }
-}
-
-@media (min-width: 992px) {
-  .carousel-slide__author,
-  .carousel-slide__source {
-    font-size: 16px;
-  }
+  justify-content: center;
+  align-items: center;
 }
 
 .carousel__arrow {
   position: absolute;
-  top: 50%;
+  top: 40%;
   display: block;
   color: #111;
   cursor: pointer;

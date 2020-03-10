@@ -1,35 +1,71 @@
-import React from "react";
-import styled from "styled-components";
-
-const SINContainer = styled.div`
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transition: all 0.6s ease-in-out;
-  left: 0;
-  width: 50%;
-  z-index: 2;
-`;
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Signin() {
+  const dispatch = useDispatch();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  async function handleSubmit(event) {
+    event.preventDefault();
+    console.log("Username:", username, "Password: ", password);
+
+    let data = { email: username, password: password };
+
+    let response = await fetch("/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    });
+    let body = await response.text();
+    console.log("response body from login", body);
+
+    body = JSON.parse(body);
+    if (!body.success) {
+      alert("login failed");
+      return;
+    }
+    dispatch({
+      type: "login-success",
+      content: username
+    });
+  }
+
   return (
     <div class="form-container sign-in-container">
-      <form class="signform" action="#">
-        <h1 class="signH1">Sign in</h1>
-        <div class="social-container">
-          <a href="#" class="social sign_a">
-            <i class="fab fa-facebook-f"></i>
+      <form className="signform" onSubmit={handleSubmit}>
+        <h1 className="signH1">Sign in</h1>
+        <div className="social-container">
+          <a href="/#" class="social sign_a">
+            <i className="fab fa-facebook-f"></i>
           </a>
-          <a href="#" class="social sign_a">
-            <i class="fab fa-linkedin-in"></i>
+          <a href="/#" className="social sign_a">
+            <i className="fab fa-linkedin-in"></i>
           </a>
         </div>
-        <input class="signInput" type="email" placeholder="Email" />
-        <input class="signInput" type="password" placeholder="Password" />
-        <a class="sign_a" href="#">
+        <input
+          className="signInput"
+          type="text"
+          placeholder="Email"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
+        <input
+          className="signInput"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <a className="sign_a" href="/#">
           Forgot your password?
         </a>
-        <button class="btn">Sign In</button>
+        <button className="btn" type="submit">
+          Sign In
+        </button>
       </form>
     </div>
   );

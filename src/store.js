@@ -1,10 +1,25 @@
 import { createStore } from "redux";
 let reducer = (state, action) => {
+  if (action.type === "login-success") {
+    return {
+      ...state,
+      loggedIn: true,
+      username: action.content
+    };
+  }
   if (action.type === "set-items") {
     return { ...state, items: action.content };
   }
   if (action.type === "set-messages") {
     return { ...state, msgs: action.messages };
+  }
+  if (action.type === "log-out") {
+    return {
+      ...state,
+      loggedIn: false,
+      username: undefined,
+      userId: undefined
+    };
   }
   return state;
 };
@@ -12,6 +27,9 @@ let reducer = (state, action) => {
 const store = createStore(
   reducer,
   {
+    loggedIn: false,
+    username: undefined,
+    userId: undefined,
     items: [],
     msgs: []
   },

@@ -64,15 +64,6 @@ class ChatForm extends Component {
               value={this.state.message}
             ></textarea>
           </div>
-          <div>
-            <label>Image Files</label>
-            <input
-              type="file"
-              name="images"
-              onChange={this.handleImgFiles}
-              multiple
-            />
-          </div>
           <button type="submit">Send</button>
         </form>
       </div>

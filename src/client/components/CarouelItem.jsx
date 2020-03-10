@@ -9,21 +9,25 @@ const Main = styled.div`
 `;
 const ItemCard = styled.div`
   img {
-    width: 200px;
-    height: 200px;
+    height: 100%;
+    max-height: 120px;
+    width: auto;
     object-fit: cover;
+    margin-left: 10px;
   }
 `;
 const Info = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  font-size: 13px;
 `;
 
 class CarouselLeftArrow extends Component {
   render() {
     return (
       <a
+        href="/#"
         className="carousel__arrow carousel__arrow--left"
         onClick={this.props.onClick}
       >
@@ -37,6 +41,7 @@ class CarouselRightArrow extends Component {
   render() {
     return (
       <a
+        href="/#"
         className="carousel__arrow carousel__arrow--right"
         onClick={this.props.onClick}
       >
@@ -53,7 +58,7 @@ class CarouselSlide extends Component {
       <div>
         <ItemCard className="carousel__slide carousel__slide--active">
           <div>
-            <img src={defaultPaths.frontendPath} />
+            <img src={defaultPaths.frontendPath} alt="for sell" />
           </div>
           <Info>
             <div>{description}</div>
@@ -127,8 +132,8 @@ export default class CarouselItem extends Component {
       this.state.activeIndex + 3
     );
     return (
-      <div class="carousel-container">
-        <div class="carousel">
+      <div className="carousel-container">
+        <div className="carousel">
           <CarouselLeftArrow onClick={e => this.goToPrevSlide(e)} />
           <Main>
             {results.map((slide, index) => (

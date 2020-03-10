@@ -62,11 +62,19 @@ export default class Navbar extends Component {
             <div className="row">
               <p>
                 You can use{" "}
-                <a target="_blank" href="https://obsproject.com/">
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://obsproject.com/"
+                >
                   OBS
                 </a>{" "}
                 or
-                <a target="_blank" href="https://www.xsplit.com/">
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://www.xsplit.com/"
+                >
                   XSplit
                 </a>{" "}
                 to Live stream. If you're using OBS, go to Settings > Stream and
