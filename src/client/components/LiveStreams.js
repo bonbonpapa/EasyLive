@@ -31,7 +31,8 @@ export default class LiveStreams extends Component {
       .get("http://127.0.0.1:" + config.rtmp_server.http.port + "/api/streams")
       .then(res => {
         let streams = res.data;
-        if (typeof (streams["live"] !== "undefined")) {
+        console.log("Streams info get from the media server:", streams);
+        if (streams["live"] !== undefined) {
           this.getStreamsInfo(streams["live"]);
         }
       });

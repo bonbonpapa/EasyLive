@@ -20,7 +20,7 @@ class UnconnectedChatMessages extends Component {
             ""
           ) : (
             <div>
-              <img src={e.imgs_path[0]} height="100px" alt="chat image"></img>
+              <img src={e.imgs_path[0]} height="100px" alt="chat"></img>
             </div>
           )}
         </div>

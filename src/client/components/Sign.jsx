@@ -31,7 +31,7 @@ export default function Sign() {
 
   return (
     <Wrapper>
-      <div class={signClass.join(" ")}>
+      <div className={signClass.join(" ")}>
         <Signup />
         <Signin />
         <SignOverlay action={toggle} />

@@ -15,24 +15,29 @@ const express = require("express"),
   MongoClient = MongoDb.MongoClient,
   ObjectID = MongoDb.ObjectID,
   mongoose = require("mongoose"),
-  middleware = require("connect-ensure-login"),
   FileStore = require("session-file-store")(Session),
   thumbnail_generator = require("./cron/thumbnails.js");
 
-mongoose.connect("mongodb://127.0.0.1:27017/easylive", {
-  useNewUrlParser: true
-});
-
 let dbo = undefined;
 let url = config.mongodb_url.url;
+
+// mongoose.connect("mongodb://127.0.0.1:27017/easylive", {
+//   useNewUrlParser: true
+// });
+
+mongoose.connect(url, { dbName: "easy-live", useNewUrlParser: true });
+
+const dbgoo = mongoose.connection;
+dbgoo.on("error", () => {
+  console.log(">error occured from database");
+});
+dbgoo.once("open", () => {
+  console.log("> successfully opened the database");
+});
+
 MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
   dbo = client.db("media-board");
 });
-// let dbo = undefined;
-// let url = config.mongodb_url.url;
-// MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-//   dbo = client.db("media-board");
-// });
 
 // let upload = multer({
 //   dest: __dirname + "/uploads/"
@@ -50,9 +55,6 @@ let stream_key = "";
 // Add this on the top of app.js file
 // next to all imports
 const node_media_server = require("./media_server.js");
-
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "./views"));
 
 app.use("/", express.static("public"));
 app.use("/uploads", express.static("uploads"));
@@ -125,15 +127,15 @@ io.on("connection", function(socket) {
   });
 });
 
-app.get("/stream_key", (req, res) => {
-  // res.json({ stream_key: stream_key });
-  res.json({ stream_key: "FFVSZpXk" });
-});
-app.post("/stream_key", (req, res) => {
-  //stream_key = shortid.generate();
-  stream_key = "FFVSZpXk";
-  res.json({ stream_key: stream_key });
-});
+// app.get("/stream_key", (req, res) => {
+//   // res.json({ stream_key: stream_key });
+//   res.json({ stream_key: "FFVSZpXk" });
+// });
+// app.post("/stream_key", (req, res) => {
+//   //stream_key = shortid.generate();
+//   stream_key = "FFVSZpXk";
+//   res.json({ stream_key: stream_key });
+// });
 app.get("/user", (req, res) => {
   let username = req.query.username;
   console.log("username of the streamung", username);
@@ -143,7 +145,7 @@ app.get("/user", (req, res) => {
   });
 });
 app.get("/info", (req, res) => {
-  console.log(req.query.streams);
+  console.log("req inforamtion for the streams", req.query.streams);
   if (req.query.streams) {
     let streams = JSON.parse(req.query.streams);
     let query = { $or: [] };
@@ -227,10 +229,12 @@ let generateId = () => {
 // Register app routes
 app.use("/login", require("./routes/login.js"));
 app.use("/register", require("./routes/register.js"));
+app.use("/settings", require("./routes/settings.js"));
 
 app.post("/logout", (req, res) => {
   const sessionId = req.cookies.sid;
   delete sessions[sessionId];
+
   res.send(JSON.stringify({ success: true }));
 });
 
@@ -238,9 +242,7 @@ app.get("/test", (req, res) => {
   console.log("in Server test endpoint");
   res.send(JSON.stringify({ success: true }));
 });
-app.get("*", middleware.ensureLoggedIn(), (req, res) => {
-  res.render("index");
-});
+
 app.listen(port, () => console.log(`Server app is listening on ${port}!`));
 
 node_media_server.run();

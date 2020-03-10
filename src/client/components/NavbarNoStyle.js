@@ -7,6 +7,7 @@ export default function NavbarNoStyle() {
 
   const handleLogout = event => {
     fetch("/logout", { method: "POST", credentials: "same-origin" });
+
     //  history.push("/");
 
     dispatch({ type: "log-out" });
@@ -37,6 +38,11 @@ export default function NavbarNoStyle() {
             <li className="nav-item ">
               <Link className={"nav-link"} to={"/"} onClick={handleLogout}>
                 Sign out
+              </Link>
+            </li>
+            <li className="nav-item ">
+              <Link className={"nav-link"} to={"/sign"}>
+                Sign in
               </Link>
             </li>
           </ul>

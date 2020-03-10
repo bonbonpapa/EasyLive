@@ -4,7 +4,6 @@ const express = require("express"),
 
 router.get(
   "/",
-  require("connect-ensure-login").ensureLoggedOut(),
   (req, res) => {
     res.render("register", {
       user: null,
@@ -19,9 +18,8 @@ router.get(
 
 router.post(
   "/",
-  require("connect-ensure-login").ensureLoggedOut(),
   passport.authenticate("localRegister", {
-    successRedirect: "/",
+    successRedirect: "/test",
     failureRedirect: "/register",
     failureFlash: true
   })

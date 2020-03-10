@@ -20,7 +20,7 @@ passport.use(
       passReqToCallback: true
     },
     (req, email, password, done) => {
-      console.log("informatoon in the req: ", req.body);
+      console.log("informatoon in the req: ", req);
       console.log("Inforamtion for auth, email: ", email);
       console.log("Information for auth, passord, ", password);
       User.findOne(

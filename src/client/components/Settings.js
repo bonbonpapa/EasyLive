@@ -17,7 +17,7 @@ export default class Navbar extends Component {
   }
 
   generateStreamKey(e) {
-    axios.post("/stream_key").then(res => {
+    axios.post("/settings/stream_key").then(res => {
       this.setState({
         stream_key: res.data.stream_key
       });
@@ -25,7 +25,7 @@ export default class Navbar extends Component {
   }
 
   getStreamKey() {
-    axios.get("/stream_key").then(res => {
+    axios.get("/settings/stream_key").then(res => {
       this.setState({
         stream_key: res.data.stream_key
       });
@@ -34,7 +34,7 @@ export default class Navbar extends Component {
 
   render() {
     return (
-      <React.Fragment>
+      <div>
         <div className="container mt-5">
           <h4>Streaming Key</h4>
           <hr className="my-4" />
@@ -85,7 +85,7 @@ export default class Navbar extends Component {
             </div>
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

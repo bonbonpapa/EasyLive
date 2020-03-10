@@ -4,13 +4,13 @@ import { useDispatch } from "react-redux";
 export default function Signin() {
   const dispatch = useDispatch();
 
-  const [username, setUsername] = useState("");
+  // const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log("Username:", username, "Password: ", password);
 
-    let data = { email: username, password: password };
+    let data = { email: email, password: password };
 
     let response = await fetch("/login", {
       method: "POST",
@@ -24,22 +24,22 @@ export default function Signin() {
     console.log("response body from login", body);
 
     body = JSON.parse(body);
-    if (!body.success) {
-      alert("login failed");
+    if (body.success) {
+      alert("login success");
       return;
     }
     dispatch({
       type: "login-success",
-      content: username
+      content: email
     });
   }
 
   return (
-    <div class="form-container sign-in-container">
+    <div className="form-container sign-in-container">
       <form className="signform" onSubmit={handleSubmit}>
         <h1 className="signH1">Sign in</h1>
         <div className="social-container">
-          <a href="/#" class="social sign_a">
+          <a href="/#" className="social sign_a">
             <i className="fab fa-facebook-f"></i>
           </a>
           <a href="/#" className="social sign_a">
@@ -48,10 +48,10 @@ export default function Signin() {
         </div>
         <input
           className="signInput"
-          type="text"
+          type="email"
           placeholder="Email"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
+          value={email}
+          onChange={e => setEmail(e.target.value)}
         />
         <input
           className="signInput"
