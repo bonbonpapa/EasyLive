@@ -40,7 +40,7 @@ export default class LiveStreams extends Component {
 
   getStreamsInfo(live_streams) {
     axios
-      .get("/info", {
+      .get("/streams/info", {
         params: {
           streams: live_streams
         }

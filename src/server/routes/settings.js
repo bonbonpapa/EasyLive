@@ -6,6 +6,11 @@ const express = require("express"),
 router.get("/stream_key", (req, res) => {
   console.log("request from front end, ", req.user);
 
+  if (req.user === undefined) {
+    res.json({ success: false, stream_key: "" });
+    return;
+  }
+
   User.findOne({ email: req.user.email }, (err, user) => {
     if (!err) {
       res.json({
@@ -16,6 +21,10 @@ router.get("/stream_key", (req, res) => {
 });
 
 router.post("/stream_key", (req, res) => {
+  if (req.user === undefined) {
+    res.json({ success: false, stream_key: "" });
+    return;
+  }
   User.findOneAndUpdate(
     {
       email: req.user.email

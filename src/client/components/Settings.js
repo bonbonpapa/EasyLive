@@ -1,7 +1,8 @@
 import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
 
-export default class Navbar extends Component {
+export default class Settings extends Component {
   constructor(props) {
     super(props);
 
@@ -10,6 +11,7 @@ export default class Navbar extends Component {
     };
 
     this.generateStreamKey = this.generateStreamKey.bind(this);
+    // this.gotoLogin = this.gotoLogin.bind(this);
   }
 
   componentDidMount() {
@@ -23,6 +25,10 @@ export default class Navbar extends Component {
       });
     });
   }
+  // gotoLogin(e) {
+  //   history.push("/Settings");
+  //   return <Sign {history} />
+  // }
 
   getStreamKey() {
     axios.get("/settings/stream_key").then(res => {
@@ -43,13 +49,23 @@ export default class Navbar extends Component {
             <div className="row">
               <h5>{this.state.stream_key}</h5>
             </div>
-            <div className="row">
-              <button
-                className="btn btn-dark mt-2"
-                onClick={this.generateStreamKey}
-              >
-                Generate a new key
-              </button>
+            <div>
+              {this.state.stream_key !== "" ? (
+                <div className="row">
+                  <button
+                    className="btn btn-dark mt-2"
+                    onClick={this.generateStreamKey}
+                  >
+                    Generate a new key
+                  </button>
+                </div>
+              ) : (
+                <div className="row">
+                  <button className="btn btn-dark mt-2">
+                    <Link to={"/sign"}>Sign in</Link>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

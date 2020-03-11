@@ -136,27 +136,27 @@ io.on("connection", function(socket) {
 //   stream_key = "FFVSZpXk";
 //   res.json({ stream_key: stream_key });
 // });
-app.get("/user", (req, res) => {
-  let username = req.query.username;
-  console.log("username of the streamung", username);
+// app.get("/user", (req, res) => {
+//   let username = req.query.username;
+//   console.log("username of the streamung", username);
 
-  res.json({
-    stream_key: "FFVSZpXk"
-  });
-});
-app.get("/info", (req, res) => {
-  console.log("req inforamtion for the streams", req.query.streams);
-  if (req.query.streams) {
-    let streams = JSON.parse(req.query.streams);
-    let query = { $or: [] };
-    for (let stream in streams) {
-      if (!streams.hasOwnProperty(stream)) continue;
-      query.$or.push({ stream_key: stream });
-    }
+//   res.json({
+//     stream_key: "FFVSZpXk"
+//   });
+// });
+// app.get("/info", (req, res) => {
+//   console.log("req inforamtion for the streams", req.query.streams);
+//   if (req.query.streams) {
+//     let streams = JSON.parse(req.query.streams);
+//     let query = { $or: [] };
+//     for (let stream in streams) {
+//       if (!streams.hasOwnProperty(stream)) continue;
+//       query.$or.push({ stream_key: stream });
+//     }
 
-    res.json([{ username: "pi", stream_key: stream_key }]);
-  }
-});
+//     res.json([{ username: "pi", stream_key: stream_key }]);
+//   }
+// });
 
 app.get("/all-items", (req, res) => {
   console.log("request to /all-items");
@@ -230,12 +230,21 @@ let generateId = () => {
 app.use("/login", require("./routes/login.js"));
 app.use("/register", require("./routes/register.js"));
 app.use("/settings", require("./routes/settings.js"));
+app.use("/streams", require("./routes/streams.js"));
+app.use("/user", require("./routes/user.js"));
 
-app.post("/logout", (req, res) => {
-  const sessionId = req.cookies.sid;
-  delete sessions[sessionId];
+// app.post("/logout", (req, res) => {
+//   const sessionId = req.cookies.sid;
+//   delete sessions[sessionId];
 
-  res.send(JSON.stringify({ success: true }));
+//   res.send(JSON.stringify({ success: true }));
+// });
+app.get("/logout", function(req, res) {
+  console.log("in the logout endpoint, ", req);
+  if (req.user !== undefined) {
+    req.logout();
+    res.send(JSON.stringify({ success: true }));
+  } else res.send(JSON.stringify({ success: false }));
 });
 
 app.get("/test", (req, res) => {

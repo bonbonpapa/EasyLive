@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-export default function Signin() {
+function Signin({ history }) {
   const dispatch = useDispatch();
 
   // const [username, setUsername] = useState("");
@@ -26,6 +27,7 @@ export default function Signin() {
     body = JSON.parse(body);
     if (body.success) {
       alert("login success");
+      history.push("/");
       return;
     }
     dispatch({
@@ -70,3 +72,4 @@ export default function Signin() {
     </div>
   );
 }
+export default withRouter(Signin);

@@ -5,8 +5,15 @@ import { Link } from "react-router-dom";
 export default function NavbarNoStyle() {
   const dispatch = useDispatch();
 
-  const handleLogout = event => {
-    fetch("/logout", { method: "POST", credentials: "same-origin" });
+  const handleLogout = async event => {
+    let response = await fetch("/logout");
+
+    let body = await response.text();
+    console.log("response from: ", body);
+
+    body = JSON.parse(body);
+
+    console.log("Response from logout, ", body);
 
     //  history.push("/");
 
