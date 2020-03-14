@@ -32,7 +32,7 @@ export default class LiveStreams extends Component {
       .then(res => {
         let streams = res.data;
         console.log("Streams info get from the media server:", streams);
-        if (streams["live"] !== undefined) {
+        if (typeof streams["live"] !== "undefined") {
           this.getStreamsInfo(streams["live"]);
         }
       });

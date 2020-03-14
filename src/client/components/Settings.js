@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
-export default class Settings extends Component {
+class Settings extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      stream_key: ""
-    };
+    // this.state = {
+    //   stream_key: ""
+    // };
 
     this.generateStreamKey = this.generateStreamKey.bind(this);
     // this.gotoLogin = this.gotoLogin.bind(this);
@@ -20,9 +21,10 @@ export default class Settings extends Component {
 
   generateStreamKey(e) {
     axios.post("/settings/stream_key").then(res => {
-      this.setState({
-        stream_key: res.data.stream_key
-      });
+      //     this.setState({
+      // //      stream_key: res.data.stream_key
+      //     });
+      this.props.dispatch({ type: "set-key", content: res.data.stream_key });
     });
   }
   // gotoLogin(e) {
@@ -32,9 +34,17 @@ export default class Settings extends Component {
 
   getStreamKey() {
     axios.get("/settings/stream_key").then(res => {
-      this.setState({
-        stream_key: res.data.stream_key
-      });
+      if (!res.data.success) {
+        // this.setState({
+        //   stream_key: ""
+        // });
+        this.props.dispatch({ type: "set-key", content: "" });
+      } else {
+        // this.setState({
+        //   stream_key: res.data.stream_key
+        // });
+        this.props.dispatch({ type: "set-key", content: res.data.stream_key });
+      }
     });
   }
 
@@ -47,10 +57,10 @@ export default class Settings extends Component {
 
           <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6">
             <div className="row">
-              <h5>{this.state.stream_key}</h5>
+              <h5>{this.props.stream_key}</h5>
             </div>
             <div>
-              {this.state.stream_key !== "" ? (
+              {this.props.stream_key !== "" ? (
                 <div className="row">
                   <button
                     className="btn btn-dark mt-2"
@@ -105,3 +115,9 @@ export default class Settings extends Component {
     );
   }
 }
+let mapStateToProps = state => {
+  return {
+    stream_key: state.stream_key
+  };
+};
+export default connect(mapStateToProps)(Settings);

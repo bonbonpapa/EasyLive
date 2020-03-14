@@ -21,6 +21,12 @@ let reducer = (state, action) => {
       userId: undefined
     };
   }
+  if (action.type === "set-key") {
+    return {
+      ...state,
+      stream_key: action.content
+    };
+  }
   return state;
 };
 
@@ -30,6 +36,7 @@ const store = createStore(
     loggedIn: false,
     username: undefined,
     userId: undefined,
+    stream_key: "",
     items: [],
     msgs: []
   },

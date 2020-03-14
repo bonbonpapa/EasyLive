@@ -1,19 +1,24 @@
 const express = require("express"),
   router = express.Router(),
   User = require("../database/Schema.js").User,
-  shortid = require("shortid");
+  shortid = require("shortid"),
+  { ensureAuthenticated } = require("../auth/ensureAuth.js");
 
-router.get("/stream_key", (req, res) => {
+router.get("/stream_key", ensureAuthenticated, (req, res) => {
   console.log("request from front end, ", req.user);
 
-  if (req.user === undefined) {
-    res.json({ success: false, stream_key: "" });
-    return;
-  }
+  // here I implemented to check if the req.user existed, if it is undefined, then the user is not logiin,
+  // and then ask the user to login
+
+  // if (req.user === undefined) {
+  //   res.json({ success: false, stream_key: "" });
+  //   return;
+  // }
 
   User.findOne({ email: req.user.email }, (err, user) => {
     if (!err) {
       res.json({
+        success: true,
         stream_key: user.stream_key
       });
     }

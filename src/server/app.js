@@ -51,7 +51,7 @@ server.listen(socketPort, () => console.log(`Listening on port ${socketPort}`));
 
 let messages = [];
 let sessions = {};
-let stream_key = "";
+
 // Add this on the top of app.js file
 // next to all imports
 const node_media_server = require("./media_server.js");
@@ -120,43 +120,12 @@ io.on("connection", function(socket) {
 
   socket.on("disconnect", function() {
     clients--;
-    io.socket.emit("broadcast", {
-      description: clients + " clients connected!"
+    io.sockets.emit("broadcast", {
+      description: clients + " clients disconnected!"
     });
     console.log("Client disconnected");
   });
 });
-
-// app.get("/stream_key", (req, res) => {
-//   // res.json({ stream_key: stream_key });
-//   res.json({ stream_key: "FFVSZpXk" });
-// });
-// app.post("/stream_key", (req, res) => {
-//   //stream_key = shortid.generate();
-//   stream_key = "FFVSZpXk";
-//   res.json({ stream_key: stream_key });
-// });
-// app.get("/user", (req, res) => {
-//   let username = req.query.username;
-//   console.log("username of the streamung", username);
-
-//   res.json({
-//     stream_key: "FFVSZpXk"
-//   });
-// });
-// app.get("/info", (req, res) => {
-//   console.log("req inforamtion for the streams", req.query.streams);
-//   if (req.query.streams) {
-//     let streams = JSON.parse(req.query.streams);
-//     let query = { $or: [] };
-//     for (let stream in streams) {
-//       if (!streams.hasOwnProperty(stream)) continue;
-//       query.$or.push({ stream_key: stream });
-//     }
-
-//     res.json([{ username: "pi", stream_key: stream_key }]);
-//   }
-// });
 
 app.get("/all-items", (req, res) => {
   console.log("request to /all-items");
@@ -247,9 +216,15 @@ app.get("/logout", function(req, res) {
   } else res.send(JSON.stringify({ success: false }));
 });
 
-app.get("/test", (req, res) => {
+app.get("/succeed", (req, res) => {
   console.log("in Server test endpoint");
-  res.send(JSON.stringify({ success: true }));
+
+  res.send(JSON.stringify({ success: true, user: req.user }));
+});
+app.get("/fail", (req, res) => {
+  console.log("in Server test endpoint");
+
+  res.send(JSON.stringify({ success: false }));
 });
 
 app.listen(port, () => console.log(`Server app is listening on ${port}!`));
