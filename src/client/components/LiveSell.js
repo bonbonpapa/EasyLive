@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import axios from "axios";
+import React from "react";
+import { useSelector } from "react-redux";
+// import axios from "axios";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
 import styled from "styled-components";
+import LiveSellSave from "./LiveSellSave.js";
 
 const LiveWrapper = styled.div`
   display: flex;
@@ -45,39 +46,46 @@ const ChatContainer = styled.div`
 `;
 
 export default function LiveSell(props) {
-  let [items, setItems] = useState([]);
-  const dispatch = useDispatch();
+  let items = useSelector(state => state.items);
 
-  useEffect(() => {
-    async function reload() {
-      let response = await axios("/all-items");
+  // let [items, setItems] = useState([]);
+  // const dispatch = useDispatch();
 
-      let body = response.data;
-      console.log("Response from get all items: ", body);
-      // console.log("/all-items response", body);
-      // body = JSON.parse(body);
-      if (body.success) {
-        setItems(body.items);
-      }
-    }
-    reload();
-  }, []);
+  // useEffect(() => {
+  //   async function reload() {
+  //     let response = await axios("/all-items");
 
-  dispatch({ type: "set-items", content: items });
+  //     let body = response.data;
+  //     console.log("Response from get all items: ", body);
+  //     // console.log("/all-items response", body);
+  //     // body = JSON.parse(body);
+  //     if (body.success) {
+  //       setItems(body.items);
+  //     }
+  //   }
+  //   reload();
+  // }, []);
+
+  // dispatch({ type: "set-items", content: items });
 
   return (
-    <LiveWrapper>
-      <Wrapper>
-        <PlayerContainer>
-          <VideoPlayer {...props} />
-        </PlayerContainer>
-        <CarouselContainer>
-          <CarouelItem slides={items} />
-        </CarouselContainer>
-        <ChatContainer>
-          <ChatRoom />
-        </ChatContainer>
-      </Wrapper>
-    </LiveWrapper>
+    <div>
+      <LiveWrapper>
+        <Wrapper>
+          <PlayerContainer>
+            <VideoPlayer {...props} />
+          </PlayerContainer>
+          <CarouselContainer>
+            <CarouelItem slides={items} />
+          </CarouselContainer>
+          <ChatContainer>
+            <ChatRoom />
+          </ChatContainer>
+        </Wrapper>
+      </LiveWrapper>
+      <div>
+        <LiveSellSave />
+      </div>
+    </div>
   );
 }

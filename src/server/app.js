@@ -1,6 +1,7 @@
 const express = require("express"),
   path = require("path"),
   Session = require("express-session"),
+  multer = require("multer"),
   bodyParse = require("body-parser"),
   config = require("./config/default.js"),
   flash = require("connect-flash"),
@@ -12,8 +13,9 @@ const express = require("express"),
   socketPort = 80,
   passport = require("./auth/passport.js"),
   MongoDb = require("mongodb"),
+  InitDb = require("./db.js").initDb,
+  GetDb = require("./db.js").getDb,
   MongoClient = MongoDb.MongoClient,
-  ObjectID = MongoDb.ObjectID,
   mongoose = require("mongoose"),
   FileStore = require("session-file-store")(Session),
   thumbnail_generator = require("./cron/thumbnails.js");
@@ -25,7 +27,11 @@ let url = config.mongodb_url.url;
 //   useNewUrlParser: true
 // });
 
-mongoose.connect(url, { dbName: "easy-live", useNewUrlParser: true });
+mongoose.connect(url, {
+  dbName: "easy-live",
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
 
 const dbgoo = mongoose.connection;
 dbgoo.on("error", () => {
@@ -35,8 +41,15 @@ dbgoo.once("open", () => {
   console.log("> successfully opened the database");
 });
 
-MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-  dbo = client.db("media-board");
+// MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+//   dbo = client.db("media-board");
+// });
+InitDb(function(err) {
+  if (err) {
+    console.log("Error with the Mongodb database initializaion error ", err);
+    return;
+  }
+  dbo = GetDb();
 });
 
 // let upload = multer({
@@ -56,9 +69,10 @@ let sessions = {};
 // next to all imports
 const node_media_server = require("./media_server.js");
 
+app.use("/", express.static("build"));
 app.use("/", express.static("public"));
 app.use("/uploads", express.static("uploads"));
-app.use("/thumbnails", express.static("server/thumbnails"));
+app.use("/thumbnails", express.static("thumbnails"));
 app.use("/images", express.static(__dirname + "/uploads"));
 app.use(flash());
 
@@ -201,6 +215,7 @@ app.use("/register", require("./routes/register.js"));
 app.use("/settings", require("./routes/settings.js"));
 app.use("/streams", require("./routes/streams.js"));
 app.use("/user", require("./routes/user.js"));
+app.use("/sell", require("./routes/sell.js"));
 
 // app.post("/logout", (req, res) => {
 //   const sessionId = req.cookies.sid;
@@ -225,6 +240,9 @@ app.get("/fail", (req, res) => {
   console.log("in Server test endpoint");
 
   res.send(JSON.stringify({ success: false }));
+});
+app.all("/*", (req, res, next) => {
+  res.sendFile(__dirname + "/build/index.html");
 });
 
 app.listen(port, () => console.log(`Server app is listening on ${port}!`));

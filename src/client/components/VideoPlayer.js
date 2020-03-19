@@ -43,13 +43,24 @@ export default class VideoPlayer extends Component {
             }
           },
           () => {
+            console.log(this.videoNode);
             this.player = videojs(
               this.videoNode,
               this.state.videoJsOptions,
               function onPlayerReady() {
                 console.log("onPlayerReady", this);
+                let reloadOptions = {};
+                reloadOptions.errorInterval = 10;
+                this.reloadSourceOnError(reloadOptions);
               }
             );
+            this.player.on("error", function() {
+              this.pause();
+              console.log(
+                "Following error occured from the player:",
+                this.error()
+              );
+            });
           }
         );
       });
@@ -60,6 +71,21 @@ export default class VideoPlayer extends Component {
       this.player.dispose();
     }
   }
+  handlErrorVideo = event => {
+    console.log(event);
+    event.stopPropagation();
+
+    let error = event.target.error;
+    console.log(
+      "Following error occured from the player:",
+      error.code,
+      error.type,
+      error.message
+    );
+  };
+  CreateError = event => {
+    this.player.error({ code: "2" });
+  };
 
   render() {
     return (
@@ -70,6 +96,7 @@ export default class VideoPlayer extends Component {
               <video
                 ref={node => (this.videoNode = node)}
                 className="video-js vjs-big-play-centered"
+                onError={this.handlErrorVideo}
               />
             </div>
           ) : (

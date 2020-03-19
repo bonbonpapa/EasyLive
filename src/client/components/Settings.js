@@ -1,18 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import LiveSellCreator from "./LiveSellCreator.js";
 import axios from "axios";
 
 class Settings extends Component {
   constructor(props) {
     super(props);
 
-    // this.state = {
-    //   stream_key: ""
-    // };
-
     this.generateStreamKey = this.generateStreamKey.bind(this);
-    // this.gotoLogin = this.gotoLogin.bind(this);
   }
 
   componentDidMount() {
@@ -21,28 +17,15 @@ class Settings extends Component {
 
   generateStreamKey(e) {
     axios.post("/settings/stream_key").then(res => {
-      //     this.setState({
-      // //      stream_key: res.data.stream_key
-      //     });
       this.props.dispatch({ type: "set-key", content: res.data.stream_key });
     });
   }
-  // gotoLogin(e) {
-  //   history.push("/Settings");
-  //   return <Sign {history} />
-  // }
 
   getStreamKey() {
     axios.get("/settings/stream_key").then(res => {
       if (!res.data.success) {
-        // this.setState({
-        //   stream_key: ""
-        // });
         this.props.dispatch({ type: "set-key", content: "" });
       } else {
-        // this.setState({
-        //   stream_key: res.data.stream_key
-        // });
         this.props.dispatch({ type: "set-key", content: res.data.stream_key });
       }
     });
@@ -62,12 +45,17 @@ class Settings extends Component {
             <div>
               {this.props.stream_key !== "" ? (
                 <div className="row">
-                  <button
-                    className="btn btn-dark mt-2"
-                    onClick={this.generateStreamKey}
-                  >
-                    Generate a new key
-                  </button>
+                  <div>
+                    <button
+                      className="btn btn-dark mt-2"
+                      onClick={this.generateStreamKey}
+                    >
+                      Generate a new key
+                    </button>
+                  </div>
+                  <div>
+                    <LiveSellCreator />
+                  </div>
                 </div>
               ) : (
                 <div className="row">

@@ -56,6 +56,11 @@ class Root extends Component {
               path="/stream/:username"
               render={props => <LiveSell {...props} />}
             />
+            <Route
+              exact
+              path="/complete/:lid"
+              render={props => <LiveSell {...props} />}
+            />
             <Route exact={true} path="/sign" render={() => <Sign />} />
 
             <Route
