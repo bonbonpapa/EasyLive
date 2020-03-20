@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-// import axios from "axios";
+import axios from "axios";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
@@ -46,46 +46,55 @@ const ChatContainer = styled.div`
 `;
 
 export default function LiveSell(props) {
-  let items = useSelector(state => state.items);
+  // let items = useSelector(state => state.items);
 
-  // let [items, setItems] = useState([]);
-  // const dispatch = useDispatch();
+  let [items, setItems] = useState([]);
+  let [livesell, setLivesell] = useState(null);
+  //const dispatch = useDispatch();
+  console.log("props for LiveSell hooks", props);
 
-  // useEffect(() => {
-  //   async function reload() {
-  //     let response = await axios("/all-items");
+  useEffect(() => {
+    async function reload() {
+      axios
+        .get("/sell", {
+          params: {
+            liveid: props.match.params.lid
+          }
+        })
+        .then(res => {
+          const liveselled = res.data.livesell;
+          //   console.log("response from server for user data", liveselled);
+          setLivesell(liveselled);
+          setItems(liveselled.items);
 
-  //     let body = response.data;
-  //     console.log("Response from get all items: ", body);
-  //     // console.log("/all-items response", body);
-  //     // body = JSON.parse(body);
-  //     if (body.success) {
-  //       setItems(body.items);
-  //     }
-  //   }
-  //   reload();
-  // }, []);
+          // dispatch({ type: "set-items", content: livesell.items });
+        });
+    }
+    reload();
+  }, []);
 
-  // dispatch({ type: "set-items", content: items });
-
-  return (
-    <div>
-      <LiveWrapper>
-        <Wrapper>
-          <PlayerContainer>
-            <VideoPlayer {...props} />
-          </PlayerContainer>
-          <CarouselContainer>
-            <CarouelItem slides={items} />
-          </CarouselContainer>
-          <ChatContainer>
-            <ChatRoom />
-          </ChatContainer>
-        </Wrapper>
-      </LiveWrapper>
+  if (livesell) {
+    return (
       <div>
-        <LiveSellSave />
+        <LiveWrapper>
+          <Wrapper>
+            <PlayerContainer>
+              <VideoPlayer contents={livesell} />
+            </PlayerContainer>
+            <CarouselContainer>
+              <CarouelItem slides={items} />
+            </CarouselContainer>
+            <ChatContainer>
+              <ChatRoom />
+            </ChatContainer>
+          </Wrapper>
+        </LiveWrapper>
+        <div>
+          <LiveSellSave />
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return <div>Loading Page</div>;
+  }
 }

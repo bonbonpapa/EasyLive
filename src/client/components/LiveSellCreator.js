@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -51,6 +51,7 @@ export default function LiveSellCreator() {
 
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const stream_key = useSelector(state => state.stream_key);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -59,6 +60,8 @@ export default function LiveSellCreator() {
     data.append("description", description);
     data.append("category", category);
     data.append("email", "aa@qq.com");
+    data.append("stream_key", stream_key);
+    data.append("username", "pi");
 
     const options = {
       method: "POST",

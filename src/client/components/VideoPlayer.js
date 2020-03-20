@@ -14,56 +14,88 @@ export default class VideoPlayer extends Component {
   }
 
   componentDidMount() {
-    axios
-      .get("/user", {
-        params: {
-          username: this.props.match.params.username
-        }
-      })
-      .then(res => {
-        console.log("response from server for user data", res.data.stream_key);
-        this.setState(
-          {
-            stream: true,
-            videoJsOptions: {
-              autoplay: false,
-              controls: true,
-              sources: [
-                {
-                  src:
-                    "http://127.0.0.1:" +
-                    config.rtmp_server.http.port +
-                    "/live/" +
-                    res.data.stream_key +
-                    "/index.m3u8",
-                  type: "application/x-mpegURL"
-                }
-              ],
-              fluid: true
-            }
-          },
-          () => {
-            console.log(this.videoNode);
-            this.player = videojs(
-              this.videoNode,
-              this.state.videoJsOptions,
-              function onPlayerReady() {
-                console.log("onPlayerReady", this);
-                let reloadOptions = {};
-                reloadOptions.errorInterval = 10;
-                this.reloadSourceOnError(reloadOptions);
+    const livesell = this.props.contents;
+    console.log("Live sell components in video sell,", livesell);
+    if (livesell && livesell.state === "active") {
+      this.setState(
+        {
+          stream: true,
+          videoJsOptions: {
+            autoplay: false,
+            controls: true,
+            sources: [
+              {
+                src:
+                  "http://127.0.0.1:" +
+                  config.rtmp_server.http.port +
+                  "/live/" +
+                  livesell.stream_key +
+                  "/index.m3u8",
+                type: "application/x-mpegURL"
               }
-            );
-            this.player.on("error", function() {
-              this.pause();
-              console.log(
-                "Following error occured from the player:",
-                this.error()
-              );
-            });
+            ],
+            fluid: true
           }
-        );
-      });
+        },
+        () => {
+          console.log(this.videoNode);
+          this.player = videojs(
+            this.videoNode,
+            this.state.videoJsOptions,
+            function onPlayerReady() {
+              console.log("onPlayerReady", this);
+              let reloadOptions = {};
+              reloadOptions.errorInterval = 10;
+              this.reloadSourceOnError(reloadOptions);
+            }
+          );
+          this.player.on("error", function() {
+            this.pause();
+            console.log(
+              "Following error occured from the player:",
+              this.error()
+            );
+          });
+        }
+      );
+    } else if (livesell && livesell.state === "completed") {
+      this.setState(
+        {
+          stream: true,
+          videoJsOptions: {
+            autoplay: false,
+            controls: true,
+            sources: [
+              {
+                src: "https://vjs.zencdn.net/v/oceans.mp4",
+                type: "video/mp4"
+              }
+            ],
+            fluid: true
+          }
+        },
+        () => {
+          console.log(this.videoNode);
+          this.player = videojs(
+            this.videoNode,
+            this.state.videoJsOptions,
+            function onPlayerReady() {
+              console.log("onPlayerReady", this);
+              let reloadOptions = {};
+              reloadOptions.errorInterval = 10;
+              this.reloadSourceOnError(reloadOptions);
+            }
+          );
+          this.player.on("error", function() {
+            this.pause();
+            console.log(
+              "Following error occured from the player:",
+              this.error()
+            );
+          });
+        }
+      );
+    }
   }
 
   componentWillUnmount() {

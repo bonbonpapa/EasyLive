@@ -9,7 +9,8 @@ let LiveSellSchema = new Schema({
   items: [],
   source: { frontendPath: String, filetype: String },
   messages: [],
-  state: String
+  state: String,
+  stream_key: String
 });
 
 module.exports = LiveSellSchema;

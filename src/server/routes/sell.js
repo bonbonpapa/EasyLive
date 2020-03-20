@@ -18,6 +18,28 @@ InitDb(function(err) {
   dbo = getDb();
 });
 
+router.get("/", (req, res) => {
+  // get the requested live sell information based on the _id live from frontend
+  if (req.query.liveid) {
+    LiveSell.findOne(
+      {
+        _id: req.query.liveid
+      },
+      (err, sell) => {
+        if (err) return;
+        if (sell) {
+          console.log("Find the sell information from server", sell);
+          res.json({
+            livesell: sell
+          });
+        }
+      }
+    );
+  } else {
+    res.json({});
+  }
+});
+
 router.get("/completed", (req, res) => {
   console.log("request to /all-items");
   LiveSell.find({ state: "completed" }, (err, sells) => {
@@ -26,7 +48,7 @@ router.get("/completed", (req, res) => {
       res.send(JSON.stringify({ success: false }));
       return;
     }
-    console.log("Completed Live Sells", sells);
+    // console.log("Completed Live Sells", sells);
     res.send(JSON.stringify({ success: true, sells: sells }));
   });
 });
@@ -39,6 +61,8 @@ router.post("/livecreator", upload.none(), async (req, res) => {
   const description = req.body.description;
   const category = req.body.category;
   const email = req.body.email;
+  const username = req.body.username;
+  const stream_key = req.body.stream_key;
 
   console.log("informatoon in the description: ", description);
   console.log("Inforamtion email: ", email);
@@ -50,6 +74,8 @@ router.post("/livecreator", upload.none(), async (req, res) => {
     .toArray();
 
   let LiveSelling = new LiveSell();
+  LiveSelling.username = username;
+  LiveSelling.stream_key = stream_key;
   LiveSelling.description = description;
   LiveSelling.category = category;
   LiveSelling.email = email;

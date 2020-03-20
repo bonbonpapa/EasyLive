@@ -1,6 +1,7 @@
 const express = require("express"),
   router = express.Router(),
-  User = require("../database/Schema.js").User;
+  User = require("../database/Schema.js").User,
+  LiveSell = require("../database/Schema.js").LiveSell;
 
 router.get("/info", (req, res) => {
   // here to be decided, if the user need to de checked as login, as get info is for all the users.
@@ -15,18 +16,26 @@ router.get("/info", (req, res) => {
   // what the return here ti check
   if (req.query.streams) {
     let streams = JSON.parse(req.query.streams);
-    let query = { $or: [] };
+    let query = { $and: [] };
     for (let stream in streams) {
       if (!streams.hasOwnProperty(stream)) continue;
-      query.$or.push({ stream_key: stream });
+      query.$and.push({ stream_key: stream });
+      query.$and.push({ state: "active" });
     }
 
-    User.find(query, (err, users) => {
+    LiveSell.find(query, (err, sellings) => {
       if (err) return;
-      if (users) {
-        res.json(users);
+      if (sellings) {
+        res.json(sellings);
       }
     });
+
+    // User.find(query, (err, users) => {
+    //   if (err) return;
+    //   if (users) {
+    //     res.json(users);
+    //   }
+    // });
   }
 });
 module.exports = router;

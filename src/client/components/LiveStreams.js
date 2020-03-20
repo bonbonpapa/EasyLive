@@ -31,7 +31,7 @@ class LiveStreams extends Component {
   async getCompletedLive() {
     let response = await fetch("/sell/completed");
     let body = await response.text();
-    console.log("/all-items response", body);
+    //console.log("/all-items response", body);
     body = JSON.parse(body);
     if (body.success) {
       this.props.dispatch({ type: "set-liveselled", content: body.sells });
@@ -73,7 +73,7 @@ class LiveStreams extends Component {
       return (
         <LiveCard className="stream" key={index}>
           <span className="live-label">LIVE</span>
-          <Link to={"/stream/" + stream.username}>
+          <Link to={"/stream/" + stream._id}>
             <div className="stream-thumbnail">
               <img
                 alt="video"
@@ -87,7 +87,7 @@ class LiveStreams extends Component {
           </Link>
 
           <span className="username">
-            <Link to={"/stream/" + stream.username}>{stream.username}</Link>
+            <Link to={"/stream/" + stream._id}>{stream.username}</Link>
           </span>
         </LiveCard>
       );
@@ -96,7 +96,7 @@ class LiveStreams extends Component {
       return (
         <LiveCard className="stream" key={index}>
           <span className="live-label">Completed Live</span>
-          <Link to={"/complete/" + sell._id}>
+          <Link to={"/stream/" + sell._id}>
             <div className="stream-thumbnail">
               <img
                 alt="video"
@@ -105,7 +105,7 @@ class LiveStreams extends Component {
             </div>
           </Link>
           <span className="username">
-            <Link to={"/complete/" + sell._id}>{sell.description}</Link>
+            <Link to={"/stream/" + sell._id}>{sell.description}</Link>
           </span>
         </LiveCard>
       );
