@@ -22,18 +22,16 @@ function Signin({ history }) {
       credentials: "include"
     });
     let body = await response.text();
-    console.log("response body from login", body);
+    //  console.log("response body from login", body);
 
     body = JSON.parse(body);
     if (body.success) {
       alert("login success");
+      dispatch({ type: "login-success", content: body.user });
+      dispatch({ type: "set-stream", content: body.streamlive });
       history.push("/");
       return;
     }
-    dispatch({
-      type: "login-success",
-      content: email
-    });
   }
 
   return (

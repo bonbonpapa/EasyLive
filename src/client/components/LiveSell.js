@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import axios from "axios";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
@@ -71,7 +70,7 @@ export default function LiveSell(props) {
         });
     }
     reload();
-  }, []);
+  }, [props.match.params.lid]);
 
   if (livesell) {
     return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -44,14 +44,34 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function LiveSellCreator() {
+export default function LiveSellCreator(props) {
   const classes = useStyles();
 
+  const isMounted = useRef(null);
+
   const dispatch = useDispatch();
+  let streamlive = useSelector(state => state.streamlive);
+  let user = useSelector(state => state.user);
 
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const stream_key = useSelector(state => state.stream_key);
+  const [items, setItems] = useState([]);
+  const [stream_key, setStreamKey] = useState("");
+  //const stream_key = useSelector(state => state.stream_key);
+
+  useEffect(() => {
+    setDescription(streamlive ? streamlive.description : "");
+    setCategory(streamlive ? streamlive.category : "");
+    setItems(streamlive ? streamlive.items.slice() : []);
+    setStreamKey(user ? user.stream_key : "");
+  }, [streamlive]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -62,25 +82,53 @@ export default function LiveSellCreator() {
     data.append("email", "aa@qq.com");
     data.append("stream_key", stream_key);
     data.append("username", "pi");
+    data.append("items", items);
 
     const options = {
       method: "POST",
       body: data
     };
 
-    let response = await fetch("/sell/livecreator", options);
-    let body = await response.text();
-    body = JSON.parse(body);
-    console.log("parsed body", body);
-    if (body.success) {
-      dispatch({ type: "set-items", content: body.livesell.items });
-      dispatch({ type: "set-liveid", content: body.livesell._id });
+    // let response = await fetch("/sell/livecreator", options);
+    // let body = await response.text();
+    // body = JSON.parse(body);
+    // console.log("parsed body", body);
+    // if (body.success) {
+    //   dispatch({ type: "set-items", content: body.livesell.items });
+    //   dispatch({ type: "set-stream", content: body.livesell });
 
-      setDescription("");
-      setCategory("");
-      return;
+    //   if (props.onSubmit) {
+    //     props.onSubmit();
+    //   }
+    //   setDescription("");
+    //   setCategory("");
+    //   return;
+    // }
+
+    let parse = undefined;
+    if (isMounted.current) {
+      fetch("/sell/livecreator", options)
+        .then(response => {
+          if (isMounted.current) return response.text();
+        })
+        .then(body => {
+          if (isMounted.current) {
+            parse = JSON.parse(body);
+            if (parse.success) {
+              dispatch({ type: "set-items", content: parse.livesell.items });
+              dispatch({ type: "set-stream", content: parse.livesell });
+
+              if (props.onSubmit) {
+                props.onSubmit();
+              }
+              setDescription("");
+              setCategory("");
+              return;
+            }
+            alert("items added failed");
+          }
+        });
     }
-    alert("items added failed");
   }
 
   return (

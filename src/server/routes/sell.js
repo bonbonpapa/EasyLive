@@ -63,6 +63,8 @@ router.post("/livecreator", upload.none(), async (req, res) => {
   const email = req.body.email;
   const username = req.body.username;
   const stream_key = req.body.stream_key;
+  const items = req.body.items;
+  let new_live = null;
 
   console.log("informatoon in the description: ", description);
   console.log("Inforamtion email: ", email);
@@ -73,19 +75,49 @@ router.post("/livecreator", upload.none(), async (req, res) => {
     .find({})
     .toArray();
 
-  let LiveSelling = new LiveSell();
-  LiveSelling.username = username;
-  LiveSelling.stream_key = stream_key;
-  LiveSelling.description = description;
-  LiveSelling.category = category;
-  LiveSelling.email = email;
-  LiveSelling.items = liveitems.slice();
-  LiveSelling.state = "active";
+  // let LiveSelling = new LiveSell();
+  // LiveSelling.username = username;
+  // LiveSelling.stream_key = stream_key;
+  // LiveSelling.description = description;
+  // LiveSelling.category = category;
+  // LiveSelling.email = email;
+  // LiveSelling.items = liveitems.slice();
+  // LiveSelling.state = "active";
 
-  LiveSelling.save((err, sell) => {
-    if (err) res.send(JSON.stringify({ success: false, error: err }));
-    res.send(JSON.stringify({ success: true, livesell: sell }));
-  });
+  // LiveSelling.save((err, sell) => {
+  //   if (err) res.send(JSON.stringify({ success: false, error: err }));
+  //   res.send(JSON.stringify({ success: true, livesell: sell }));
+  // });
+  try {
+    new_live = await LiveSell.findOneAndUpdate(
+      { email: email, state: "active" },
+      {
+        $set: {
+          description: description,
+          email: email,
+          username: username,
+          category: category,
+          stream_key: stream_key,
+          items: liveitems,
+          state: "active"
+        }
+      },
+      { upsert: true, new: true }
+    );
+  } catch (err) {
+    console.log("Error, ", err);
+    res.send(JSON.stringify({ success: false, error: err }));
+    return;
+  }
+  if (new_live) {
+    console.log(
+      "results afer updating the stream live, and if not existed, crrated the stream for the user",
+      new_live
+    );
+    res.send(JSON.stringify({ success: true, livesell: new_live }));
+    return;
+  }
+  res.send(JSON.stringify({ success: false }));
 });
 
 router.post("/livesave", upload.single("videofile"), async (req, res) => {

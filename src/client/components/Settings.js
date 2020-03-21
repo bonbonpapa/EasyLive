@@ -3,17 +3,27 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import LiveSellCreator from "./LiveSellCreator.js";
 import axios from "axios";
+import Guide from "./Guide.js";
 
 class Settings extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      show_form: false
+    };
 
     this.generateStreamKey = this.generateStreamKey.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    this.getStreamKey();
+    //  this.getStreamKey();
   }
+  handleClick = event => {
+    this.setState({
+      show_form: !this.state.show_form
+    });
+  };
 
   generateStreamKey(e) {
     axios.post("/settings/stream_key").then(res => {
@@ -32,18 +42,21 @@ class Settings extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <div className="container mt-5">
-          <h4>Streaming Key</h4>
-          <hr className="my-4" />
-
-          <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6">
-            <div className="row">
-              <h5>{this.props.stream_key}</h5>
-            </div>
-            <div>
-              {this.props.stream_key !== "" ? (
+    if (this.props.loggedIn) {
+      return (
+        <div>
+          <div className="container mt-5">
+            <h4>Account Settings</h4>
+            <hr className="my-4" />
+            <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6">
+              <div className="row">
+                <h5>
+                  {this.props.streamlive
+                    ? this.props.streamlive.stream_key
+                    : ""}
+                </h5>
+              </div>
+              <div>
                 <div className="row">
                   <div>
                     <button
@@ -54,58 +67,44 @@ class Settings extends Component {
                     </button>
                   </div>
                   <div>
-                    <LiveSellCreator />
+                    <button
+                      className="btn btn-dark mt-2"
+                      onClick={this.handleClick}
+                    >
+                      Update the Live Sell Creator
+                    </button>
+                  </div>
+                  <div>
+                    {this.state.show_form ? (
+                      <LiveSellCreator onSubmit={this.handleClick} />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </div>
-              ) : (
-                <div className="row">
-                  <button className="btn btn-dark mt-2">
-                    <Link to={"/sign"}>Sign in</Link>
-                  </button>
-                </div>
-              )}
+              </div>
+            </div>
+            <div>
+              <Guide />
             </div>
           </div>
         </div>
-
-        <div className="container mt-5">
-          <h4>How to Stream</h4>
-          <hr className="my-4" />
-
-          <div className="col-12">
-            <div className="row">
-              <p>
-                You can use{" "}
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://obsproject.com/"
-                >
-                  OBS
-                </a>{" "}
-                or
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://www.xsplit.com/"
-                >
-                  XSplit
-                </a>{" "}
-                to Live stream. If you're using OBS, go to Settings > Stream and
-                select Custom from service dropdown. Enter
-                <b>rtmp://127.0.0.1:1935/live</b> in server input field. Also,
-                add your stream key. Click apply to save.
-              </p>
-            </div>
-          </div>
+      );
+    } else {
+      return (
+        <div className="row">
+          <button className="btn btn-dark mt-2">
+            <Link to={"/sign"}>Sign in</Link>
+          </button>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 let mapStateToProps = state => {
   return {
-    stream_key: state.stream_key
+    streamlive: state.streamlive,
+    loggedIn: state.loggedIn
   };
 };
 export default connect(mapStateToProps)(Settings);

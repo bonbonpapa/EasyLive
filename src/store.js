@@ -4,7 +4,7 @@ let reducer = (state, action) => {
     return {
       ...state,
       loggedIn: true,
-      username: action.content
+      user: action.content
     };
   }
   if (action.type === "set-items") {
@@ -27,17 +27,23 @@ let reducer = (state, action) => {
       stream_key: action.content
     };
   }
-  if (action.type === "set-liveid") {
-    return {
-      ...state,
-      live_id: action.content
-    };
-  }
   if (action.type === "set-liveselled") {
     return {
       ...state,
       liveselled: action.content
     };
+  }
+  if (action.type === "set-stream") {
+    return {
+      ...state,
+      streamlive: action.content
+    };
+    if (action.type === "clear-stream") {
+      return {
+        ...state,
+        streamlive: null
+      };
+    }
   }
   return state;
 };
@@ -48,10 +54,11 @@ const store = createStore(
     loggedIn: false,
     username: undefined,
     userId: undefined,
-    live_id: undefined,
     stream_key: "",
     items: [],
     liveselled: [],
+    streamlive: null,
+    user: null,
     msgs: []
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()

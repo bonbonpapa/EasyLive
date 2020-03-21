@@ -50,6 +50,7 @@ class LiveStreams extends Component {
   }
 
   getStreamsInfo(live_streams) {
+    console.log("Live streams for get streams infor, ", live_streams);
     axios
       .get("/streams/info", {
         params: {

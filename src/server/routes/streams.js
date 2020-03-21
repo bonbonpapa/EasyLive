@@ -16,11 +16,14 @@ router.get("/info", (req, res) => {
   // what the return here ti check
   if (req.query.streams) {
     let streams = JSON.parse(req.query.streams);
-    let query = { $and: [] };
+    console.log(
+      "In the server endpoint to get the Live stream inforamtion",
+      streams
+    );
+    let query = { $or: [], state: "active" };
     for (let stream in streams) {
       if (!streams.hasOwnProperty(stream)) continue;
-      query.$and.push({ stream_key: stream });
-      query.$and.push({ state: "active" });
+      query.$or.push({ stream_key: stream });
     }
 
     LiveSell.find(query, (err, sellings) => {

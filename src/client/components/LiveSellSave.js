@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -44,11 +44,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function LiveSellCreator() {
+export default function LiveSellSave() {
   const classes = useStyles();
 
+  const dispatch = useDispatch();
+
   const [videofile, setVideoFile] = useState([]);
-  let live_id = useSelector(state => state.live_id);
+  let streamlive = useSelector(state => state.streamlive);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -56,7 +58,7 @@ export default function LiveSellCreator() {
     console.log("file selection", videofile[0]);
 
     let data = new FormData();
-    data.append("liveid", live_id);
+    data.append("liveid", streamlive._id);
     data.append("videofile", videofile[0]);
 
     const options = {
@@ -70,6 +72,9 @@ export default function LiveSellCreator() {
     console.log("parsed body", body);
     if (body.success) {
       alert("Live save success");
+      // dispatch({ type: "set-liveselled", content: body.livesell });
+      dispatch({ type: "clear-stream" });
+
       setVideoFile([]);
 
       return;

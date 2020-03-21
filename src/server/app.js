@@ -18,6 +18,7 @@ const express = require("express"),
   MongoClient = MongoDb.MongoClient,
   mongoose = require("mongoose"),
   FileStore = require("session-file-store")(Session),
+  LiveSell = require("./database/Schema.js").LiveSell,
   thumbnail_generator = require("./cron/thumbnails.js");
 
 let dbo = undefined;
@@ -231,10 +232,21 @@ app.get("/logout", function(req, res) {
   } else res.send(JSON.stringify({ success: false }));
 });
 
-app.get("/succeed", (req, res) => {
-  console.log("in Server test endpoint");
+let getStream = async email => {
+  console.log("email to get stream live", email);
+  let results = await LiveSell.findOne({ email: email, state: "active" });
+  //console.log("search results for the carts", results);
+  return results;
+};
+app.get("/succeed", async (req, res) => {
+  console.log("in Server after login succeed endpoint", req.user);
 
-  res.send(JSON.stringify({ success: true, user: req.user }));
+  let streamLive = await getStream(req.user.email);
+  //console.log("Steam livd after loggin: ", streamLive);
+
+  res.send(
+    JSON.stringify({ success: true, streamlive: streamLive, user: req.user })
+  );
 });
 app.get("/fail", (req, res) => {
   console.log("in Server test endpoint");
