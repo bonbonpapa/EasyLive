@@ -38,13 +38,14 @@ let reducer = (state, action) => {
       ...state,
       streamlive: action.content
     };
-    if (action.type === "clear-stream") {
-      return {
-        ...state,
-        streamlive: null
-      };
-    }
   }
+  if (action.type === "clear-stream") {
+    return {
+      ...state,
+      streamlive: null
+    };
+  }
+
   return state;
 };
 

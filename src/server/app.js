@@ -119,53 +119,28 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-let clients = 0;
-io.on("connection", function(socket) {
-  clients++;
-  let clientMsg = { name: "admin", message: "new user connection" };
-  messages = messages.concat(clientMsg);
-  io.sockets.emit("broadcast", { messages: messages });
-  console.log("New client connected");
+// let clients = 0;
+// io.on("connection", function(socket) {
+//   clients++;
+//   let clientMsg = { name: "admin", message: "new user connection" };
+//   messages = messages.concat(clientMsg);
+//   io.sockets.emit("broadcast", { messages: messages });
+//   console.log("New client connected");
 
-  socket.on("clientEvent", function(data) {
-    messages = messages.concat(data);
-    io.sockets.emit("broadcast", { messages: messages });
-    console.log(data);
-  });
+//   socket.on("clientEvent", function(data) {
+//     messages = messages.concat(data);
+//     io.sockets.emit("broadcast", { messages: messages });
+//     console.log(data);
+//   });
 
-  socket.on("disconnect", function() {
-    clients--;
-    io.sockets.emit("broadcast", {
-      description: clients + " clients disconnected!"
-    });
-    console.log("Client disconnected");
-  });
-});
-
-app.get("/all-items", (req, res) => {
-  console.log("request to /all-items");
-  dbo
-    .collection("items")
-    .find({})
-    .toArray((err, items) => {
-      if (err) {
-        console.log("error", err);
-        res.send(JSON.stringify({ success: false }));
-        return;
-      }
-      // console.log("Items", items);
-      res.send(JSON.stringify({ success: true, items: items }));
-    });
-});
-
-app.get("/messages", function(req, res) {
-  res.send(
-    JSON.stringify({
-      success: true,
-      messages: messages
-    })
-  );
-});
+//   socket.on("disconnect", function() {
+//     clients--;
+//     io.sockets.emit("broadcast", {
+//       description: clients + " clients disconnected!"
+//     });
+//     console.log("Client disconnected");
+//   });
+// });
 
 let login = (req, res) => {
   console.log("login", req.body);

@@ -6,6 +6,12 @@ import Card from "@material-ui/core/Card";
 import { Link } from "react-router-dom";
 import config from "../../server/config/default.js";
 
+const Main = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+`;
+
 const LiveCard = styled(Card)`
   max-width: 345px;
   img {
@@ -29,12 +35,16 @@ class LiveStreams extends Component {
   }
 
   async getCompletedLive() {
-    let response = await fetch("/sell/completed");
-    let body = await response.text();
-    //console.log("/all-items response", body);
-    body = JSON.parse(body);
-    if (body.success) {
-      this.props.dispatch({ type: "set-liveselled", content: body.sells });
+    try {
+      let response = await fetch("/sell/completed");
+      let body = await response.text();
+      //console.log("/all-items response", body);
+      body = JSON.parse(body);
+      if (body.success) {
+        this.props.dispatch({ type: "set-liveselled", content: body.sells });
+      }
+    } catch (err) {
+      console.log("Error from get the complete streams, ", err);
     }
   }
   getLiveStreams() {
@@ -46,6 +56,9 @@ class LiveStreams extends Component {
         if (typeof streams["live"] !== "undefined") {
           this.getStreamsInfo(streams["live"]);
         }
+      })
+      .catch(error => {
+        console.log("error with get request for the completed live", error);
       });
   }
 
@@ -66,6 +79,9 @@ class LiveStreams extends Component {
             console.log(this.state);
           }
         );
+      })
+      .catch(error => {
+        console.log("error with the request to get infor, ", error);
       });
   }
 
@@ -115,9 +131,9 @@ class LiveStreams extends Component {
     return (
       <div>
         <h4>Live Streams</h4>
-        <div className="streams row">{streams}</div>
+        <Main>{streams}</Main>
         <h4>Completed Streams</h4>
-        <div className="streams row">{livesellings}</div>
+        <Main>{livesellings}</Main>
       </div>
     );
   }

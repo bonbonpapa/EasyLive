@@ -22,6 +22,7 @@
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "fs": "0.0.1-security",
     "history": "^4.10.1",
     "hls.js": "^0.13.2",
     "jquery": "^3.4.1",

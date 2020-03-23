@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
 import StoreOutlinedIcon from "@material-ui/icons/StoreOutlined";
 import Typography from "@material-ui/core/Typography";
@@ -48,18 +51,37 @@ export default function LiveSellSave() {
   const classes = useStyles();
 
   const dispatch = useDispatch();
+  const [vfiles, setfiles] = useState([]);
 
-  const [videofile, setVideoFile] = useState([]);
   let streamlive = useSelector(state => state.streamlive);
+  let stream_key = streamlive ? streamlive.stream_key : "";
+
+  useEffect(() => {
+    async function reload() {
+      fetch("/sell/doneinfo?stream=" + stream_key)
+        .then(res => res.text())
+        .then(body => {
+          let parse = JSON.parse(body);
+
+          if (parse.success) {
+            setfiles(parse.files);
+            console.log("Mp4 videos from server, ", parse.files);
+          }
+        })
+        .catch(err => {
+          console.log("error in hte Live Sell use effect,", err);
+        });
+    }
+    reload();
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    console.log("file selection", videofile[0]);
-
     let data = new FormData();
     data.append("liveid", streamlive._id);
-    data.append("videofile", videofile[0]);
+    console.log(vfiles, vfiles.slice(-1)[0]);
+    data.append("videofile", vfiles.slice(-1)[0]);
 
     const options = {
       method: "POST",
@@ -74,8 +96,6 @@ export default function LiveSellSave() {
       alert("Live save success");
       // dispatch({ type: "set-liveselled", content: body.livesell });
       dispatch({ type: "clear-stream" });
-
-      setVideoFile([]);
 
       return;
     }
@@ -98,18 +118,15 @@ export default function LiveSellSave() {
             onSubmit={handleSubmit}
             encType="multipart/form-data"
           >
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="videofile"
-              label="Video"
-              type="file"
-              id="video"
-              inputProps={{ multiple: false }}
-              onInput={e => setVideoFile(e.target.files)}
-            />
+            <List disablePadding>
+              {vfiles.map((filename, idx) => {
+                return (
+                  <ListItem className={classes.listItem} key={filename}>
+                    <ListItemText primary={filename} />
+                  </ListItem>
+                );
+              })}
+            </List>
             <Button
               type="submit"
               fullWidth

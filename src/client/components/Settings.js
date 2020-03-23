@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import LiveSellCreator from "./LiveSellCreator.js";
 import axios from "axios";
 import Guide from "./Guide.js";
+import Streamkey from "./Streamkey.js";
+import ActiveLive from "./ActiveLive.js";
 
 class Settings extends Component {
   constructor(props) {
@@ -49,30 +51,14 @@ class Settings extends Component {
             <h4>Account Settings</h4>
             <hr className="my-4" />
             <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6">
-              <div className="row">
-                <h5>
-                  {this.props.streamlive
-                    ? this.props.streamlive.stream_key
-                    : ""}
-                </h5>
-              </div>
+              <div className="row"></div>
               <div>
                 <div className="row">
                   <div>
-                    <button
-                      className="btn btn-dark mt-2"
-                      onClick={this.generateStreamKey}
-                    >
-                      Generate a new key
-                    </button>
+                    <Streamkey />
                   </div>
                   <div>
-                    <button
-                      className="btn btn-dark mt-2"
-                      onClick={this.handleClick}
-                    >
-                      Update the Live Sell Creator
-                    </button>
+                    <ActiveLive onSubmit={this.handleClick} />
                   </div>
                   <div>
                     {this.state.show_form ? (

@@ -5,6 +5,9 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import StoreOutlinedIcon from "@material-ui/icons/StoreOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -51,6 +54,7 @@ export default function LiveSellCreator(props) {
 
   const dispatch = useDispatch();
   let streamlive = useSelector(state => state.streamlive);
+  const sellList = streamlive ? streamlive.items : [];
   let user = useSelector(state => state.user);
 
   const [description, setDescription] = useState("");
@@ -72,6 +76,20 @@ export default function LiveSellCreator(props) {
       isMounted.current = false;
     };
   }, []);
+
+  async function DeletefromSellList(idx, id_db) {
+    let response = await fetch("/sell/delete?pid=" + id_db);
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      alert("delete item from live stream");
+      console.log("new Cart returned, ", body.livesell);
+      dispatch({ type: "set-stream", content: body.livesell });
+    } else {
+      alert("something went wrong");
+    }
+    //  dispatch({ type: "delete-from-list", content: idx });
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -172,6 +190,35 @@ export default function LiveSellCreator(props) {
               value={category}
               onInput={e => setCategory(e.target.value)}
             />
+            <Typography variant="h6" gutterBottom>
+              Live Selling Items
+            </Typography>
+            <List disablePadding>
+              {sellList &&
+                sellList.map((product, idx) => {
+                  return (
+                    <ListItem
+                      className={classes.listItem}
+                      key={product.description}
+                    >
+                      <ListItemText
+                        primary={product.description}
+                        secondary={"x " + product.quantity}
+                      />
+                      <Typography variant="body2">
+                        {"$ " + product.price + " /ea"}
+                      </Typography>
+                      <Button
+                        onClick={() => DeletefromSellList(idx, product._id)}
+                        variant="contained"
+                        className={classes.remove}
+                      >
+                        Remove
+                      </Button>
+                    </ListItem>
+                  );
+                })}
+            </List>
             <Button
               type="submit"
               fullWidth

@@ -16,10 +16,10 @@ router.get("/info", (req, res) => {
   // what the return here ti check
   if (req.query.streams) {
     let streams = JSON.parse(req.query.streams);
-    console.log(
-      "In the server endpoint to get the Live stream inforamtion",
-      streams
-    );
+    // console.log(
+    //   "In the server endpoint to get the Live stream inforamtion",
+    //   streams
+    // );
     let query = { $or: [], state: "active" };
     for (let stream in streams) {
       if (!streams.hasOwnProperty(stream)) continue;
@@ -41,4 +41,5 @@ router.get("/info", (req, res) => {
     // });
   }
 });
+
 module.exports = router;

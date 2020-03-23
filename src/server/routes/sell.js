@@ -1,9 +1,12 @@
 const express = require("express"),
   LiveSell = require("../database/Schema.js").LiveSell,
+  mongoose = require("mongoose"),
   multer = require("multer"),
   router = express.Router(),
+  config = require("../config/default.js"),
   InitDb = require("../db.js").initDb,
-  getDb = require("../db.js").getDb;
+  getDb = require("../db.js").getDb,
+  fs = require("fs");
 
 let upload = multer({
   dest: __dirname + "/../uploads/"
@@ -28,7 +31,7 @@ router.get("/", (req, res) => {
       (err, sell) => {
         if (err) return;
         if (sell) {
-          console.log("Find the sell information from server", sell);
+          //    console.log("Find the sell information from server", sell);
           res.json({
             livesell: sell
           });
@@ -40,8 +43,34 @@ router.get("/", (req, res) => {
   }
 });
 
+router.get("/delete", async (req, res) => {
+  const pid = req.query.pid;
+  console.log("delete item in the cart, prduct id: ", pid);
+  let user = req.user;
+  // console.log("User information in the delete items endpoint, ", user);
+
+  if (req.user) {
+    try {
+      newSell = await LiveSell.findOneAndUpdate(
+        { email: user.email, state: "active" },
+        { $pull: { items: { _id: mongoose.Types.ObjectId(pid) } } },
+        { new: true }
+      );
+    } catch (err) {
+      console.log("Error with delete item from Cart", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    if (newSell) {
+      // console.log("New cart updated ", newSell);
+      res.send(JSON.stringify({ success: true, livesell: newSell }));
+      return;
+    }
+  }
+  res.send(JSON.stringify({ success: false }));
+});
+
 router.get("/completed", (req, res) => {
-  console.log("request to /all-items");
   LiveSell.find({ state: "completed" }, (err, sells) => {
     if (err) {
       console.log("error", err);
@@ -50,6 +79,26 @@ router.get("/completed", (req, res) => {
     }
     // console.log("Completed Live Sells", sells);
     res.send(JSON.stringify({ success: true, sells: sells }));
+  });
+});
+router.get("/doneinfo", (req, res) => {
+  let stream_key = req.query.stream;
+  console.log("In the server endpoint to get the video files list", stream_key);
+  let ouPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].app}/${stream_key}`;
+  console.log("Video folder ", ouPath);
+  let oufiles = [];
+  fs.readdir(ouPath, function(err, files) {
+    if (!err) {
+      files.forEach(filename => {
+        if (filename.endsWith(".mp4")) {
+          console.log(filename);
+          //  oufiles.push(ouPath + "/" + filename);
+          oufiles.push(filename);
+        }
+      });
+      console.log(oufiles);
+      res.send(JSON.stringify({ success: true, files: oufiles }));
+    } else res.send(JSON.stringify({ success: false }));
   });
 });
 
@@ -75,19 +124,6 @@ router.post("/livecreator", upload.none(), async (req, res) => {
     .find({})
     .toArray();
 
-  // let LiveSelling = new LiveSell();
-  // LiveSelling.username = username;
-  // LiveSelling.stream_key = stream_key;
-  // LiveSelling.description = description;
-  // LiveSelling.category = category;
-  // LiveSelling.email = email;
-  // LiveSelling.items = liveitems.slice();
-  // LiveSelling.state = "active";
-
-  // LiveSelling.save((err, sell) => {
-  //   if (err) res.send(JSON.stringify({ success: false, error: err }));
-  //   res.send(JSON.stringify({ success: true, livesell: sell }));
-  // });
   try {
     new_live = await LiveSell.findOneAndUpdate(
       { email: email, state: "active" },
@@ -98,7 +134,7 @@ router.post("/livecreator", upload.none(), async (req, res) => {
           username: username,
           category: category,
           stream_key: stream_key,
-          items: liveitems,
+          items: liveitems.slice(0, 5),
           state: "active"
         }
       },
@@ -120,17 +156,17 @@ router.post("/livecreator", upload.none(), async (req, res) => {
   res.send(JSON.stringify({ success: false }));
 });
 
-router.post("/livesave", upload.single("videofile"), async (req, res) => {
+router.post("/livesave", upload.none(), async (req, res) => {
   console.log("req to save live, ", req.body);
 
   let liveid = req.body.liveid;
   console.log("id for the live sell, ", liveid);
 
-  let file = req.file;
-  console.log("file selected by the server", file);
+  let videopath = req.body.videofile;
+  console.log("file selected by the server", videopath);
   let frontendPath = {
-    frontendPath: "/uploads/" + file.filename,
-    filetype: "application/x-mpegURL"
+    frontendPath: videopath,
+    filetype: "video/mp4"
   };
   console.log("video file location, ", frontendPath);
   let messages = [{ name: "admin", message: "new user connection" }];

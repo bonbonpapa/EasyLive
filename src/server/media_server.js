@@ -23,7 +23,10 @@ nms.on("prePublish", async (id, StreamPath, args) => {
           let session = nms.getSession(id);
           session.reject();
         } else {
-          console.log("From Media Server, user information :", LiveSell);
+          console.log(
+            "From Media Server, active Live Stream information :",
+            LiveSell
+          );
           helpers.generateStreamThumbnail(stream_key);
         }
       }

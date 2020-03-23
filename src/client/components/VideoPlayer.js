@@ -66,8 +66,15 @@ export default class VideoPlayer extends Component {
             controls: true,
             sources: [
               {
-                src: "https://vjs.zencdn.net/v/oceans.mp4",
-                type: "video/mp4"
+                // src: "https://vjs.zencdn.net/v/oceans.mp4",
+                src:
+                  "http://127.0.0.1:" +
+                  config.rtmp_server.http.port +
+                  "/live/" +
+                  livesell.stream_key +
+                  "/" +
+                  livesell.source.frontendPath,
+                type: livesell.source.filetype
               }
             ],
             fluid: true

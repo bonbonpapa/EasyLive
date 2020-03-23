@@ -47,6 +47,8 @@ const ChatContainer = styled.div`
 export default function LiveSell(props) {
   // let items = useSelector(state => state.items);
 
+  let [show_form, setShowfrm] = useState(false);
+
   let [items, setItems] = useState([]);
   let [livesell, setLivesell] = useState(null);
   //const dispatch = useDispatch();
@@ -67,10 +69,17 @@ export default function LiveSell(props) {
           setItems(liveselled.items);
 
           // dispatch({ type: "set-items", content: livesell.items });
+        })
+        .catch(err => {
+          console.log("error in hte Live Sell use effect,", err);
         });
     }
     reload();
   }, [props.match.params.lid]);
+
+  const handleClick = event => {
+    setShowfrm(!show_form);
+  };
 
   if (livesell) {
     return (
@@ -88,9 +97,8 @@ export default function LiveSell(props) {
             </ChatContainer>
           </Wrapper>
         </LiveWrapper>
-        <div>
-          <LiveSellSave />
-        </div>
+        <button onClick={handleClick}>Complete Live</button>
+        <div>{show_form ? <LiveSellSave /> : <></>}</div>
       </div>
     );
   } else {
