@@ -213,14 +213,27 @@ let getStream = async email => {
   //console.log("search results for the carts", results);
   return results;
 };
+let getItems = async email => {
+  let allitems = await dbo
+    .collection("items")
+    .find({})
+    .toArray();
+  return allitems;
+};
 app.get("/succeed", async (req, res) => {
   console.log("in Server after login succeed endpoint", req.user);
 
   let streamLive = await getStream(req.user.email);
-  //console.log("Steam livd after loggin: ", streamLive);
+  let items = await getItems(req.user.email);
+  // console.log("Items after loggin: ", items);
 
   res.send(
-    JSON.stringify({ success: true, streamlive: streamLive, user: req.user })
+    JSON.stringify({
+      success: true,
+      streamlive: streamLive,
+      user: req.user,
+      items: items.slice()
+    })
   );
 });
 app.get("/fail", (req, res) => {

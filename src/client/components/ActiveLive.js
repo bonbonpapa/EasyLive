@@ -82,10 +82,7 @@ export default function ActiveLive(props) {
                     className={classes.listItem}
                     key={product.description}
                   >
-                    <ListItemText
-                      primary={product.description}
-                      secondary={"x " + product.quantity}
-                    />
+                    <ListItemText primary={product.description} />
                     <Typography variant="body2">
                       {"$ " + product.price + " /ea"}
                     </Typography>

@@ -10,6 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
 import StoreOutlinedIcon from "@material-ui/icons/StoreOutlined";
 import Typography from "@material-ui/core/Typography";
+import SelectItem from "./SelectItem.js";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
@@ -52,6 +53,7 @@ export default function LiveSellSave() {
 
   const dispatch = useDispatch();
   const [vfiles, setfiles] = useState([]);
+  const [fileselect, SetFileSelect] = useState("");
 
   let streamlive = useSelector(state => state.streamlive);
   let stream_key = streamlive ? streamlive.stream_key : "";
@@ -80,8 +82,9 @@ export default function LiveSellSave() {
 
     let data = new FormData();
     data.append("liveid", streamlive._id);
-    console.log(vfiles, vfiles.slice(-1)[0]);
-    data.append("videofile", vfiles.slice(-1)[0]);
+    //   console.log(vfiles, vfiles.slice(-1)[0]);
+    //  data.append("videofile", vfiles.slice(-1)[0]);
+    data.append("videofile", fileselect);
 
     const options = {
       method: "POST",
@@ -94,13 +97,17 @@ export default function LiveSellSave() {
     console.log("parsed body", body);
     if (body.success) {
       alert("Live save success");
-      // dispatch({ type: "set-liveselled", content: body.livesell });
+
       dispatch({ type: "clear-stream" });
 
       return;
     }
     alert("live save failed");
   }
+
+  const handleSelect = filename => {
+    SetFileSelect(filename);
+  };
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -118,15 +125,7 @@ export default function LiveSellSave() {
             onSubmit={handleSubmit}
             encType="multipart/form-data"
           >
-            <List disablePadding>
-              {vfiles.map((filename, idx) => {
-                return (
-                  <ListItem className={classes.listItem} key={filename}>
-                    <ListItemText primary={filename} />
-                  </ListItem>
-                );
-              })}
-            </List>
+            <SelectItem items={vfiles} handleSelect={handleSelect} />
             <Button
               type="submit"
               fullWidth

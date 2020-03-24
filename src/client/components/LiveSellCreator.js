@@ -10,6 +10,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import StoreOutlinedIcon from "@material-ui/icons/StoreOutlined";
 import Typography from "@material-ui/core/Typography";
+import ItemsList from "./ItemsList.js";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
@@ -54,19 +55,19 @@ export default function LiveSellCreator(props) {
 
   const dispatch = useDispatch();
   let streamlive = useSelector(state => state.streamlive);
-  const sellList = streamlive ? streamlive.items : [];
+
+  let selected = useSelector(state => state.selected);
   let user = useSelector(state => state.user);
 
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [items, setItems] = useState([]);
+
   const [stream_key, setStreamKey] = useState("");
   //const stream_key = useSelector(state => state.stream_key);
 
   useEffect(() => {
     setDescription(streamlive ? streamlive.description : "");
     setCategory(streamlive ? streamlive.category : "");
-    setItems(streamlive ? streamlive.items.slice() : []);
     setStreamKey(user ? user.stream_key : "");
   }, [streamlive]);
 
@@ -77,20 +78,6 @@ export default function LiveSellCreator(props) {
     };
   }, []);
 
-  async function DeletefromSellList(idx, id_db) {
-    let response = await fetch("/sell/delete?pid=" + id_db);
-    let body = await response.text();
-    body = JSON.parse(body);
-    if (body.success) {
-      alert("delete item from live stream");
-      console.log("new Cart returned, ", body.livesell);
-      dispatch({ type: "set-stream", content: body.livesell });
-    } else {
-      alert("something went wrong");
-    }
-    //  dispatch({ type: "delete-from-list", content: idx });
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -100,7 +87,7 @@ export default function LiveSellCreator(props) {
     data.append("email", "aa@qq.com");
     data.append("stream_key", stream_key);
     data.append("username", "pi");
-    data.append("items", items);
+    data.append("items", JSON.stringify(selected));
 
     const options = {
       method: "POST",
@@ -133,8 +120,12 @@ export default function LiveSellCreator(props) {
           if (isMounted.current) {
             parse = JSON.parse(body);
             if (parse.success) {
-              dispatch({ type: "set-items", content: parse.livesell.items });
               dispatch({ type: "set-stream", content: parse.livesell });
+              if (parse.livesell)
+                dispatch({
+                  type: "set-selected",
+                  content: parse.livesell.items
+                });
 
               if (props.onSubmit) {
                 props.onSubmit();
@@ -158,7 +149,7 @@ export default function LiveSellCreator(props) {
             <StoreOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            LIVE SELL CTEATOR
+            LIVE SELL CREATOR
           </Typography>
           <form
             className={classes.form}
@@ -193,32 +184,9 @@ export default function LiveSellCreator(props) {
             <Typography variant="h6" gutterBottom>
               Live Selling Items
             </Typography>
-            <List disablePadding>
-              {sellList &&
-                sellList.map((product, idx) => {
-                  return (
-                    <ListItem
-                      className={classes.listItem}
-                      key={product.description}
-                    >
-                      <ListItemText
-                        primary={product.description}
-                        secondary={"x " + product.quantity}
-                      />
-                      <Typography variant="body2">
-                        {"$ " + product.price + " /ea"}
-                      </Typography>
-                      <Button
-                        onClick={() => DeletefromSellList(idx, product._id)}
-                        variant="contained"
-                        className={classes.remove}
-                      >
-                        Remove
-                      </Button>
-                    </ListItem>
-                  );
-                })}
-            </List>
+            <div>
+              <ItemsList />
+            </div>
             <Button
               type="submit"
               fullWidth

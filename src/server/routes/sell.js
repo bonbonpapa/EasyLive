@@ -112,17 +112,18 @@ router.post("/livecreator", upload.none(), async (req, res) => {
   const email = req.body.email;
   const username = req.body.username;
   const stream_key = req.body.stream_key;
-  const items = req.body.items;
+  const items = JSON.parse(req.body.items);
+  console.log("Items pass to the server ", items);
   let new_live = null;
 
   console.log("informatoon in the description: ", description);
   console.log("Inforamtion email: ", email);
   console.log("Information category ", category);
 
-  let liveitems = await dbo
-    .collection("items")
-    .find({})
-    .toArray();
+  // let liveitems = await dbo
+  //   .collection("items")
+  //   .find({})
+  //   .toArray();
 
   try {
     new_live = await LiveSell.findOneAndUpdate(
@@ -134,7 +135,7 @@ router.post("/livecreator", upload.none(), async (req, res) => {
           username: username,
           category: category,
           stream_key: stream_key,
-          items: liveitems.slice(0, 5),
+          items: items,
           state: "active"
         }
       },

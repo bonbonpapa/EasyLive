@@ -45,8 +45,6 @@ const ChatContainer = styled.div`
 `;
 
 export default function LiveSell(props) {
-  // let items = useSelector(state => state.items);
-
   let [show_form, setShowfrm] = useState(false);
 
   let [items, setItems] = useState([]);

@@ -45,7 +45,12 @@ let reducer = (state, action) => {
       streamlive: null
     };
   }
-
+  if (action.type === "set-selected") {
+    return {
+      ...state,
+      selected: action.content
+    };
+  }
   return state;
 };
 
@@ -57,6 +62,7 @@ const store = createStore(
     userId: undefined,
     stream_key: "",
     items: [],
+    selected: [],
     liveselled: [],
     streamlive: null,
     user: null,

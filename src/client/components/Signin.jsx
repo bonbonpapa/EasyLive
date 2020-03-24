@@ -29,6 +29,10 @@ function Signin({ history }) {
       alert("login success");
       dispatch({ type: "login-success", content: body.user });
       dispatch({ type: "set-stream", content: body.streamlive });
+      dispatch({ type: "set-items", content: body.items });
+      if (body.streamlive)
+        dispatch({ type: "set-selected", content: body.streamlive.items });
+
       history.push("/");
       return;
     }
