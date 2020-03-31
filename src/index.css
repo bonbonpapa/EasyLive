@@ -13,34 +13,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
-.nav_container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
-  background: white;
-}
-
-.navbar-link {
-  color: white;
-  text-decoration: none;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  list-style: none;
-}
-.navbar-nav {
-  display: flex;
-  align-items: center;
-  list-style: none;
-}
-
-.nav-item {
-  padding: 10px;
-  margin-right: 10px;
-}

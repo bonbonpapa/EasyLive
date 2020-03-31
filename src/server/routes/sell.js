@@ -102,16 +102,58 @@ router.get("/doneinfo", (req, res) => {
   });
 });
 
-router.post("/livecreator", upload.none(), async (req, res) => {
+let create = async (sellObj, res) => {
+  let new_live = null;
+
+  try {
+    new_live = await LiveSell.findOneAndUpdate(
+      { email: sellObj.email, state: "active" },
+      {
+        $set: sellObj
+      },
+      { upsert: true, new: true }
+    );
+  } catch (err) {
+    console.log("Error, ", err);
+    res.send(JSON.stringify({ success: false, error: err }));
+    return;
+  }
+  if (new_live) {
+    console.log(
+      "results afer updating the stream live, and if not existed, crrated the stream for the user",
+      new_live
+    );
+    res.send(JSON.stringify({ success: true, livesell: new_live }));
+    return;
+  }
+  res.send(JSON.stringify({ success: false }));
+};
+
+router.post("/livecreator", upload.array("mfiles", 9), async (req, res) => {
   // here to get the body about the formdata inforamtion from the request
   // and then create the livesell using the information provided by the user
   console.log("Server in the LiveCreator endpoint, ", req.body);
+
+  let files = req.files;
+  console.log("uploaded files", files);
+
+  let frontendPaths = files.map(file => {
+    if (file) {
+      let filetype = file.mimetype;
+      return { frontendPath: "/uploads/" + file.filename, filetype: filetype };
+    } else {
+      return null;
+    }
+  });
+  console.log("Frontend path array", frontendPaths);
 
   const description = req.body.description;
   const category = req.body.category;
   const email = req.body.email;
   const username = req.body.username;
   const stream_key = req.body.stream_key;
+  let thumbnail = frontendPaths[0];
+  let poster = frontendPaths[1];
   const items = JSON.parse(req.body.items);
   console.log("Items pass to the server ", items);
   let new_live = null;
@@ -119,11 +161,6 @@ router.post("/livecreator", upload.none(), async (req, res) => {
   console.log("informatoon in the description: ", description);
   console.log("Inforamtion email: ", email);
   console.log("Information category ", category);
-
-  // let liveitems = await dbo
-  //   .collection("items")
-  //   .find({})
-  //   .toArray();
 
   try {
     new_live = await LiveSell.findOneAndUpdate(
@@ -136,6 +173,8 @@ router.post("/livecreator", upload.none(), async (req, res) => {
           category: category,
           stream_key: stream_key,
           items: items,
+          thumbnail: thumbnail,
+          poster: poster,
           state: "active"
         }
       },
@@ -192,8 +231,20 @@ router.post("/livesave", upload.none(), async (req, res) => {
       "Return from update the live sell with video source and messages,",
       newLiveSell
     );
-    res.send(JSON.stringify({ success: true, livesell: newLiveSell }));
-    return;
+
+    let sellObj = {
+      description: "",
+      email: newLiveSell.email,
+      username: newLiveSell.username,
+      category: "",
+      stream_key: newLiveSell.stream_key,
+      items: [],
+      state: "active"
+    };
+    create(sellObj, res);
+
+    // res.send(JSON.stringify({ success: true, livesell: newLiveSell }));
+    // return;
   }
 });
 

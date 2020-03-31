@@ -31,6 +31,8 @@ export default class VideoPlayer extends Component {
                   livesell.stream_key +
                   "/index.m3u8",
                 type: "application/x-mpegURL"
+                // src: "https://vjs.zencdn.net/v/oceans.mp4",
+                // type: "video/mp4"
               }
             ],
             fluid: true
@@ -101,6 +103,10 @@ export default class VideoPlayer extends Component {
           });
         }
       );
+    } else {
+      //set the source here when the source is not ready, when the stautus is active or complete, the video should be ready
+      // and ready to fire
+      // if not ready, then show the poster or for the video elements.
     }
   }
 
@@ -134,6 +140,11 @@ export default class VideoPlayer extends Component {
               <video
                 ref={node => (this.videoNode = node)}
                 className="video-js vjs-big-play-centered"
+                poster={
+                  this.props.contents.poster
+                    ? this.props.contents.poster.frontendPath
+                    : "https://images.unsplash.com/photo-1522327646852-4e28586a40dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2251&q=80"
+                }
                 onError={this.handlErrorVideo}
               />
             </div>

@@ -8,6 +8,8 @@ let LiveSellSchema = new Schema({
   email: String,
   items: [],
   source: { frontendPath: String, filetype: String },
+  thumbnail: { frontendPath: String, filetype: String },
+  poster: { frontendPath: String, filetype: String },
   messages: [],
   state: String,
   stream_key: String

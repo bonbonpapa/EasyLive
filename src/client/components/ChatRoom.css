@@ -4,13 +4,15 @@
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   color: #434651;
+  width: 18vw;
+  min-width: 220px;
 
   /* height: 770px;
   overflow-y: scroll; */
 }
 
 .chat .chat-history {
-  padding: 30px 30px 20px;
+  padding: 0;
   border-bottom: 2px solid white;
   overflow-y: scroll;
   /* height: 660px; */
@@ -25,7 +27,7 @@
 }
 .chat .chat-history .message {
   color: white;
-  padding: 18px 20px;
+  padding: 0;
   line-height: 26px;
   font-size: 16px;
   border-radius: 7px;
@@ -54,13 +56,13 @@
 }
 
 .chat .chat-message {
-  padding: 0px 15px 0px 5px;
+  padding: 0;
   align-items: flex-end;
 }
 .chat .chat-message textarea {
   width: 90%;
   border: none;
-  padding: 5px 20px;
+  padding: 0;
   font: 14px/22px "Lato", Arial, sans-serif;
   margin-bottom: 5px;
   border-radius: 5px;

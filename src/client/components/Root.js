@@ -7,10 +7,11 @@ import Settings from "./Settings.js";
 import styled from "styled-components";
 import LiveSell from "./LiveSell.js";
 import Sign from "./Sign.jsx";
+import StreamManager from "./StreamManager.js";
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 100px 1fr;
+  grid-template-rows: auto 1fr;
 `;
 
 class Root extends Component {
@@ -50,12 +51,11 @@ class Root extends Component {
               path="/"
               render={props => <LiveStreams {...props} />}
             />
-
-            {/* <Route
+            <Route
               exact
-              path="/stream/:username"
-              render={props => <LiveSell {...props} />}
-            /> */}
+              path="/manager"
+              render={props => <StreamManager {...props} />}
+            />
             <Route
               exact
               path="/stream/:lid"
@@ -74,10 +74,10 @@ class Root extends Component {
     }
     return (
       <BrowserRouter>
-        <div>
+        <Wrapper>
           <NavbarNoStyle />
           <Route exact={true} path="/" render={() => <Sign />} />
-        </div>
+        </Wrapper>
       </BrowserRouter>
     );
   }

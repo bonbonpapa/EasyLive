@@ -5,15 +5,20 @@ import styled from "styled-components";
 import Card from "@material-ui/core/Card";
 import { Link } from "react-router-dom";
 import config from "../../server/config/default.js";
+import "./LiveStreams.css";
 
 const Main = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 10px;
+
+  @media screen and (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
 `;
 
-const LiveCard = styled(Card)`
-  max-width: 345px;
+const LiveCard = styled.div`
+  /* max-width: 345px; */
+
   img {
     width: 100%;
     height: 100%;
@@ -88,52 +93,75 @@ class LiveStreams extends Component {
   render() {
     let streams = this.state.live_streams.map((stream, index) => {
       return (
-        <LiveCard className="stream" key={index}>
-          <span className="live-label">LIVE</span>
-          <Link to={"/stream/" + stream._id}>
-            <div className="stream-thumbnail">
-              <img
-                alt="video"
-                src={"/thumbnails/" + stream.stream_key + ".png"}
-              />
-              {/* <img
-                alt="video"
-                src="https://www.rosen-group.com/.imaging/stk/rosen-website/gallery-zoom/dms/rosen-website/rosen-pictures/company/insight/news/latest-news/2018/Live-Stream/LiveStreaming_Button_PTC2018/document/LiveStreaming_Button_PTC2018.png"
-              /> */}
-            </div>
-          </Link>
-
-          <span className="username">
-            <Link to={"/stream/" + stream._id}>{stream.username}</Link>
-          </span>
-        </LiveCard>
+        <div className="video-card-container" key={index}>
+          <div className="inner-video-card-list">
+            <Link
+              className="video-card video-card-normal-to-horizontal"
+              to={"/stream/" + stream._id}
+            >
+              <div className="inner">
+                <div className="stream-thumbnail">
+                  <img
+                    alt="video"
+                    src={"/thumbnails/" + stream.stream_key + ".png"}
+                  />
+                </div>
+                <div className="video-card-details">{stream.username}</div>
+              </div>
+            </Link>
+          </div>
+        </div>
       );
     });
     let livesellings = this.props.liveselled.map((sell, index) => {
       return (
-        <LiveCard className="stream" key={index}>
-          <span className="live-label">Completed Live</span>
-          <Link to={"/stream/" + sell._id}>
-            <div className="stream-thumbnail">
-              <img
-                alt="video"
-                src="https://www.rosen-group.com/.imaging/stk/rosen-website/gallery-zoom/dms/rosen-website/rosen-pictures/company/insight/news/latest-news/2018/Live-Stream/LiveStreaming_Button_PTC2018/document/LiveStreaming_Button_PTC2018.png"
-              />
-            </div>
-          </Link>
-          <span className="username">
-            <Link to={"/stream/" + sell._id}>{sell.description}</Link>
-          </span>
-        </LiveCard>
+        <div className="video-card-container" key={index}>
+          <div className="inner-video-card-list">
+            <Link
+              className="video-card video-card-normal-to-horizontal"
+              to={"/stream/" + sell._id}
+            >
+              <div className="inner">
+                <div className="stream-thumbnail">
+                  <img
+                    alt="video"
+                    src={
+                      sell.thumbnail
+                        ? sell.thumbnail.frontendPath
+                        : "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=600&q=60"
+                    }
+                  />
+                </div>
+                <div className="video-card-details">{sell.description}</div>
+              </div>
+            </Link>
+          </div>
+        </div>
       );
     });
 
     return (
-      <div>
-        <h4>Live Streams</h4>
-        <Main>{streams}</Main>
-        <h4>Completed Streams</h4>
-        <Main>{livesellings}</Main>
+      <div className="video-section-page">
+        <div className="page-row">
+          <div className="video-grid-panel">
+            <div>
+              <h2 className="section-title">Live</h2>
+            </div>
+            <div className="video-card-list column-5">
+              <div className="video-cards-container">{streams}</div>
+            </div>
+          </div>
+        </div>
+        <div className="page-row">
+          <div className="video-grid-panel">
+            <div>
+              <h2 className="section-title">Live Completed</h2>
+            </div>
+            <div className="video-card-list column-5">
+              <div className="video-cards-container">{livesellings}</div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

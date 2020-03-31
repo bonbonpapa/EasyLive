@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { useRouteMatch } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
 import styled from "styled-components";
-import LiveSellSave from "./LiveSellSave.js";
 
 const LiveWrapper = styled.div`
   display: flex;
   justify-content: center;
+  box-sizing: border-box;
 `;
 
 const Wrapper = styled.div`
@@ -17,7 +19,7 @@ const Wrapper = styled.div`
   grid-template-areas:
     "player chat"
     "carousel chat";
-  margin: 5px 50px 50px 50px;
+  margin: 0px 0px 0px 0px;
 `;
 const PlayerContainer = styled.div`
   grid-area: player;
@@ -37,27 +39,35 @@ const CarouselContainer = styled.div`
 `;
 const ChatContainer = styled.div`
   grid-area: chat;
-  width: 23vw;
-  min-width: 300px;
+  width: 18vw;
+  min-width: 220px;
   height: calc(33.75vw + 160px);
   min-height: calc(337.5px + 160px);
   display: flex;
 `;
 
 export default function LiveSell(props) {
-  let [show_form, setShowfrm] = useState(false);
+  const match = useRouteMatch("/stream/:lid");
+
+  let streamlive = useSelector(store => store.streamlive);
+  let liveId = "";
+
+  if (streamlive) {
+    liveId = streamlive._id;
+  }
+
+  let lid = match ? match.params.lid : liveId;
 
   let [items, setItems] = useState([]);
   let [livesell, setLivesell] = useState(null);
-  //const dispatch = useDispatch();
-  console.log("props for LiveSell hooks", props);
 
-  useEffect(() => {
-    async function reload() {
+  console.log("props for LiveSell hooks", props);
+  async function reload() {
+    if (match) {
       axios
         .get("/sell", {
           params: {
-            liveid: props.match.params.lid
+            liveid: lid
           }
         })
         .then(res => {
@@ -71,13 +81,14 @@ export default function LiveSell(props) {
         .catch(err => {
           console.log("error in hte Live Sell use effect,", err);
         });
+    } else {
+      setLivesell(streamlive);
+      setItems(streamlive ? streamlive.items : []);
     }
+  }
+  useEffect(() => {
     reload();
-  }, [props.match.params.lid]);
-
-  const handleClick = event => {
-    setShowfrm(!show_form);
-  };
+  }, [streamlive]);
 
   if (livesell) {
     return (
@@ -95,8 +106,6 @@ export default function LiveSell(props) {
             </ChatContainer>
           </Wrapper>
         </LiveWrapper>
-        <button onClick={handleClick}>Complete Live</button>
-        <div>{show_form ? <LiveSellSave /> : <></>}</div>
       </div>
     );
   } else {

@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import LiveSellCreator from "./LiveSellCreator.js";
 import axios from "axios";
 import Guide from "./Guide.js";
 import Streamkey from "./Streamkey.js";
-import ActiveLive from "./ActiveLive.js";
 
 class Settings extends Component {
   constructor(props) {
@@ -47,25 +45,15 @@ class Settings extends Component {
     if (this.props.loggedIn) {
       return (
         <div>
-          <div className="container mt-5">
+          <div>
             <h4>Account Settings</h4>
-            <hr className="my-4" />
-            <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6">
+            {/* <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6"> */}
+            <div>
               <div className="row"></div>
               <div>
                 <div className="row">
                   <div>
                     <Streamkey />
-                  </div>
-                  <div>
-                    <ActiveLive onSubmit={this.handleClick} />
-                  </div>
-                  <div>
-                    {this.state.show_form ? (
-                      <LiveSellCreator onSubmit={this.handleClick} />
-                    ) : (
-                      <></>
-                    )}
                   </div>
                 </div>
               </div>
@@ -78,7 +66,7 @@ class Settings extends Component {
       );
     } else {
       return (
-        <div className="row">
+        <div>
           <button className="btn btn-dark mt-2">
             <Link to={"/sign"}>Sign in</Link>
           </button>

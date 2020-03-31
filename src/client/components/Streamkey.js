@@ -59,28 +59,26 @@ export default function Streamkey() {
     });
   }
   return (
-    <React.Fragment>
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography variant="h6" gutterBottom>
-            Stream Key
-          </Typography>
-          <Typography variant="h6" gutterBottom>
-            {stream_key}
-          </Typography>
-          <div>
-            <Button
-              fullWidth
-              onClick={generateStreamKey}
-              variant="contained"
-              color="primary"
-              className={classes.checkout}
-            >
-              Generate a new key
-            </Button>
-          </div>
-        </Paper>
-      </main>
-    </React.Fragment>
+    <div className={classes.layout}>
+      <Paper className={classes.paper}>
+        <Typography variant="h6" gutterBottom>
+          Stream Key
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          {stream_key}
+        </Typography>
+        <div>
+          <Button
+            fullWidth
+            onClick={generateStreamKey}
+            variant="contained"
+            color="primary"
+            className={classes.checkout}
+          >
+            Generate a new key
+          </Button>
+        </div>
+      </Paper>
+    </div>
   );
 }

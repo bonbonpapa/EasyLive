@@ -34,22 +34,11 @@ function getStyles(name, personName, theme) {
 export default function SelectItem({ items, handleSelect }) {
   const classes = useStyles();
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState([]);
+  const [personName, setPersonName] = React.useState("");
 
   const handleChange = event => {
     setPersonName(event.target.value);
     handleSelect(event.target.value);
-  };
-
-  const handleChangeMultiple = event => {
-    const { options } = event.target;
-    const value = [];
-    for (let i = 0, l = options.length; i < l; i += 1) {
-      if (options[i].selected) {
-        value.push(options[i].value);
-      }
-    }
-    setPersonName(value);
   };
 
   return (
@@ -59,6 +48,7 @@ export default function SelectItem({ items, handleSelect }) {
           Native
         </InputLabel>
         <Select
+          multiple={false}
           native
           value={personName}
           onChange={handleChange}

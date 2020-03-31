@@ -17,10 +17,10 @@ const useStyles = makeStyles(theme => ({
     margin: "auto"
   },
   cardHeader: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(0, 0)
   },
   list: {
-    width: 200,
+    width: "100%",
     height: 230,
     backgroundColor: theme.palette.background.paper,
     overflow: "auto"
@@ -152,14 +152,14 @@ export default function ItemsList() {
   return (
     <Grid
       container
-      spacing={2}
-      justify="center"
+      spacing={0}
+      justify="flex-start"
       alignItems="center"
       className={classes.root}
     >
       <Grid item>{customList("Choices", left)}</Grid>
-      <Grid item>
-        <Grid container direction="column" alignItems="center">
+      <Grid item justify="center">
+        <Grid container direction="row" alignItems="center">
           <Button
             variant="outlined"
             size="small"
@@ -168,7 +168,7 @@ export default function ItemsList() {
             disabled={leftChecked.length === 0}
             aria-label="move selected right"
           >
-            &gt;
+            &dArr;
           </Button>
           <Button
             variant="outlined"
@@ -178,7 +178,7 @@ export default function ItemsList() {
             disabled={rightChecked.length === 0}
             aria-label="move selected left"
           >
-            &lt;
+            &uArr;
           </Button>
         </Grid>
       </Grid>

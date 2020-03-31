@@ -15,19 +15,9 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    height: "100vh",
+    // height: "100vh",
     justifyContent: "center",
     alignItems: "center"
-  },
-  image: {
-    backgroundImage: "url(https://source.unsplash.com/random)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.type === "dark"
-        ? theme.palette.grey[900]
-        : theme.palette.grey[50],
-    backgroundSize: "cover",
-    backgroundPosition: "center"
   },
   paper: {
     margin: theme.spacing(8, 4),
@@ -111,33 +101,24 @@ export default function LiveSellSave() {
 
   return (
     <Grid container component="main" className={classes.root}>
-      {/* <Grid item xs={false} sm={4} md={7} className={classes.image} /> */}
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <StoreOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            LIVE SELL SAVER
-          </Typography>
-          <form
-            className={classes.form}
-            onSubmit={handleSubmit}
-            encType="multipart/form-data"
+      <div className={classes.paper}>
+        <form
+          className={classes.form}
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+        >
+          <SelectItem items={vfiles} handleSelect={handleSelect} />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
           >
-            <SelectItem items={vfiles} handleSelect={handleSelect} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Submit
-            </Button>
-          </form>
-        </div>
-      </Grid>
+            Submit
+          </Button>
+        </form>
+      </div>
     </Grid>
   );
 }
