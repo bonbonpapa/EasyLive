@@ -1,0 +1,14 @@
+.video-js .vjs-dock-text {
+  background: linear-gradient(
+    180deg,
+    rgba(226, 231, 235, 0.74),
+    20%,
+    transparent
+  );
+  height: 50%;
+  font-size: 2em;
+  color: yellow;
+}
+.video-button {
+  height: 50%;
+}

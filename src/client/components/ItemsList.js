@@ -158,7 +158,7 @@ export default function ItemsList() {
       className={classes.root}
     >
       <Grid item>{customList("Choices", left)}</Grid>
-      <Grid item justify="center">
+      <Grid item>
         <Grid container direction="row" alignItems="center">
           <Button
             variant="outlined"

@@ -106,7 +106,10 @@ class LiveStreams extends Component {
                     src={"/thumbnails/" + stream.stream_key + ".png"}
                   />
                 </div>
-                <div className="video-card-details">{stream.username}</div>
+                <div className="video-card-details">
+                  <h3 className="video-card-title">{stream.description}</h3>
+                  <p className="video-show-category">{stream.category}</p>
+                </div>
               </div>
             </Link>
           </div>
@@ -132,7 +135,10 @@ class LiveStreams extends Component {
                     }
                   />
                 </div>
-                <div className="video-card-details">{sell.description}</div>
+                <div className="video-card-details">
+                  <h3 className="video-card-title">{sell.description}</h3>
+                  <p className="video-show-category">{sell.category}</p>
+                </div>
               </div>
             </Link>
           </div>

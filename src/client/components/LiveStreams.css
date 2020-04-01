@@ -61,8 +61,23 @@
   overflow: hidden;
   background-color: #000;
 }
+.video-card-title {
+  margin: 0;
+}
+.video-show-category {
+  margin: 10px 0 0;
+}
+@media only screen and (min-width: 466px) {
+  .video-card-details {
+    background-color: #fff;
+    position: relative;
+    height: 92px;
+    padding: 20px;
+    width: calc(100% - 40px);
+  }
+}
 
-@media only screen and (max-width: 460px) {
+@media only screen and (max-width: 465px) {
   .video-card-container {
     flex-grow: 1;
     flex-shrink: 0;

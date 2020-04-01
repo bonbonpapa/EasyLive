@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import LiveSell from "./LiveSell.js";
 import LiveSellCreator from "./LiveSellCreator.js";
 import LiveSellSave from "./LiveSellSave.js";

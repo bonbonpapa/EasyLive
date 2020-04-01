@@ -25,7 +25,7 @@ const PlayerContainer = styled.div`
   grid-area: player;
   width: 60vw;
   min-width: 600px;
-  height: 33.75vw;
+  height: calc(33.75vw+ 40px);
   min-height: 337.5px;
 `;
 const CarouselContainer = styled.div`
@@ -41,8 +41,8 @@ const ChatContainer = styled.div`
   grid-area: chat;
   width: 18vw;
   min-width: 220px;
-  height: calc(33.75vw + 160px);
-  min-height: calc(337.5px + 160px);
+  height: calc(33.75vw + 200px);
+  min-height: calc(337.5px + 200px);
   display: flex;
 `;
 
