@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import videojs from "video.js";
-import overlay from "videojs-overlay";
-import dock from "videojs-dock";
+// import overlay from "videojs-overlay";
+import "videojs-dock";
 import config from "../../server/config/default.js";
 import "./VideoPlayer.css";
 
@@ -47,6 +47,10 @@ export default class VideoPlayer extends Component {
               "Following error occured from the player:",
               this.error()
             );
+          });
+          this.player.dock({
+            title: livesell.email,
+            description: livesell.description
           });
         }
       );
@@ -130,6 +134,10 @@ export default class VideoPlayer extends Component {
               "Following error occured from the player:",
               this.error()
             );
+          });
+          this.player.dock({
+            title: livesell.email,
+            description: livesell.description
           });
         }
       );

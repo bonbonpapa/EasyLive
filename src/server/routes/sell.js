@@ -6,7 +6,8 @@ const express = require("express"),
   config = require("../config/default.js"),
   InitDb = require("../db.js").initDb,
   getDb = require("../db.js").getDb,
-  fs = require("fs");
+  fs = require("fs"),
+  { getMsgRoom } = require("../users.js");
 
 let upload = multer({
   dest: __dirname + "/../uploads/"
@@ -209,7 +210,11 @@ router.post("/livesave", upload.none(), async (req, res) => {
     filetype: "video/mp4"
   };
   console.log("video file location, ", frontendPath);
-  let messages = [{ name: "admin", message: "new user connection" }];
+  //  let messages = [{ name: "admin", message: "new user connection" }];
+  let room = liveid;
+  const { err, room_msg } = getMsgRoom({ room });
+  if (err) console.log("Error to get the messages from", err);
+  console.log("Room messages added", room_msg);
 
   let newLiveSell = null;
 
@@ -217,7 +222,11 @@ router.post("/livesave", upload.none(), async (req, res) => {
     newLiveSell = await LiveSell.findOneAndUpdate(
       { _id: liveid },
       {
-        $set: { source: frontendPath, messages: messages, state: "completed" }
+        $set: {
+          source: frontendPath,
+          messages: room_msg.msgs,
+          state: "completed"
+        }
       },
       { new: true }
     );

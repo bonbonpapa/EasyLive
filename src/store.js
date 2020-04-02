@@ -39,6 +39,12 @@ let reducer = (state, action) => {
       streamlive: action.content
     };
   }
+  if (action.type === "set-streamview") {
+    return {
+      ...state,
+      streamview: action.content
+    };
+  }
   if (action.type === "clear-stream") {
     return {
       ...state,
@@ -65,6 +71,7 @@ const store = createStore(
     selected: [],
     liveselled: [],
     streamlive: null,
+    streamview: null,
     user: null,
     msgs: []
   },

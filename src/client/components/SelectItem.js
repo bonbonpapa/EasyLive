@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -22,18 +22,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium
-  };
-}
-
 export default function SelectItem({ items, handleSelect }) {
   const classes = useStyles();
-  const theme = useTheme();
+
   const [personName, setPersonName] = React.useState("");
 
   const handleChange = event => {

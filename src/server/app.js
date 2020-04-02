@@ -24,10 +24,6 @@ const express = require("express"),
 let dbo = undefined;
 let url = config.mongodb_url.url;
 
-// mongoose.connect("mongodb://127.0.0.1:27017/easylive", {
-//   useNewUrlParser: true
-// });
-
 mongoose.connect(url, {
   dbName: "easy-live",
   useNewUrlParser: true,
@@ -42,9 +38,6 @@ dbgoo.once("open", () => {
   console.log("> successfully opened the database");
 });
 
-// MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-//   dbo = client.db("media-board");
-// });
 InitDb(function(err) {
   if (err) {
     console.log("Error with the Mongodb database initializaion error ", err);
@@ -56,6 +49,15 @@ InitDb(function(err) {
 // let upload = multer({
 //   dest: __dirname + "/uploads/"
 // });
+
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+  addMsgRoom,
+  addMessage
+} = require("./users.js");
 
 // API for the socket IO connection here
 const server = http.Server(app);
@@ -83,8 +85,6 @@ app.use(flash());
 app.use(require("cookie-parser")());
 app.use(bodyParse.urlencoded({ extended: true }));
 app.use(bodyParse.json());
-// // // app.use(bodyParse.urlencoded({ extended: true }));
-// app.use(bodyParse.json());
 
 app.use(
   Session({
@@ -119,28 +119,60 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-// let clients = 0;
-// io.on("connection", function(socket) {
-//   clients++;
-//   let clientMsg = { name: "admin", message: "new user connection" };
-//   messages = messages.concat(clientMsg);
-//   io.sockets.emit("broadcast", { messages: messages });
-//   console.log("New client connected");
+io.on("connection", function(socket) {
+  console.log("socket at connection,", socket.id);
+  socket.on("join", ({ name, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, name, room });
+    console.log("User added to the socket", user);
+    if (error) return callback(error);
+    const { err, room_msg } = addMsgRoom({ id: socket.id, name, room });
+    console.log("Room messages added", room_msg);
+    if (err) return callback(err);
+    socket.join(user.room);
+    socket.emit("message", {
+      user: "admin",
+      text: `${user.name}, Welcome to room ${user.room}.`
+    });
+    socket.emit("msgs", room_msg);
+    io.to(user.room).emit("roomData", {
+      room: user.room,
+      users: getUsersInRoom(user.room)
+    });
+    callback();
+  });
 
-//   socket.on("clientEvent", function(data) {
-//     messages = messages.concat(data);
-//     io.sockets.emit("broadcast", { messages: messages });
-//     console.log(data);
-//   });
+  socket.on("sendMessage", (message, callback) => {
+    const user = getUser(socket.id);
 
-//   socket.on("disconnect", function() {
-//     clients--;
-//     io.sockets.emit("broadcast", {
-//       description: clients + " clients disconnected!"
-//     });
-//     console.log("Client disconnected");
-//   });
-// });
+    console.log("Send message in the socket,", socket.id);
+    console.log("user corresponding to the socket id", user);
+    let msg = { user: user.name, text: message };
+
+    io.to(user.room).emit("message", msg);
+
+    addMessage({ room: user.room, msg });
+
+    callback();
+  });
+
+  socket.on("disconnect", () => {
+    const user = removeUser(socket.id);
+    console.log("disconnect event in the socket", socket.id);
+    console.log("User disconnect from the socket", user);
+
+    if (user) {
+      io.to(user.room).emit("message", {
+        user: "Admin",
+        text: `${user.name} has left.`
+      });
+
+      io.to(user.room).emit("roomData", {
+        room: user.room,
+        users: getUsersInRoom(user.room)
+      });
+    }
+  });
+});
 
 let login = (req, res) => {
   console.log("login", req.body);

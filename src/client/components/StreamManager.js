@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LiveSell from "./LiveSell.js";
@@ -47,16 +47,16 @@ const CreateContainer = styled.div`
 `;
 
 export default function StreamManager(props) {
-  let [livesell, setLivesell] = useState(null);
-  const streamlive = useSelector(state => state.streamlive);
+  // let [livesell, setLivesell] = useState(null);
+  // const streamlive = useSelector(state => state.streamlive);
   let loggedIn = useSelector(state => state.loggedIn);
 
   //const dispatch = useDispatch();
   console.log("props for LiveSell hooks", props);
 
-  useEffect(() => {
-    setLivesell(streamlive);
-  }, [streamlive]);
+  // useEffect(() => {
+  //   setLivesell(streamlive);
+  // }, [streamlive]);
 
   if (loggedIn) {
     return (

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import ChatRoom from "./ChatRoom.jsx";
+import Chat from "./Chat/Chat.js";
 import styled from "styled-components";
 
 const LiveWrapper = styled.div`
@@ -48,6 +50,8 @@ const ChatContainer = styled.div`
 
 export default function LiveSell(props) {
   const match = useRouteMatch("/stream/:lid");
+
+  const dispatch = useDispatch();
 
   let streamlive = useSelector(store => store.streamlive);
   let liveId = "";
@@ -102,7 +106,7 @@ export default function LiveSell(props) {
               <CarouelItem slides={items} />
             </CarouselContainer>
             <ChatContainer>
-              <ChatRoom />
+              <Chat contents={livesell} />
             </ChatContainer>
           </Wrapper>
         </LiveWrapper>

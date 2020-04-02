@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
-import StoreOutlinedIcon from "@material-ui/icons/StoreOutlined";
-import Typography from "@material-ui/core/Typography";
 import SelectItem from "./SelectItem.js";
 import { makeStyles } from "@material-ui/core/styles";
 

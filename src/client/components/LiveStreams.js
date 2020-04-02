@@ -1,30 +1,28 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
-import styled from "styled-components";
-import Card from "@material-ui/core/Card";
 import { Link } from "react-router-dom";
 import config from "../../server/config/default.js";
 import "./LiveStreams.css";
 
-const Main = styled.div`
-  display: grid;
+// const Main = styled.div`
+//   display: grid;
 
-  @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
-  }
-`;
+//   @media screen and (min-width: 768px) {
+//     grid-template-columns: repeat(4, 1fr);
+//     grid-gap: 10px;
+//   }
+// `;
 
-const LiveCard = styled.div`
-  /* max-width: 345px; */
+// const LiveCard = styled.div`
+//   /* max-width: 345px; */
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
+//   img {
+//     width: 100%;
+//     height: 100%;
+//     object-fit: cover;
+//   }
+// `;
 
 class LiveStreams extends Component {
   constructor(props) {

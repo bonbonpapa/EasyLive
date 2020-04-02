@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
-import styled from "styled-components";
+// import styled from "styled-components";
 
-const StyleA = styled.a`
-  border: 1px solid #dddddd;
-  border-radius: 50%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 5px;
-  height: 40px;
-  width: 40px;
-`;
+// const StyleA = styled.a`
+//   border: 1px solid #dddddd;
+//   border-radius: 50%;
+//   display: inline-flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin: 0 5px;
+//   height: 40px;
+//   width: 40px;
+// `;
 
 function Signin({ history }) {
   const dispatch = useDispatch();

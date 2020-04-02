@@ -16,18 +16,18 @@ class ChatRoom extends Component {
     this.state = { endpoint: "localhost:80" };
 
     const { endpoint } = this.state;
-    // this.socket = socketIOClient(endpoint);
+    this.socket = socketIOClient(endpoint);
   }
 
   submitMessage = messageString => {
     const message = { name: "pi", message: messageString };
 
-    // this.socket.emit("clientEvent", message);
+    this.socket.emit("clientEvent", message);
   };
   componentDidMount = () => {
-    // this.socket.on("broadcast", data => {
-    //   this.props.dispatch({ type: "set-messages", messages: data.messages });
-    // });
+    this.socket.on("broadcast", data => {
+      this.props.dispatch({ type: "set-messages", messages: data.messages });
+    });
   };
 
   render = () => {

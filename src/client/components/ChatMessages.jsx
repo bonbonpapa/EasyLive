@@ -8,10 +8,7 @@ class UnconnectedChatMessages extends Component {
         <div className="message-data">
           <span className="message-data-name">
             <i className="fa fa-circle online"></i>
-            {e.username}
-          </span>
-          <span className="message-data-time">
-            {new Date(e.msgtime).toLocaleTimeString()}
+            {e.name}
           </span>
         </div>
         <div className="message">
