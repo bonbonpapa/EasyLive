@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
-import ChatRoom from "./ChatRoom.jsx";
 import Chat from "./Chat/Chat.js";
 import styled from "styled-components";
 

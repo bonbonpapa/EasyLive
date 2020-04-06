@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   list: {
     width: "100%",
-    height: 230,
+    height: 180,
     backgroundColor: theme.palette.background.paper,
     overflow: "auto"
   },
@@ -154,12 +154,13 @@ export default function ItemsList() {
       container
       spacing={0}
       justify="flex-start"
-      alignItems="center"
+      direction="column"
+      alignItems="stretch"
       className={classes.root}
     >
-      <Grid item>{customList("Choices", left)}</Grid>
+      <Grid item>{customList("Items to Select", left)}</Grid>
       <Grid item>
-        <Grid container direction="row" alignItems="center">
+        <Grid container direction="row" justify="center" alignItems="center">
           <Button
             variant="outlined"
             size="small"
@@ -182,7 +183,7 @@ export default function ItemsList() {
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList("Chosen", right)}</Grid>
+      <Grid item>{customList("Selected Items", right)}</Grid>
     </Grid>
   );
 }

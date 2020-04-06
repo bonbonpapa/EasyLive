@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import Guide from "./Guide.js";
 import Streamkey from "./Streamkey.js";
@@ -8,22 +7,13 @@ import Streamkey from "./Streamkey.js";
 class Settings extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      show_form: false
-    };
 
     this.generateStreamKey = this.generateStreamKey.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
     //  this.getStreamKey();
   }
-  handleClick = event => {
-    this.setState({
-      show_form: !this.state.show_form
-    });
-  };
 
   generateStreamKey(e) {
     axios.post("/settings/stream_key").then(res => {
@@ -42,37 +32,27 @@ class Settings extends Component {
   }
 
   render() {
-    if (this.props.loggedIn) {
-      return (
-        <div>
+    return (
+      <div>
+        <h4>Account Settings</h4>
+        <div className="row">
           <div>
-            <h4>Account Settings</h4>
-            {/* <div className="col-xs-12 col-sm-12 col-md-8 col-lg-6"> */}
-            <div>
-              <div className="row"></div>
-              <div>
-                <div className="row">
-                  <div>
-                    <Streamkey />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <Guide />
-            </div>
+            <Streamkey />
           </div>
         </div>
-      );
-    } else {
-      return (
         <div>
-          <button className="btn btn-dark mt-2">
-            <Link to={"/sign"}>Sign in</Link>
+          <button
+            className="btn btn-dark mt-2"
+            onClick={this.props.handleLogout}
+          >
+            Log out
           </button>
         </div>
-      );
-    }
+        <div>
+          <Guide />
+        </div>
+      </div>
+    );
   }
 }
 let mapStateToProps = state => {

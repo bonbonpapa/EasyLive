@@ -14,7 +14,7 @@ import { withRouter } from "react-router-dom";
 //   width: 40px;
 // `;
 
-function Signin({ history }) {
+function Signin({ history, backto }) {
   const dispatch = useDispatch();
 
   // const [username, setUsername] = useState("");
@@ -45,8 +45,10 @@ function Signin({ history }) {
       if (body.streamlive)
         dispatch({ type: "set-selected", content: body.streamlive.items });
 
-      history.push("/");
+      history.push(backto);
       return;
+    } else {
+      alert(body.err);
     }
   }
 

@@ -257,4 +257,18 @@ router.post("/livesave", upload.none(), async (req, res) => {
   }
 });
 
-module.exports = router;
+let getStream = async email => {
+  console.log("email to get stream live", email);
+  let results = await LiveSell.findOne({ email: email, state: "active" });
+  //console.log("search results for the carts", results);
+  return results;
+};
+let getItems = async email => {
+  let allitems = await dbo
+    .collection("items")
+    .find({})
+    .toArray();
+  return allitems;
+};
+
+module.exports = { router, getStream, getItems };

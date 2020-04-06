@@ -20,7 +20,8 @@ passport.use(
       passReqToCallback: true
     },
     (req, email, password, done) => {
-      console.log("informatoon in the req: ", req);
+      //    console.log("informatoon in the req: ", req);
+      console.log("if Session ID existed? ", req.sessionID);
       console.log("Inforamtion for auth, email: ", email);
       console.log("Information for auth, passord, ", password);
       User.findOne(
@@ -63,6 +64,7 @@ passport.use(
     },
     (req, email, password, done) => {
       console.log("informatoon in the req: ", req.body);
+      console.log("if Session ID existed? ", req.sessionID);
       console.log("Inforamtion for auth, email: ", email);
       console.log("Information for auth, passord, ", password);
       User.findOne({ email: email }, (err, user) => {

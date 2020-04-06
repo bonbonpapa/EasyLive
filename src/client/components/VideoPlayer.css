@@ -12,3 +12,6 @@
 .video-button {
   height: 50%;
 }
+video[poster] {
+  object-fit: cover;
+}

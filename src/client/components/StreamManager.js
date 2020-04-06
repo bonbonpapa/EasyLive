@@ -1,6 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import LiveSell from "./LiveSell.js";
 import LiveSellCreator from "./LiveSellCreator.js";
 import LiveSellSave from "./LiveSellSave.js";
@@ -30,7 +28,7 @@ const SellContainer = styled.div`
 `;
 const SaveContainer = styled.div`
   grid-area: save;
-  height: 320px;
+  height: 200px;
   width: 78vw;
   min-width: 600px;
   border: 1px #ddd solid;
@@ -39,17 +37,16 @@ const SaveContainer = styled.div`
 `;
 const CreateContainer = styled.div`
   grid-area: create;
-  width: 22vw;
+  width: 20vw;
   /* min-width: 300px;
   height: 33.75vw; */
-  height: calc(33.75vw + 480px);
-  min-height: calc(337.5px + 480px);
+  height: calc(33.75vw + 360px);
+  min-height: calc(337.5px + 360px);
 `;
 
 export default function StreamManager(props) {
   // let [livesell, setLivesell] = useState(null);
   // const streamlive = useSelector(state => state.streamlive);
-  let loggedIn = useSelector(state => state.loggedIn);
 
   //const dispatch = useDispatch();
   console.log("props for LiveSell hooks", props);
@@ -58,31 +55,21 @@ export default function StreamManager(props) {
   //   setLivesell(streamlive);
   // }, [streamlive]);
 
-  if (loggedIn) {
-    return (
-      <div>
-        <ManagerWrapper>
-          <Wrapper>
-            <CreateContainer>
-              <LiveSellCreator />
-            </CreateContainer>
-            <SaveContainer>
-              <LiveSellSave />
-            </SaveContainer>
-            <SellContainer>
-              <LiveSell />
-            </SellContainer>
-          </Wrapper>
-        </ManagerWrapper>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <button className="btn btn-dark mt-2">
-          <Link to={"/sign"}>Sign in</Link>
-        </button>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <ManagerWrapper>
+        <Wrapper>
+          <CreateContainer>
+            <LiveSellCreator />
+          </CreateContainer>
+          <SaveContainer>
+            <LiveSellSave />
+          </SaveContainer>
+          <SellContainer>
+            <LiveSell />
+          </SellContainer>
+        </Wrapper>
+      </ManagerWrapper>
+    </div>
+  );
 }

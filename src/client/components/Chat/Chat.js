@@ -21,6 +21,7 @@ const Chat = props => {
 
   const user = useSelector(state => state.user);
   const livesell = props.contents;
+  const roomDescription = livesell ? livesell.description : "";
 
   useEffect(() => {
     // const { name, room } = queryString.parse(location.search);
@@ -67,7 +68,7 @@ const Chat = props => {
 
   return (
     <div className="chat-container">
-      <InfoBar room={room} />
+      <InfoBar room={roomDescription} />
       <Messages messages={messages} name={name} />
       <Input
         message={message}

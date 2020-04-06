@@ -13,11 +13,13 @@ const Wrapper = styled.div`
   flex-direction: column;
   font-family: "Montserrat", sans-serif;
   height: 100vh;
-  margin: -20px 0 50px;
+  margin: 0 0 50px;
 `;
 
-export default function Sign() {
+export default function Sign(props) {
   const [addClass, setAddClass] = useState(false);
+  // const [from, setFrom] = useState("");
+
   function toggle(add) {
     if (add) setAddClass(true);
     else setAddClass(false);
@@ -33,7 +35,9 @@ export default function Sign() {
     <Wrapper>
       <div className={signClass.join(" ")}>
         <Signup />
-        <Signin />
+        <Signin
+          backto={props.location.state ? props.location.state.from : "/"}
+        />
         <SignOverlay action={toggle} />
       </div>
     </Wrapper>

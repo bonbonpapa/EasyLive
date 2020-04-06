@@ -11,7 +11,7 @@ const StyleLink = styled(Link)`
   font-weight: 700;
 `;
 
-export default function NavbarNoStyle() {
+export default function NavbarNoStyle(props) {
   const dispatch = useDispatch();
   const [addClass, setAddClass] = useState(false);
 
@@ -23,21 +23,6 @@ export default function NavbarNoStyle() {
   }
   const handleClick = event => {
     setAddClass(!addClass);
-  };
-
-  const handleLogout = async event => {
-    let response = await fetch("/logout");
-
-    let body = await response.text();
-    console.log("response from: ", body);
-
-    body = JSON.parse(body);
-
-    console.log("Response from logout, ", body);
-
-    //  history.push("/");
-
-    dispatch({ type: "log-out" });
   };
 
   return (
@@ -53,17 +38,21 @@ export default function NavbarNoStyle() {
         </span>
         <ul className={navClass.join(" ")}>
           <li className="nav-item">
-            <StyleLink className="nav-link" to={"/settings"}>
-              Go Live
-            </StyleLink>
-          </li>
-          <li className="nav-item">
             <StyleLink className="nav-link" to={"/manager"}>
               Stream Manager
             </StyleLink>
           </li>
           <li className="nav-item">
-            <StyleLink className="nav-link" to={"/"} onClick={handleLogout}>
+            <StyleLink className="nav-link" to={"/settings"}>
+              Settings
+            </StyleLink>
+          </li>
+          <li className="nav-item">
+            <StyleLink
+              className="nav-link"
+              to={"/"}
+              onClick={props.handleLogout}
+            >
               Sign out
             </StyleLink>
           </li>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -27,10 +27,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function LiveSellCreator(props) {
+export default function LiveSellCreator() {
   const classes = useStyles();
-
-  const isMounted = useRef(null);
 
   const dispatch = useDispatch();
   let streamlive = useSelector(state => state.streamlive);
@@ -51,13 +49,6 @@ export default function LiveSellCreator(props) {
     setStreamKey(user ? user.stream_key : "");
   }, [streamlive, user]);
 
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -76,49 +67,26 @@ export default function LiveSellCreator(props) {
       body: data
     };
 
-    // let response = await fetch("/sell/livecreator", options);
-    // let body = await response.text();
-    // body = JSON.parse(body);
-    // console.log("parsed body", body);
-    // if (body.success) {
-    //   dispatch({ type: "set-items", content: body.livesell.items });
-    //   dispatch({ type: "set-stream", content: body.livesell });
-
-    //   if (props.onSubmit) {
-    //     props.onSubmit();
-    //   }
-    //   setDescription("");
-    //   setCategory("");
-    //   return;
-    // }
-
     let parse = undefined;
-    if (isMounted.current) {
-      fetch("/sell/livecreator", options)
-        .then(response => {
-          if (isMounted.current) return response.text();
-        })
-        .then(body => {
-          if (isMounted.current) {
-            parse = JSON.parse(body);
-            if (parse.success) {
-              dispatch({ type: "set-stream", content: parse.livesell });
-              if (parse.livesell)
-                dispatch({
-                  type: "set-selected",
-                  content: parse.livesell.items
-                });
 
-              if (props.onSubmit) {
-                props.onSubmit();
-              }
-              alert("items added succeeded");
-              return;
-            }
-            alert("items added failed");
-          }
-        });
-    }
+    fetch("/sell/livecreator", options)
+      .then(response => {
+        return response.text();
+      })
+      .then(body => {
+        parse = JSON.parse(body);
+        if (parse.success) {
+          dispatch({ type: "set-stream", content: parse.livesell });
+          if (parse.livesell)
+            dispatch({
+              type: "set-selected",
+              content: parse.livesell.items
+            });
+          alert("items added succeeded");
+          return;
+        }
+        alert("items added failed");
+      });
   }
 
   return (
@@ -131,7 +99,7 @@ export default function LiveSellCreator(props) {
         >
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             id="description"
@@ -144,7 +112,7 @@ export default function LiveSellCreator(props) {
           />
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             name="category"
@@ -156,24 +124,26 @@ export default function LiveSellCreator(props) {
           />
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             name="thumbnail"
-            label="Image"
+            label="Thumbnail"
             type="file"
             id="thumb"
+            InputLabelProps={{ shrink: true }}
             onInput={e => setThumbnail(e.target.files[0])}
           />
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             name="poster"
-            label="Image"
+            label="Poster"
             type="file"
             id="poster"
+            InputLabelProps={{ shrink: true }}
             onInput={e => setPoster(e.target.files[0])}
           />
           <div>
@@ -186,7 +156,7 @@ export default function LiveSellCreator(props) {
             color="primary"
             className={classes.submit}
           >
-            Submit
+            Edit Stream Info
           </Button>
         </form>
       </div>

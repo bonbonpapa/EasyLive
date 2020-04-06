@@ -7,24 +7,25 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // height: "100vh",
-    justifyContent: "center",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center"
   },
   paper: {
     margin: theme.spacing(8, 4),
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
-  },
+  // form: {
+  //   width: "100%", // Fix IE 11 issue.
+  //   marginTop: theme.spacing(1),
+  //   display: "flex",
+  //   flexDirection: "row",
+  //   justify: "space-between",
+  //   alignItems: "flex-start"
+  // },
   submit: {
     margin: theme.spacing(3, 0, 2)
   }
@@ -64,8 +65,6 @@ export default function LiveSellSave() {
 
     let data = new FormData();
     data.append("liveid", streamlive._id);
-    //   console.log(vfiles, vfiles.slice(-1)[0]);
-    //  data.append("videofile", vfiles.slice(-1)[0]);
     data.append("videofile", fileselect);
 
     const options = {
@@ -80,7 +79,7 @@ export default function LiveSellSave() {
     if (body.success) {
       alert("Live save success");
 
-      dispatch({ type: "clear-stream" });
+      dispatch({ type: "set-stream", content: body.livesell });
 
       return;
     }
@@ -94,22 +93,21 @@ export default function LiveSellSave() {
   return (
     <Grid container component="main" className={classes.root}>
       <div className={classes.paper}>
-        <form
-          className={classes.form}
-          onSubmit={handleSubmit}
-          encType="multipart/form-data"
-        >
+        <div>
           <SelectItem items={vfiles} handleSelect={handleSelect} />
+        </div>
+        <div>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
+            onClick={handleSubmit}
             className={classes.submit}
           >
-            Submit
+            Save Stream
           </Button>
-        </form>
+        </div>
       </div>
     </Grid>
   );
