@@ -34,6 +34,10 @@ const config = {
   mongodb_url: {
     url:
       "mongodb+srv://bob:bobnosue@cluster0-peipd.mongodb.net/test?retryWrites=true&w=majority"
+  },
+  FACEBOOK: {
+    clientID: "208032163651073",
+    clientSecret: "8e5d1816b28724edcac97e2ea72f00e8"
   }
 };
 

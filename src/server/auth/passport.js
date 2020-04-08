@@ -1,7 +1,9 @@
 const passport = require("passport"),
   LocalStrategy = require("passport-local").Strategy,
+  FacebookStrategy = require("passport-facebook").Strategy,
   User = require("../database/Schema.js").User,
-  shortid = require("shortid");
+  shortid = require("shortid"),
+  config = require("../config/default.js");
 
 passport.serializeUser((user, cb) => {
   cb(null, user);
@@ -70,8 +72,9 @@ passport.use(
       User.findOne({ email: email }, (err, user) => {
         if (err) return done(err);
 
-        if (!user)
+        if (!user) {
           return done(null, false, req.flash("email", "Email doesn't exist."));
+        }
 
         if (!user.validPassword(password))
           return done(
@@ -82,6 +85,47 @@ passport.use(
 
         return done(null, user);
       });
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: config.FACEBOOK.clientID,
+      clientSecret: config.FACEBOOK.clientSecret,
+      callbackURL: "http://localhost:4000/login/facebook/callback",
+      profileFields: ["id", "displayName", "name", "photos"]
+    },
+    function(accessToken, refreshToken, profile, done) {
+      console.log("in the Facebook strategy, profile data", profile);
+      done(null, profile);
+      // const { email, first_name, last_name } = profile._json;
+
+      // console.log("in the Facebook strategy, profile data", profile);
+
+      // User.findOne({ "facebook.id": profile.id }, (err, user) => {
+      //   if (err) return done(err);
+      //   if (user) return done(null, user);
+      //   else {
+      //     let user = new User();
+      //     user.facebook.id = profile.id;
+      //     user.facebook.token = accessToken;
+      //     user.facebook.name = profile.displayName;
+
+      //     if (
+      //       typeof profile.emails !== "undefined" &&
+      //       profile.emails.length > 0
+      //     )
+      //       user.facebook.email = profile.emails[0].value;
+
+      //     user.stream_key = shortid.generate();
+      //     user.save(err => {
+      //       if (err) throw err;
+      //       return done(null, user);
+      //     });
+      //   }
+      // });
     }
   )
 );

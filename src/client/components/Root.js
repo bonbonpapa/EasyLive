@@ -23,7 +23,7 @@ class Root extends Component {
     };
   }
   componentDidMount() {
-    this.fetchSession();
+    // this.fetchSession();
   }
   fetchSession = async () => {
     this.setState({ loading: true });

@@ -7,7 +7,13 @@ let UserSchema = new Schema({
   username: String,
   email: String,
   password: String,
-  stream_key: String
+  stream_key: String,
+  facebook: {
+    id: String,
+    token: String,
+    email: String,
+    name: String
+  }
 });
 
 UserSchema.methods.generateHash = password => {

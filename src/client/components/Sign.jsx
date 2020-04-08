@@ -4,6 +4,11 @@ import "./Sign.css";
 import Signup from "./Signup.jsx";
 import Signin from "./Signin.jsx";
 import SignOverlay from "./SignOverlay.jsx";
+import { API_URL } from "./config.js";
+import io from "socket.io-client";
+
+const socket = io(API_URL);
+const providers = ["facebook"];
 
 const Wrapper = styled.div`
   background: #f6f5f7;
@@ -18,6 +23,7 @@ const Wrapper = styled.div`
 
 export default function Sign(props) {
   const [addClass, setAddClass] = useState(false);
+  console.log("Sign component, the socket initialzied", socket);
   // const [from, setFrom] = useState("");
 
   function toggle(add) {
@@ -37,6 +43,8 @@ export default function Sign(props) {
         <Signup />
         <Signin
           backto={props.location.state ? props.location.state.from : "/"}
+          providers={providers}
+          socket={socket}
         />
         <SignOverlay action={toggle} />
       </div>

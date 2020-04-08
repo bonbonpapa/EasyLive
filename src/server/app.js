@@ -2,15 +2,15 @@ const express = require("express"),
   path = require("path"),
   Session = require("express-session"),
   multer = require("multer"),
+  cors = require("cors"),
   bodyParse = require("body-parser"),
   config = require("./config/default.js"),
   flash = require("connect-flash"),
   port = 4000,
-  shortid = require("shortid"),
   app = express(),
   http = require("http"),
   socketIo = require("socket.io"),
-  socketPort = 80,
+  // socketPort = 80,
   passport = require("./auth/passport.js"),
   MongoDb = require("mongodb"),
   InitDb = require("./db.js").initDb,
@@ -60,10 +60,12 @@ const {
 } = require("./users.js");
 
 // API for the socket IO connection here
-const server = http.Server(app);
+// const server = http.Server(app);
+const server = http.createServer(app);
 const io = socketIo(server);
-
-server.listen(socketPort, () => console.log(`Listening on port ${socketPort}`));
+// Connecting sockets to the server and adding them to the request
+// so that we can access them later in the controller
+app.set("io", io);
 
 let messages = [];
 let sessions = {};
@@ -85,6 +87,11 @@ app.use(flash());
 app.use(require("cookie-parser")());
 app.use(bodyParse.urlencoded({ extended: true }));
 app.use(bodyParse.json());
+app.use(
+  cors({
+    origin: ["http://127.0.0.1:3000", "http://localhost:3000"]
+  })
+);
 
 app.use(
   Session({
@@ -168,11 +175,18 @@ app.use("/streams", require("./routes/streams.js"));
 app.use("/user", require("./routes/user.js"));
 app.use("/sell", require("./routes/sell.js").router);
 
-app.all("/*", (req, res, next) => {
-  res.sendFile(__dirname + "/build/index.html");
+app.get("/succeed", (req, res) => {
+  res.send(JSON.stringify({ success: true }));
+});
+app.get("/fail", (req, res) => {
+  res.send(JSON.stringify({ success: false }));
 });
 
-app.listen(port, () => console.log(`Server app is listening on ${port}!`));
+// app.all("/*", (req, res, next) => {
+//   res.sendFile(__dirname + "/build/index.html");
+// });
 
+//app.listen(port, () => console.log(`Server app is listening on ${port}!`));
+server.listen(port, () => console.log(`Listening on port ${port}`));
 node_media_server.run();
 thumbnail_generator.start();

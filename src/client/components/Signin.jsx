@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
+import OAuth from "./OAuth.js";
 // import styled from "styled-components";
 
 // const StyleA = styled.a`
@@ -14,12 +15,18 @@ import { withRouter } from "react-router-dom";
 //   width: 40px;
 // `;
 
-function Signin({ history, backto }) {
+function Signin({ history, backto, providers, socket }) {
   const dispatch = useDispatch();
 
   // const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const buttons = (providers, socket) =>
+    providers.map(provider => (
+      <OAuth provider={provider} key={provider} socket={socket} />
+    ));
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -51,18 +58,38 @@ function Signin({ history, backto }) {
       alert(body.err);
     }
   }
+  const handleClick = async event => {
+    event.preventDefault();
+
+    let response = await fetch("http://localhost:3000/login/auth/facebook");
+
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      alert("login success with facebook");
+    } else {
+      alert("login fail");
+    }
+  };
 
   return (
     <div className="form-container sign-in-container">
       <form className="signform" onSubmit={handleSubmit}>
         <h1 className="signH1">Sign in</h1>
         <div className="social-container">
-          <a href="/#" className="social sign_a">
+          {buttons(providers, socket)}
+          {/* <a
+            href="http://localhost:4000/login/auth/facebook"
+            className="social sign_a"
+          >
             <i className="fab fa-facebook-f"></i>
-          </a>
-          <a href="/#" className="social sign_a">
+          </a> */}
+          {/* <button type="button" className="social sign_a" onClick={handleClick}>
+            <i className="fab fa-facebook-f"></i>
+          </button> */}
+          {/* <button type="button" className="social sign_a">
             <i className="fab fa-linkedin-in"></i>
-          </a>
+          </button> */}
         </div>
         <input
           className="signInput"

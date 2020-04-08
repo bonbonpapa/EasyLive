@@ -17,7 +17,7 @@ const Chat = props => {
   const [users, setUsers] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const ENDPOINT = "localhost:80";
+  const ENDPOINT = "localhost:4000";
 
   const user = useSelector(state => state.user);
   const livesell = props.contents;

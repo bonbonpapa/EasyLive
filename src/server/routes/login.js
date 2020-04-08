@@ -2,6 +2,7 @@ const express = require("express"),
   router = express.Router(),
   passport = require("passport");
 const { getStream, getItems } = require("./sell.js");
+const authController = require("./auth.controller.js");
 
 // router.post(
 //   "/",
@@ -53,10 +54,9 @@ router.post("/", (req, res, next) => {
 });
 
 router.get("/session", async (req, res) => {
-  let streamLive = await getStream(req.user.email);
-  let items = await getItems(req.user.email);
-
   if (req.user) {
+    let streamLive = await getStream(req.user.email);
+    let items = await getItems(req.user.email);
     return res.send(
       JSON.stringify({
         success: true,
@@ -83,4 +83,34 @@ router.get("/logout", function(req, res) {
   } else res.send(JSON.stringify({ success: false, message: "User not existed" }));
 });
 
+const facebookAuth = passport.authenticate("facebook");
+
+// router.get("/auth/facebook", passport.authenticate("facebook"));
+// router.get(
+//   "/auth/facebook/callback",
+//   passport.authenticate("facebook", {
+//     successRedirect: "/succeed",
+//     failureRedirect: "/fail"
+//   })
+// );
+router.get("/facebook/callback", facebookAuth, authController.facebook);
+// This custom middleware allows us to attach the socket id to the session
+// With that socket id we can send back the right user info to the right
+// socket
+router.use((req, res, next) => {
+  console.log(
+    "in the middle ware to attach socket id to the session",
+    req.query.socketId
+  );
+  req.session.socketId = req.query.socketId;
+  console.log("req session", req.session);
+  next();
+});
+router.get("/facebook", facebookAuth);
+// router.get("/succeed", (req, res) => {
+//   res.send(JSON.stringify({ success: true }));
+// });
+// router.get("/fail", (req, res) => {
+//   res.send(JSON.stringify({ success: false }));
+// });
 module.exports = router;
