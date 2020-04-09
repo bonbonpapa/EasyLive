@@ -9,6 +9,14 @@ import LiveSell from "./LiveSell.js";
 import Sign from "./Sign.jsx";
 import StreamManager from "./StreamManager.js";
 import ProtectedRoute from "./ProtectedRoute.js";
+import AllItems from "./AllItems.jsx";
+import ItemDetails from "./ItemDetails.jsx";
+import SellSide from "./SellSide.js";
+import Cart from "./Cart.js";
+import Purchased from "./Purchased.js";
+import PrimarySearchAppBar from "./PrimarySearchAppBar.js";
+import Account from "./Account.js";
+import StepCheckout from "./StepCheckout.js";
 
 const Wrapper = styled.div`
   display: grid;
@@ -43,6 +51,31 @@ class Root extends Component {
     }
     this.setState({ loading: false });
   };
+  renderItemDetails = rd => {
+    let itemId = rd.match.params.itemId;
+    let itemCandiates = this.props.items.filter(item => {
+      return item._id === itemId;
+    });
+    return <ItemDetails contents={itemCandiates[0]} />;
+  };
+  renderAllItems = () => {
+    return <AllItems />;
+  };
+  renderUpdateItem = () => {
+    return <SellSide />;
+  };
+  renderShoppingCart = () => {
+    return <Cart />;
+  };
+  renderStepCheckout = () => {
+    return <StepCheckout />;
+  };
+  renderProfile = () => {
+    return <Purchased />;
+  };
+  renderAccount = () => {
+    return <Account />;
+  };
   handleLogout = async e => {
     e.preventDefault();
 
@@ -67,8 +100,38 @@ class Root extends Component {
     return (
       <BrowserRouter>
         <Wrapper>
-          <NavbarNoStyle handleLogout={this.handleLogout} />
+          {/* <NavbarNoStyle handleLogout={this.handleLogout} /> */}
+          <PrimarySearchAppBar />
           <Route exact path="/" render={props => <LiveStreams {...props} />} />
+          <Route exact={true} path="/buy" render={this.renderAllItems} />
+          <Route exact={true} path="/profile" render={this.renderProfile} />
+          <Route exact={true} path="/account" render={this.renderAccount} />
+          <Route
+            exact={true}
+            path="/updateItems"
+            render={this.renderUpdateItem}
+          />
+          <Route
+            exact={true}
+            path="/shoppingcart"
+            render={this.renderShoppingCart}
+          />
+          <Route
+            exact={true}
+            path="/stepcheck"
+            render={this.renderStepCheckout}
+          />
+          {/* <Route
+            exact={true}
+            path="/details/:itemId"
+            render={this.renderItemDetails}
+          /> */}
+          <ProtectedRoute
+            exact
+            path="/details/:itemId"
+            lgin={this.props.lgin}
+            component={ItemDetails}
+          />
           {/* <Route
             exact
             path="/manager"
@@ -112,7 +175,8 @@ class Root extends Component {
 let mapStateToProps = state => {
   return {
     lgin: state.loggedIn,
-    username: state.username
+    username: state.username,
+    items: state.items
   };
 };
 export default connect(mapStateToProps)(Root);

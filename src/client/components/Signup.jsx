@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-export default function Signup() {
+function Signup({ history, backto }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -25,15 +28,20 @@ export default function Signup() {
     body = JSON.parse(body);
     if (body.success) {
       alert("register success");
+      dispatch({ type: "login-success", content: body.user });
+      dispatch({ type: "set-stream", content: body.streamlive });
+      dispatch({ type: "set-items", content: body.items });
+      if (body.streamlive)
+        dispatch({ type: "set-selected", content: body.streamlive.items });
+
       setUsername("");
       setEmail("");
       setPassword("");
+      history.push(backto);
       return;
+    } else {
+      alert("register fail");
     }
-    // dispatch({
-    //   type: "login-success",
-    //   content: username
-    // });
   }
 
   return (
@@ -75,3 +83,4 @@ export default function Signup() {
     </div>
   );
 }
+export default withRouter(Signup);

@@ -95,37 +95,46 @@ passport.use(
       clientID: config.FACEBOOK.clientID,
       clientSecret: config.FACEBOOK.clientSecret,
       callbackURL: "http://localhost:4000/login/facebook/callback",
-      profileFields: ["id", "displayName", "name", "photos"]
+      profileFields: ["id", "displayName", "emails", "name", "photos"]
     },
     function(accessToken, refreshToken, profile, done) {
       console.log("in the Facebook strategy, profile data", profile);
-      done(null, profile);
-      // const { email, first_name, last_name } = profile._json;
+      User.findOne({ "facebook.id": profile.id }, (err, user) => {
+        if (err) return done(err);
+        if (user) return done(null, user);
+        else {
+          let user = new User();
+          user.facebook.id = profile.id;
+          user.facebook.token = accessToken;
+          user.facebook.name = profile.displayName;
 
-      // console.log("in the Facebook strategy, profile data", profile);
+          if (
+            typeof profile.emails !== "undefined" &&
+            profile.emails.length > 0
+          ) {
+            user.facebook.email = profile.emails[0].value;
+            user.email = user.facebook.email;
+          } else {
+            user.facebook.email = undefined;
+            user.email = undefined;
+          }
 
-      // User.findOne({ "facebook.id": profile.id }, (err, user) => {
-      //   if (err) return done(err);
-      //   if (user) return done(null, user);
-      //   else {
-      //     let user = new User();
-      //     user.facebook.id = profile.id;
-      //     user.facebook.token = accessToken;
-      //     user.facebook.name = profile.displayName;
+          if (
+            typeof profile.photos !== "undefined" &&
+            profile.photos.length > 0
+          ) {
+            user.facebook.photo = profile.photos[0].value;
+          } else {
+            user.facebook.email = undefined;
+          }
 
-      //     if (
-      //       typeof profile.emails !== "undefined" &&
-      //       profile.emails.length > 0
-      //     )
-      //       user.facebook.email = profile.emails[0].value;
-
-      //     user.stream_key = shortid.generate();
-      //     user.save(err => {
-      //       if (err) throw err;
-      //       return done(null, user);
-      //     });
-      //   }
-      // });
+          user.stream_key = shortid.generate();
+          user.save(err => {
+            if (err) throw err;
+            return done(null, user);
+          });
+        }
+      });
     }
   )
 );

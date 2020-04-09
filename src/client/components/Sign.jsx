@@ -24,7 +24,6 @@ const Wrapper = styled.div`
 export default function Sign(props) {
   const [addClass, setAddClass] = useState(false);
   console.log("Sign component, the socket initialzied", socket);
-  // const [from, setFrom] = useState("");
 
   function toggle(add) {
     if (add) setAddClass(true);
@@ -40,7 +39,9 @@ export default function Sign(props) {
   return (
     <Wrapper>
       <div className={signClass.join(" ")}>
-        <Signup />
+        <Signup
+          backto={props.location.state ? props.location.state.from : "/"}
+        />
         <Signin
           backto={props.location.state ? props.location.state.from : "/"}
           providers={providers}

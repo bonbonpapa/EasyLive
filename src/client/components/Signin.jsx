@@ -24,7 +24,12 @@ function Signin({ history, backto, providers, socket }) {
 
   const buttons = (providers, socket) =>
     providers.map(provider => (
-      <OAuth provider={provider} key={provider} socket={socket} />
+      <OAuth
+        provider={provider}
+        key={provider}
+        socket={socket}
+        backto={backto}
+      />
     ));
 
   async function handleSubmit(event) {
@@ -49,6 +54,7 @@ function Signin({ history, backto, providers, socket }) {
       dispatch({ type: "login-success", content: body.user });
       dispatch({ type: "set-stream", content: body.streamlive });
       dispatch({ type: "set-items", content: body.items });
+      dispatch({ type: "set-cart", content: body.cart });
       if (body.streamlive)
         dispatch({ type: "set-selected", content: body.streamlive.items });
 
@@ -58,39 +64,12 @@ function Signin({ history, backto, providers, socket }) {
       alert(body.err);
     }
   }
-  const handleClick = async event => {
-    event.preventDefault();
-
-    let response = await fetch("http://localhost:3000/login/auth/facebook");
-
-    let body = await response.text();
-    body = JSON.parse(body);
-    if (body.success) {
-      alert("login success with facebook");
-    } else {
-      alert("login fail");
-    }
-  };
 
   return (
     <div className="form-container sign-in-container">
       <form className="signform" onSubmit={handleSubmit}>
         <h1 className="signH1">Sign in</h1>
-        <div className="social-container">
-          {buttons(providers, socket)}
-          {/* <a
-            href="http://localhost:4000/login/auth/facebook"
-            className="social sign_a"
-          >
-            <i className="fab fa-facebook-f"></i>
-          </a> */}
-          {/* <button type="button" className="social sign_a" onClick={handleClick}>
-            <i className="fab fa-facebook-f"></i>
-          </button> */}
-          {/* <button type="button" className="social sign_a">
-            <i className="fab fa-linkedin-in"></i>
-          </button> */}
-        </div>
+        <div className="social-container">{buttons(providers, socket)}</div>
         <input
           className="signInput"
           type="email"

@@ -4,7 +4,8 @@ let reducer = (state, action) => {
     return {
       ...state,
       loggedIn: true,
-      user: action.content
+      user: action.content,
+      userId: action.content._id
     };
   }
   if (action.type === "set-items") {
@@ -57,6 +58,12 @@ let reducer = (state, action) => {
       selected: action.content
     };
   }
+  if (action.type === "set-cart") {
+    return {
+      ...state,
+      cart: action.content
+    };
+  }
   return state;
 };
 
@@ -68,12 +75,18 @@ const store = createStore(
     userId: undefined,
     stream_key: "",
     items: [],
+    shoppingList: [],
+    cart: null,
     selected: [],
     liveselled: [],
     streamlive: null,
     streamview: null,
     user: null,
-    msgs: []
+    searchQuery: "",
+    msgs: [],
+    shippingAddress: null,
+    token: null,
+    order: null
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

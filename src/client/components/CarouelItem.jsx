@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import "./CarouelItem.css";
 import styled from "styled-components";
 
@@ -21,6 +22,10 @@ const Info = styled.div`
   flex-direction: column;
   justify-content: center;
   font-size: 13px;
+`;
+const DetailLink = styled(Link)`
+  text-decoration: none;
+  color: black;
 `;
 
 class CarouselLeftArrow extends Component {
@@ -53,7 +58,7 @@ class CarouselRightArrow extends Component {
 
 class CarouselSlide extends Component {
   render() {
-    const { description, price, defaultPaths } = this.props.slide;
+    const { description, price, defaultPaths, _id } = this.props.slide;
     return (
       <div>
         <ItemCard className="carousel__slide carousel__slide--active">
@@ -61,8 +66,10 @@ class CarouselSlide extends Component {
             <img src={defaultPaths.frontendPath} alt="for sell" />
           </div>
           <Info>
-            <div>{description}</div>
-            <div>{price} $</div>
+            <DetailLink to={"/details/" + _id}>
+              <div>{description}</div>
+              <div>{price} $</div>
+            </DetailLink>
           </Info>
         </ItemCard>
       </div>

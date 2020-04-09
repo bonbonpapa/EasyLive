@@ -22,6 +22,61 @@ InitDb(function(err) {
   dbo = getDb();
 });
 
+// let create = async (sellObj, res) => {
+//   let new_live = null;
+
+//   try {
+//     new_live = await LiveSell.findOneAndUpdate(
+//       { email: sellObj.email, state: "active" },
+//       {
+//         $set: sellObj
+//       },
+//       { upsert: true, new: true }
+//     );
+//   } catch (err) {
+//     console.log("Error, ", err);
+//     res.send(JSON.stringify({ success: false, error: err }));
+//     return;
+//   }
+//   if (new_live) {
+//     console.log(
+//       "results afer updating the stream live, and if not existed, crrated the stream for the user",
+//       new_live
+//     );
+//     res.send(JSON.stringify({ success: true, livesell: new_live }));
+//     return;
+//   }
+//   res.send(JSON.stringify({ success: false }));
+// };
+
+let create = async sellObj => {
+  let new_live = null;
+
+  try {
+    new_live = await LiveSell.findOneAndUpdate(
+      { email: sellObj.email, state: "active" },
+      {
+        $setOnInsert: sellObj
+      },
+      { upsert: true, new: true }
+    );
+  } catch (err) {
+    console.log("Error, ", err);
+    //   res.send(JSON.stringify({ success: false, error: err }));
+    return null;
+  }
+  if (new_live) {
+    console.log(
+      "results afer updating the stream live, and if not existed, crrated the stream for the user",
+      new_live
+    );
+    //  res.send(JSON.stringify({ success: true, livesell: new_live }));
+    return new_live;
+  }
+  //res.send(JSON.stringify({ success: false }));
+  return null;
+};
+
 router.get("/", (req, res) => {
   // get the requested live sell information based on the _id live from frontend
   if (req.query.liveid) {
@@ -102,33 +157,6 @@ router.get("/doneinfo", (req, res) => {
     } else res.send(JSON.stringify({ success: false }));
   });
 });
-
-let create = async (sellObj, res) => {
-  let new_live = null;
-
-  try {
-    new_live = await LiveSell.findOneAndUpdate(
-      { email: sellObj.email, state: "active" },
-      {
-        $set: sellObj
-      },
-      { upsert: true, new: true }
-    );
-  } catch (err) {
-    console.log("Error, ", err);
-    res.send(JSON.stringify({ success: false, error: err }));
-    return;
-  }
-  if (new_live) {
-    console.log(
-      "results afer updating the stream live, and if not existed, crrated the stream for the user",
-      new_live
-    );
-    res.send(JSON.stringify({ success: true, livesell: new_live }));
-    return;
-  }
-  res.send(JSON.stringify({ success: false }));
-};
 
 router.post("/livecreator", upload.array("mfiles", 9), async (req, res) => {
   // here to get the body about the formdata inforamtion from the request
@@ -250,11 +278,75 @@ router.post("/livesave", upload.none(), async (req, res) => {
       items: [],
       state: "active"
     };
-    create(sellObj, res);
+    let returnSell = await create(sellObj);
 
-    // res.send(JSON.stringify({ success: true, livesell: newLiveSell }));
-    // return;
+    if (returnSell) {
+      res.send(JSON.stringify({ success: true, livesell: returnSell }));
+      return;
+    } else {
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
   }
+});
+router.post("/new-item", upload.array("mfiles", 9), async (req, res) => {
+  console.log("request to /new-item, body: ", req.body);
+
+  let files = req.files;
+  console.log("uploaded files", files);
+
+  let frontendPaths = files.map(file => {
+    let filetype = file.mimetype;
+    return { frontendPath: "/uploads/" + file.filename, filetype: filetype };
+  });
+  console.log("Frontend path array", frontendPaths);
+
+  let insertReturn = await dbo
+    .collection("filestable")
+    .insertMany(frontendPaths);
+  console.log("return after insert many in the table", insertReturn);
+
+  let description = req.body.description;
+  let price = parseFloat(req.body.price);
+  let inventory = parseInt(req.body.inventory);
+  let location = req.body.location;
+  let seller = req.body.seller;
+  let defaultPaths = frontendPaths[0];
+  dbo.collection("items").insertOne(
+    {
+      description,
+      price,
+      inventory,
+      location,
+      seller,
+      defaultPaths,
+      frontendPaths: insertReturn.insertedIds
+    },
+    (error, item) => {
+      if (error) {
+        console.log("error with insert product to database, ", error);
+        res.send(JSON.stringify({ success: false }));
+        return;
+      }
+
+      if (item.insertedCount === 1) {
+        dbo
+          .collection("inventory")
+          .insertOne(
+            { _id: item.ops[0]._id, inventory: inventory },
+            (err, inventory) => {
+              if (err) {
+                console.log("error with the insert inventories, ", err);
+                res.send(JSON.stringify({ success: false }));
+                return;
+              }
+              res.send(JSON.stringify({ success: true }));
+              return;
+            }
+          );
+      }
+    }
+  );
 });
 
 let getStream = async email => {
@@ -271,4 +363,4 @@ let getItems = async email => {
   return allitems;
 };
 
-module.exports = { router, getStream, getItems };
+module.exports = { router, getStream, getItems, create };

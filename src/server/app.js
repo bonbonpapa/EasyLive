@@ -174,6 +174,7 @@ app.use("/settings", require("./routes/settings.js"));
 app.use("/streams", require("./routes/streams.js"));
 app.use("/user", require("./routes/user.js"));
 app.use("/sell", require("./routes/sell.js").router);
+app.use("/buy", require("./routes/buy.js").router);
 
 app.get("/succeed", (req, res) => {
   res.send(JSON.stringify({ success: true }));

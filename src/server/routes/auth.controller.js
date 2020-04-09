@@ -1,3 +1,5 @@
+const { getStream, getItems, create } = require("./sell.js");
+
 exports.twitter = (req, res) => {
   const io = req.app.get("io");
   const user = {
@@ -18,15 +20,38 @@ exports.google = (req, res) => {
   res.end();
 };
 
-exports.facebook = (req, res) => {
+exports.facebook = async (req, res) => {
   const io = req.app.get("io");
-  const { givenName, familyName } = req.user.name;
-  const user = {
-    name: `${givenName} ${familyName}`,
-    photo: req.user.photos[0].value
+  const name = req.user.facebook.name;
+  const email = req.user.facebook.email;
+  const stream_key = req.user.stream_key;
+  const photo = req.user.facebook.photo;
+
+  let sellObj = {
+    description: "",
+    email: email,
+    category: "",
+    stream_key: stream_key,
+    items: [],
+    state: "active"
   };
-  io.in(req.session.socketId).emit("facebook", user);
-  console.log("socket io emit from the server to client", user);
+
+  let returnSell = await create(sellObj);
+  let items = await getItems(req.user.email);
+
+  const user = {
+    name: name,
+    stream_key: stream_key,
+    photo: photo,
+    email: email
+  };
+  const userLogin = {
+    user: user,
+    sell: returnSell,
+    items: items
+  };
+  io.in(req.session.socketId).emit("facebook", userLogin);
+  console.log("socket io emit from the server to client", userLogin);
   res.end();
 };
 

@@ -12,7 +12,8 @@ let UserSchema = new Schema({
     id: String,
     token: String,
     email: String,
-    name: String
+    name: String,
+    photo: String
   }
 });
 
