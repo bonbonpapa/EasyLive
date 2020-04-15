@@ -11,7 +11,7 @@ class OAuth extends Component {
     super(props);
     this.state = {
       user: {},
-      disabled: ""
+      disabled: "",
     };
   }
 
@@ -19,7 +19,7 @@ class OAuth extends Component {
     this._isMounted = true;
     const { socket, provider } = this.props;
 
-    socket.on(provider, userLogin => {
+    socket.on(provider, (userLogin) => {
       console.log(userLogin);
       this.popup.close();
       if (this._isMounted) {
@@ -28,9 +28,9 @@ class OAuth extends Component {
       this.props.dispatch({ type: "login-success", content: userLogin.user });
       this.props.dispatch({
         type: "set-stream",
-        content: userLogin.sell
+        content: userLogin.sell,
       });
-      this.props.dispatch({ type: "set-items", content: userLogin.items });
+      this.props.dispatch({ type: "set-useritems", content: userLogin.items });
       if (userLogin.sell)
         this.props.dispatch({ type: "set-selected", content: userLogin.sell });
       this.props.history.push(this.props.backto);
@@ -116,6 +116,6 @@ class OAuth extends Component {
 
 OAuth.propTypes = {
   provider: PropTypes.string.isRequired,
-  socket: PropTypes.object.isRequired
+  socket: PropTypes.object.isRequired,
 };
 export default connect()(withRouter(OAuth));

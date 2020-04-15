@@ -6,11 +6,21 @@ let reducer = (state, action) => {
       ...state,
       loggedIn: true,
       user: action.content,
-      userId: action.content._id
+      userId: action.content._id,
     };
   }
-  if (action.type === "set-items") {
-    return { ...state, items: action.content };
+  if (action.type === "set-allitems") {
+    return { ...state, allitems: action.content };
+  }
+  if (action.type === "set-useritems") {
+    return { ...state, useritems: action.content };
+  }
+  if (action.type === "add-item") {
+    return {
+      ...state,
+      allitems: state.allitems.concat(action.content),
+      useritems: state.useritems.concat(action.content),
+    };
   }
 
   if (action.type === "log-out") {
@@ -18,49 +28,49 @@ let reducer = (state, action) => {
       ...state,
       loggedIn: false,
       username: undefined,
-      userId: undefined
+      userId: undefined,
     };
   }
   if (action.type === "set-key") {
     return {
       ...state,
-      stream_key: action.content
+      stream_key: action.content,
     };
   }
   if (action.type === "set-liveselled") {
     return {
       ...state,
-      liveselled: action.content
+      liveselled: action.content,
     };
   }
   if (action.type === "set-stream") {
     return {
       ...state,
-      streamlive: action.content
+      streamlive: action.content,
     };
   }
   if (action.type === "clear-stream") {
     return {
       ...state,
-      streamlive: null
+      streamlive: null,
     };
   }
   if (action.type === "set-selected") {
     return {
       ...state,
-      selected: action.content
+      selected: action.content,
     };
   }
   if (action.type === "set-cart") {
     return {
       ...state,
-      cart: action.content
+      cart: action.content,
     };
   }
   if (action.type === "set-token") {
     return {
       ...state,
-      token: action.payload
+      token: action.payload,
     };
   }
   if (action.type === "set-shippingaddress") {
@@ -68,57 +78,57 @@ let reducer = (state, action) => {
     shippingCopy = action.payload;
     return {
       ...state,
-      shippingAddress: shippingCopy
+      shippingAddress: shippingCopy,
     };
   }
   if (action.type === "set-order") {
     return {
       ...state,
-      order: action.payload
+      order: action.payload,
     };
   }
   if (action.type === "clear-shoppinglist") {
     return {
       ...state,
-      cart: null
+      cart: null,
     };
   }
   if (action.type === "set-video") {
     return {
       ...state,
-      videosave: action.content
+      videosave: action.content,
     };
   }
   if (action.type === "create-room") {
     return {
       ...state,
-      msgs: [...state.msgs, { room: action.room, msgs: [] }]
+      msgs: [...state.msgs, { room: action.room, msgs: [] }],
     };
   }
   if (action.type === "set-messages") {
     return {
       ...state,
-      msgs: state.msgs.map(msg =>
+      msgs: state.msgs.map((msg) =>
         msg.room === action.room ? { ...msg, msgs: action.content } : msg
-      )
+      ),
     };
   }
   if (action.type === "add-message") {
     return {
       ...state,
-      msgs: state.msgs.map(msg =>
+      msgs: state.msgs.map((msg) =>
         msg.room === action.room
           ? { ...msg, msgs: [...msg.msgs, action.content] }
           : msg
-      )
+      ),
     };
   }
   if (action.type === "clear-message") {
     return {
       ...state,
-      msgs: state.msgs.map(msg =>
+      msgs: state.msgs.map((msg) =>
         msg.room === action.room ? { ...msg, msgs: [] } : msg
-      )
+      ),
     };
   }
   return state;
@@ -131,7 +141,8 @@ const store = createStore(
     username: undefined,
     userId: undefined,
     stream_key: "",
-    items: [],
+    allitems: [],
+    useritems: [],
     shoppingList: [],
     cart: null,
     selected: [],
@@ -143,7 +154,7 @@ const store = createStore(
     shippingAddress: null,
     token: null,
     order: null,
-    videosave: ""
+    videosave: "",
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

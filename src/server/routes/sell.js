@@ -12,11 +12,11 @@ const express = require("express"),
   { getMsgRoom, removeMsgRoom } = require("../users.js");
 
 let upload = multer({
-  dest: __dirname + "/../uploads/"
+  dest: __dirname + "/../uploads/",
 });
 let dbo = undefined;
 
-InitDb(function(err) {
+InitDb(function (err) {
   if (err) {
     console.log("Error with the Mongodb database initializaion error ", err);
     return;
@@ -24,14 +24,14 @@ InitDb(function(err) {
   dbo = getDb();
 });
 
-let create = async sellObj => {
+let create = async (sellObj) => {
   let new_live = null;
 
   try {
     new_live = await LiveSell.findOneAndUpdate(
       { email: sellObj.email, state: "active" },
       {
-        $setOnInsert: sellObj
+        $setOnInsert: sellObj,
       },
       { upsert: true, new: true }
     );
@@ -57,14 +57,14 @@ router.get("/", (req, res) => {
   if (req.query.liveid) {
     LiveSell.findOne(
       {
-        _id: req.query.liveid
+        _id: req.query.liveid,
       },
       (err, sell) => {
         if (err) return;
         if (sell) {
           //    console.log("Find the sell information from server", sell);
           res.json({
-            livesell: sell
+            livesell: sell,
           });
         }
       }
@@ -119,9 +119,9 @@ router.get("/doneinfo", (req, res) => {
   let newPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].archive}/${stream_key}`;
   console.log("Video folder ", ouPath);
   let oufiles = [];
-  fs.readdir(ouPath, function(err, files) {
+  fs.readdir(ouPath, function (err, files) {
     if (!err) {
-      files.forEach(filename => {
+      files.forEach((filename) => {
         if (filename.endsWith(".mp4")) {
           //      console.log(filename);
           //  oufiles.push(ouPath + "/" + filename);
@@ -136,7 +136,7 @@ router.get("/doneinfo", (req, res) => {
       console.log("dir created,", made);
       let oldPath = `${ouPath}/${oufiles[oufiles.length - 1]}`;
       let newP = `${newPath}/${oufiles[oufiles.length - 1]}`;
-      fs.rename(oldPath, newP, err => {
+      fs.rename(oldPath, newP, (err) => {
         if (err) throw err;
         console.log("successfully remove the video to archive location", newP);
       });
@@ -146,7 +146,7 @@ router.get("/doneinfo", (req, res) => {
   });
 });
 
-let donesave = async stream_key => {
+let donesave = async (stream_key) => {
   const rename = util.promisify(fs.rename);
   const readdir = util.promisify(fs.readdir);
   console.log("In the server endpoint to get the video files list", stream_key);
@@ -161,7 +161,7 @@ let donesave = async stream_key => {
     console.log("error during read dir, ", err);
   }
 
-  files.forEach(filename => {
+  files.forEach((filename) => {
     if (filename.endsWith(".mp4")) {
       //      console.log(filename);
       //  oufiles.push(ouPath + "/" + filename);
@@ -193,7 +193,7 @@ router.post("/livecreator", upload.array("mfiles", 9), async (req, res) => {
   let files = req.files;
   console.log("uploaded files", files);
 
-  let frontendPaths = files.map(file => {
+  let frontendPaths = files.map((file) => {
     if (file) {
       let filetype = file.mimetype;
       return { frontendPath: "/uploads/" + file.filename, filetype: filetype };
@@ -231,8 +231,8 @@ router.post("/livecreator", upload.array("mfiles", 9), async (req, res) => {
           items: items,
           thumbnail: thumbnail,
           poster: poster,
-          state: "active"
-        }
+          state: "active",
+        },
       },
       { upsert: true, new: true }
     );
@@ -265,7 +265,7 @@ router.post("/livesave", upload.none(), async (req, res) => {
   console.log("file selected by the server", videopath);
   let frontendPath = {
     frontendPath: videopath,
-    filetype: "video/mp4"
+    filetype: "video/mp4",
   };
   console.log("video file location, ", frontendPath);
 
@@ -287,8 +287,8 @@ router.post("/livesave", upload.none(), async (req, res) => {
         $set: {
           source: frontendPath,
           messages: room_msg.msgs,
-          state: "completed"
-        }
+          state: "completed",
+        },
       },
       { new: true }
     );
@@ -317,7 +317,7 @@ router.post("/livesave", upload.none(), async (req, res) => {
       category: "",
       stream_key: newLiveSell.stream_key,
       items: [],
-      state: "active"
+      state: "active",
     };
     let returnSell = await create(sellObj);
 
@@ -336,7 +336,7 @@ router.post("/new-item", upload.array("mfiles", 9), async (req, res) => {
   let files = req.files;
   console.log("uploaded files", files);
 
-  let frontendPaths = files.map(file => {
+  let frontendPaths = files.map((file) => {
     let filetype = file.mimetype;
     return { frontendPath: "/uploads/" + file.filename, filetype: filetype };
   });
@@ -351,7 +351,7 @@ router.post("/new-item", upload.array("mfiles", 9), async (req, res) => {
   let price = parseFloat(req.body.price);
   let inventory = parseInt(req.body.inventory);
   let location = req.body.location;
-  let seller = req.body.seller;
+  let seller = req.user.email;
   let defaultPaths = frontendPaths[0];
   dbo.collection("items").insertOne(
     {
@@ -361,7 +361,7 @@ router.post("/new-item", upload.array("mfiles", 9), async (req, res) => {
       location,
       seller,
       defaultPaths,
-      frontendPaths: insertReturn.insertedIds
+      frontendPaths: insertReturn.insertedIds,
     },
     (error, item) => {
       if (error) {
@@ -375,13 +375,15 @@ router.post("/new-item", upload.array("mfiles", 9), async (req, res) => {
           .collection("inventory")
           .insertOne(
             { _id: item.ops[0]._id, inventory: inventory },
-            (err, inventory) => {
+            async (err, inventory) => {
               if (err) {
                 console.log("error with the insert inventories, ", err);
                 res.send(JSON.stringify({ success: false }));
                 return;
               }
-              res.send(JSON.stringify({ success: true }));
+              //      let items = await getItems(req.user.email);
+
+              res.send(JSON.stringify({ success: true, item: item.ops[0] }));
               return;
             }
           );
@@ -390,16 +392,16 @@ router.post("/new-item", upload.array("mfiles", 9), async (req, res) => {
   );
 });
 
-let getStream = async email => {
+let getStream = async (email) => {
   console.log("email to get stream live", email);
   let results = await LiveSell.findOne({ email: email, state: "active" });
   //console.log("search results for the carts", results);
   return results;
 };
-let getItems = async email => {
+let getItems = async (email) => {
   let allitems = await dbo
     .collection("items")
-    .find({})
+    .find({ seller: email })
     .toArray();
   return allitems;
 };

@@ -17,17 +17,17 @@ class ItemDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contents: {}
+      contents: {},
     };
   }
 
-  componentDidMount = event => {
+  componentDidMount = (event) => {
     let itemId = this.props.match.params.itemId;
-    let itemCandidates = this.props.items.filter(item => {
+    let itemCandidates = this.props.items.filter((item) => {
       return item._id === itemId;
     });
     this.setState({
-      contents: itemCandidates[0]
+      contents: itemCandidates[0],
     });
   };
 
@@ -42,7 +42,7 @@ class ItemDetails extends Component {
     let existed = false;
     if (this.props.cart) {
       existed = this.props.cart.products.some(
-        product => product._id === this.state.contents._id
+        (product) => product._id === this.state.contents._id
       );
     }
 
@@ -57,7 +57,7 @@ class ItemDetails extends Component {
 
     let response = await fetch("/buy/add-cart", {
       method: "POST",
-      body: formData
+      body: formData,
     });
     let body = await response.text();
     body = JSON.parse(body);
@@ -75,7 +75,7 @@ class ItemDetails extends Component {
       inventory,
       location,
       seller,
-      frontendPaths
+      frontendPaths,
     } = this.state.contents;
 
     return (
@@ -102,11 +102,11 @@ class ItemDetails extends Component {
     );
   }
 }
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     cart: state.cart,
     userId: state.userId,
-    items: state.items
+    items: state.allitems,
   };
 };
 export default connect(mapStateToProps)(ItemDetails);

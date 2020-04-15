@@ -22,7 +22,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: false,
     };
   }
   componentDidMount() {
@@ -38,15 +38,15 @@ class App extends Component {
       this.props.dispatch({
         type: "login-success",
         content: parsed.username,
-        userId: parsed.userId
+        userId: parsed.userId,
       });
       this.props.dispatch({
         type: "set-cart",
-        content: parsed.cart
+        content: parsed.cart,
       });
       this.props.dispatch({
         type: "set-shippingaddress",
-        payload: parsed.shipping
+        payload: parsed.shipping,
       });
     }
     this.setState({ loading: false });
@@ -54,9 +54,9 @@ class App extends Component {
   renderAllItems = () => {
     return <AllItems />;
   };
-  renderItemDetails = rd => {
+  renderItemDetails = (rd) => {
     let itemId = rd.match.params.itemId;
-    let itemCandiates = this.props.items.filter(item => {
+    let itemCandiates = this.props.items.filter((item) => {
       return item._id === itemId;
     });
     return <ItemDetails contents={itemCandiates[0]} />;
@@ -65,9 +65,9 @@ class App extends Component {
   clearShoppingList = () => {
     this.props.dispatch({ type: "clear-shoppinglist" });
   };
-  setShoppingHistory = list => {
+  setShoppingHistory = (list) => {
     this.setState({
-      shoppingHistory: this.state.shoppingHistory.concat(list)
+      shoppingHistory: this.state.shoppingHistory.concat(list),
     });
   };
 
@@ -140,11 +140,11 @@ class App extends Component {
     );
   };
 }
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
     lgin: state.loggedIn,
     username: state.username,
-    items: state.items
+    items: state.allitems,
   };
 };
 export default connect(mapStateToProps)(App);

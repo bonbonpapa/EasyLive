@@ -13,7 +13,7 @@ class AllItems extends Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount = event => {
+  componentDidMount = (event) => {
     this.reload();
   };
   reload = async () => {
@@ -22,27 +22,27 @@ class AllItems extends Component {
     console.log("/all-items response", body);
     body = JSON.parse(body);
     if (body.success) {
-      this.props.dispatch({ type: "set-items", content: body.items });
+      this.props.dispatch({ type: "set-allitems", content: body.items });
     }
   };
 
   render = () => {
-    let results = this.props.items.filter(item => {
+    let results = this.props.items.filter((item) => {
       return item.description.includes(this.props.searchQuery);
     });
     return (
       <Main>
-        {results.map(item => (
+        {results.map((item) => (
           <Item key={item._id} contents={item} />
         ))}
       </Main>
     );
   };
 }
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
-    items: state.items,
-    searchQuery: state.searchQuery
+    items: state.allitems,
+    searchQuery: state.searchQuery,
   };
 };
 export default connect(mapStateToProps)(AllItems);

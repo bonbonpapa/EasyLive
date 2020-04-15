@@ -14,7 +14,9 @@ import Switch from "@material-ui/core/Switch";
 const LiveWrapper = styled.div`
   display: flex;
   justify-content: center;
-  box-sizing: border-box;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0;
 `;
 
 const Wrapper = styled.div`
@@ -23,8 +25,9 @@ const Wrapper = styled.div`
   grid-template-areas:
     "player chat"
     "carousel chat"
-    "control control";
+    "control chat";
   margin: 0px 0px 0px 0px;
+  box-sizing: content;
 `;
 const PlayerContainer = styled.div`
   grid-area: player;
@@ -32,6 +35,8 @@ const PlayerContainer = styled.div`
   min-width: 600px;
   height: calc(33.75vw+ 40px);
   min-height: 337.5px;
+  margin: 0px 0px 0px 0px;
+  box-sizing: content;
 `;
 const CarouselContainer = styled.div`
   grid-area: carousel;
@@ -41,13 +46,14 @@ const CarouselContainer = styled.div`
   border: 1px #ddd solid;
   border-top: none;
   background: #fff;
+  box-sizing: border-box;
 `;
 const ChatContainer = styled.div`
   grid-area: chat;
   width: 18vw;
   min-width: 220px;
-  height: calc(33.75vw + 200px);
-  min-height: calc(337.5px + 200px);
+  height: calc(33.75vw + 280px);
+  min-height: calc(337.5px + 280px);
   display: flex;
 `;
 const ControlContainer = styled.div`
@@ -56,8 +62,8 @@ const ControlContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  width: 78vw;
-  min-width: 820px;
+  width: 60vw;
+  min-width: 600px;
   border: 1px #ddd solid;
   border-top: none;
   background: #fff;

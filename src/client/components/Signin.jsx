@@ -23,7 +23,7 @@ function Signin({ history, backto, providers, socket }) {
   const [password, setPassword] = useState("");
 
   const buttons = (providers, socket) =>
-    providers.map(provider => (
+    providers.map((provider) => (
       <OAuth
         provider={provider}
         key={provider}
@@ -41,9 +41,9 @@ function Signin({ history, backto, providers, socket }) {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      credentials: "include"
+      credentials: "include",
     });
     let body = await response.text();
     //  console.log("response body from login", body);
@@ -53,7 +53,7 @@ function Signin({ history, backto, providers, socket }) {
       alert("login success");
       dispatch({ type: "login-success", content: body.user });
       dispatch({ type: "set-stream", content: body.streamlive });
-      dispatch({ type: "set-items", content: body.items });
+      dispatch({ type: "set-useritems", content: body.items });
       dispatch({ type: "set-cart", content: body.cart });
       dispatch({ type: "set-shippingaddress", payload: body.user.shipping });
       if (body.streamlive)
@@ -76,14 +76,14 @@ function Signin({ history, backto, providers, socket }) {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           className="signInput"
           type="password"
           placeholder="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <a className="sign_a" href="/#">
           Forgot your password?

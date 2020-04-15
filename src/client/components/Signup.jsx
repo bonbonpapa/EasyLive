@@ -18,9 +18,9 @@ function Signup({ history, backto }) {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      credentials: "include"
+      credentials: "include",
     });
     let body = await response.text();
     console.log("response body from login", body);
@@ -30,7 +30,7 @@ function Signup({ history, backto }) {
       alert("register success");
       dispatch({ type: "login-success", content: body.user });
       dispatch({ type: "set-stream", content: body.streamlive });
-      dispatch({ type: "set-items", content: body.items });
+      dispatch({ type: "set-useritems", content: body.items });
       if (body.streamlive)
         dispatch({ type: "set-selected", content: body.streamlive.items });
 
@@ -62,21 +62,21 @@ function Signup({ history, backto }) {
           type="text"
           placeholder="Name"
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <input
           className="signInput"
           type="email"
           placeholder="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           className="signInput"
           type="password"
           placeholder="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <button className="btn">Sign Up</button>
       </form>

@@ -11,9 +11,9 @@ import StoreOutlinedIcon from "@material-ui/icons/StoreOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100vh"
+    height: "100vh",
   },
   image: {
     backgroundImage: "url(https://source.unsplash.com/random)",
@@ -23,29 +23,31 @@ const useStyles = makeStyles(theme => ({
         ? theme.palette.grey[900]
         : theme.palette.grey[50],
     backgroundSize: "cover",
-    backgroundPosition: "center"
+    backgroundPosition: "center",
   },
   paper: {
     margin: theme.spacing(8, 4),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 export default function SellSide() {
   const classes = useStyles();
+
+  const dispatch = useDispatch();
 
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
@@ -62,20 +64,22 @@ export default function SellSide() {
     data.append("price", price);
     data.append("location", location);
     data.append("inventory", inventory);
-    data.append("seller", "pi");
+    // data.append("seller", "pi");
     for (let i = 0; i < files.length; i++) {
       data.append("mfiles", files[i]);
     }
 
     let response = await fetch("/sell/new-item", {
       method: "POST",
-      body: data
+      body: data,
     });
     let body = await response.text();
     body = JSON.parse(body);
     console.log("parsed body", body);
     if (body.success) {
       alert("Item added successfully");
+      // dispatch({ type: "set-useritems", content: body.items });
+      dispatch({ type: "add-item", content: body.item });
       setDescription("");
       setPrice(0);
       setInventory(0);
@@ -110,7 +114,7 @@ export default function SellSide() {
               autoComplete="description"
               autoFocus
               value={description}
-              onInput={e => setDescription(e.target.value)}
+              onInput={(e) => setDescription(e.target.value)}
             />
             <TextField
               variant="outlined"
@@ -122,7 +126,7 @@ export default function SellSide() {
               id="price"
               autoComplete="price"
               value={price}
-              onInput={e => setPrice(parseFloat(e.target.value))}
+              onInput={(e) => setPrice(parseFloat(e.target.value))}
             />
             <TextField
               variant="outlined"
@@ -134,7 +138,7 @@ export default function SellSide() {
               id="inventory"
               autoComplete="inventory"
               value={inventory}
-              onInput={e => setInventory(parseInt(e.target.value))}
+              onInput={(e) => setInventory(parseInt(e.target.value))}
             />
             <TextField
               variant="outlined"
@@ -146,7 +150,7 @@ export default function SellSide() {
               id="location"
               autoComplete="location"
               value={location}
-              onInput={e => setLocation(e.target.value)}
+              onInput={(e) => setLocation(e.target.value)}
             />
             <TextField
               variant="outlined"
@@ -159,7 +163,7 @@ export default function SellSide() {
               id="image"
               inputProps={{ multiple: true }}
               InputLabelProps={{ shrink: true }}
-              onInput={e => setFiles(e.target.files)}
+              onInput={(e) => setFiles(e.target.files)}
             />
             <Button
               type="submit"

@@ -12,30 +12,31 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    margin: "auto"
+    margin: "auto",
   },
   cardHeader: {
-    padding: theme.spacing(0, 0)
+    padding: theme.spacing(0, 0),
   },
   list: {
     width: "100%",
-    height: 180,
+    // height: "100%",
+    height: "12vw",
     backgroundColor: theme.palette.background.paper,
-    overflow: "auto"
+    overflow: "auto",
   },
   button: {
-    margin: theme.spacing(0.5, 0)
-  }
+    margin: theme.spacing(0.5, 0),
+  },
 }));
 
 function not(a, b) {
-  return a.filter(value => b.indexOf(value) === -1);
+  return a.filter((value) => b.indexOf(value) === -1);
 }
 
 function intersection(a, b) {
-  return a.filter(value => b.indexOf(value) !== -1);
+  return a.filter((value) => b.indexOf(value) !== -1);
 }
 
 function union(a, b) {
@@ -46,11 +47,11 @@ export default function ItemsList() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [checked, setChecked] = React.useState([]);
-  let streamlive = useSelector(state => state.streamlive);
+  let streamlive = useSelector((state) => state.streamlive);
   let sellList = streamlive ? streamlive.items : [];
-  let allList = useSelector(state => state.items);
-  let leftList = allList.filter(function(item) {
-    return sellList.every(sitem => sitem._id !== item._id);
+  let allList = useSelector((state) => state.useritems);
+  let leftList = allList.filter(function (item) {
+    return sellList.every((sitem) => sitem._id !== item._id);
   });
 
   const [left, setLeft] = React.useState(leftList);
@@ -59,7 +60,7 @@ export default function ItemsList() {
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
 
-  const handleToggle = value => () => {
+  const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
@@ -72,9 +73,9 @@ export default function ItemsList() {
     setChecked(newChecked);
   };
 
-  const numberOfChecked = items => intersection(checked, items).length;
+  const numberOfChecked = (items) => intersection(checked, items).length;
 
-  const handleToggleAll = items => () => {
+  const handleToggleAll = (items) => () => {
     if (numberOfChecked(items) === items.length) {
       setChecked(not(checked, items));
     } else {
@@ -122,7 +123,7 @@ export default function ItemsList() {
       />
       <Divider />
       <List className={classes.list} dense component="div" role="list">
-        {items.map(item => {
+        {items.map((item) => {
           const labelId = `transfer-list-all-item-${item.description}-label`;
 
           return (
