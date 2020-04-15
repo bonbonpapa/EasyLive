@@ -8,12 +8,12 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center"
   },
   paper: {
-    margin: theme.spacing(8, 4),
+    margin: theme.spacing(0, 0),
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between"
@@ -50,7 +50,7 @@ export default function LiveSellSave() {
 
           if (parse.success) {
             setfiles(parse.files);
-            console.log("Mp4 videos from server, ", parse.files);
+            //    console.log("Mp4 videos from server, ", parse.files);
           }
         })
         .catch(err => {
@@ -66,6 +66,7 @@ export default function LiveSellSave() {
     let data = new FormData();
     data.append("liveid", streamlive._id);
     data.append("videofile", fileselect);
+    data.append("stream_key", streamlive.stream_key);
 
     const options = {
       method: "POST",
@@ -80,6 +81,7 @@ export default function LiveSellSave() {
       alert("Live save success");
 
       dispatch({ type: "set-stream", content: body.livesell });
+      dispatch({ type: "clear-message" });
 
       return;
     }
@@ -88,6 +90,7 @@ export default function LiveSellSave() {
 
   const handleSelect = filename => {
     SetFileSelect(filename);
+    dispatch({ type: "set-video", content: filename });
   };
 
   return (
@@ -96,7 +99,7 @@ export default function LiveSellSave() {
         <div>
           <SelectItem items={vfiles} handleSelect={handleSelect} />
         </div>
-        <div>
+        {/* <div>
           <Button
             type="submit"
             fullWidth
@@ -107,7 +110,7 @@ export default function LiveSellSave() {
           >
             Save Stream
           </Button>
-        </div>
+        </div> */}
       </div>
     </Grid>
   );

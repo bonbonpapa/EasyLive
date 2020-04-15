@@ -1,6 +1,7 @@
 const express = require("express"),
   router = express.Router(),
   multer = require("multer"),
+  ObjectID = require("mongodb").ObjectID,
   User = require("../database/Schema.js").User;
 
 let upload = multer({
@@ -28,8 +29,10 @@ router.get("/", (req, res) => {
 });
 
 router.post("/update-address", upload.none(), async (req, res) => {
-  const sessionId = req.cookies.sid;
-  const user = sessions[sessionId];
+  // const sessionId = req.cookies.sid;
+  // const user = sessions[sessionId];
+
+  const user = req.user;
 
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
@@ -41,9 +44,9 @@ router.post("/update-address", upload.none(), async (req, res) => {
   const address_state = req.body.address_state;
   try {
     // result = await dbo.collection("users").findOneAndUpdate(
-    result = User.findOneAndUpdate(
+    result = await User.findOneAndUpdate(
       {
-        _id: ObjectID(user.userId)
+        _id: ObjectID(user._id)
       },
       {
         $set: {
@@ -70,13 +73,11 @@ router.post("/update-address", upload.none(), async (req, res) => {
       "results after updating the users with shipping address ",
       result
     );
-    sessions[sessionId] = {
-      ...user,
-      shipping: result.value.shipping
-    };
-    res.send(
-      JSON.stringify({ success: true, shipping: result.value.shipping })
-    );
+    // sessions[sessionId] = {
+    //   ...user,
+    //   shipping: result.value.shipping
+    // };
+    res.send(JSON.stringify({ success: true, shipping: result.shipping }));
     return;
   }
 

@@ -1,31 +1,24 @@
 const users = [];
 const messages = [];
 
-const addUser = ({ id, name, room }) => {
-  name = name.trim().toLowerCase();
-  room = room.trim().toLowerCase();
-
-  const existingUser = users.find(
-    user => user.room === room && user.name === name
+const addUser = ({ socketid, chatUser, room }) => {
+  let findIndex = users.findIndex(
+    user => user.room === room && user.userId === chatUser.userId
   );
 
-  if (!name || !room) return { error: "Username and room are required." };
-  //  if (existingUser) return { error: "Username is taken." };
+  if (!chatUser || !room) return { error: "Username and room are required." };
 
-  if (existingUser) {
-    let findIndex = users.findIndex(
-      user => user.room === room && user.name === name
-    );
-
-    const user = { id, name, room };
+  if (findIndex !== -1) {
+    const user = { ...chatUser, socketid: socketid };
     users[findIndex] = user;
 
-    console.log("User updated in the user array", users);
+    console.log("User updated in the user array with new socket id", user);
 
     return { user };
   }
 
-  const user = { id, name, room };
+  const user = { ...chatUser, socketid: socketid, room: room };
+  console.log("New user added,", user);
 
   users.push(user);
   console.log("User added to the user array", users);
@@ -34,27 +27,23 @@ const addUser = ({ id, name, room }) => {
 };
 
 const removeUser = id => {
-  const index = users.findIndex(user => user.id === id);
+  const index = users.findIndex(user => user.socketid === id);
 
   if (index !== -1) return users.splice(index, 1)[0];
 };
 
-const getUser = id => users.find(user => user.id === id);
+const getUser = id => users.find(user => user.socketid === id);
 
 const getUsersInRoom = room => users.filter(user => user.room === room);
 
 // messages functions
-const addMsgRoom = ({ id, name, room }) => {
-  name = name.trim().toLowerCase();
-  room = room.trim().toLowerCase();
+const addMsgRoom = room => {
+  // room = room.trim().toLowerCase();
+  if (!room) return { err: "room are required." };
+  // const existingRoom = messages.find(message => message.room === room);
+  let findIndex = messages.findIndex(message => message.room === room);
 
-  const existingRoom = messages.find(message => message.room === room);
-
-  if (!name || !room) return { error: "Username and room are required." };
-
-  if (existingRoom) {
-    let findIndex = messages.findIndex(message => message.room === room);
-
+  if (findIndex !== -1) {
     const room_msg = messages[findIndex];
 
     console.log("return the messages array for the room", room_msg);
@@ -70,32 +59,35 @@ const addMsgRoom = ({ id, name, room }) => {
   return { room_msg };
 };
 
+const removeMsgRoom = room => {
+  const index = messages.findIndex(message => message.room === room);
+
+  if (index !== -1) {
+    const room_msg = messages.splice(index, 1)[0];
+    return { room_msg };
+  } else return { error: "cannot remove the message room" };
+};
+
 const addMessage = ({ room, msg }) => {
   console.log("Message to be added to array", msg);
-  const existingRoom = messages.find(message => message.room === room);
+  let findIndex = messages.findIndex(message => message.room === room);
 
-  if (existingRoom) {
-    let findIndex = messages.findIndex(message => message.room === room);
-
+  if (findIndex !== -1) {
     messages[findIndex].msgs.push(msg);
 
     console.log("Messages added to the user array", messages);
-  }
+  } else return { error: "cannot add message to the array" };
 };
-const getMsgRoom = ({ room }) => {
-  const existingRoom = messages.find(message => message.room === room);
+const getMsgRoom = room => {
+  let findIndex = messages.findIndex(message => message.room === room);
 
-  if (!room || !existingRoom) return { error: "room are required." };
-
-  if (existingRoom) {
-    let findIndex = messages.findIndex(message => message.room === room);
-
+  if (findIndex !== -1) {
     const room_msg = messages[findIndex];
 
     console.log("return the messages array for the room", room_msg);
 
     return { room_msg };
-  }
+  } else return { error: "cannot get message room for " + room };
 };
 module.exports = {
   addUser,
@@ -104,5 +96,6 @@ module.exports = {
   getUsersInRoom,
   addMsgRoom,
   addMessage,
-  getMsgRoom
+  getMsgRoom,
+  removeMsgRoom
 };

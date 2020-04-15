@@ -51,31 +51,11 @@ class Root extends Component {
     }
     this.setState({ loading: false });
   };
-  renderItemDetails = rd => {
-    let itemId = rd.match.params.itemId;
-    let itemCandiates = this.props.items.filter(item => {
-      return item._id === itemId;
-    });
-    return <ItemDetails contents={itemCandiates[0]} />;
-  };
+
   renderAllItems = () => {
     return <AllItems />;
   };
-  renderUpdateItem = () => {
-    return <SellSide />;
-  };
-  renderShoppingCart = () => {
-    return <Cart />;
-  };
-  renderStepCheckout = () => {
-    return <StepCheckout />;
-  };
-  renderProfile = () => {
-    return <Purchased />;
-  };
-  renderAccount = () => {
-    return <Account />;
-  };
+
   handleLogout = async e => {
     e.preventDefault();
 
@@ -101,53 +81,55 @@ class Root extends Component {
       <BrowserRouter>
         <Wrapper>
           {/* <NavbarNoStyle handleLogout={this.handleLogout} /> */}
-          <PrimarySearchAppBar />
+          <PrimarySearchAppBar handleLogout={this.handleLogout} />
           <Route exact path="/" render={props => <LiveStreams {...props} />} />
           <Route exact={true} path="/buy" render={this.renderAllItems} />
-          <Route exact={true} path="/profile" render={this.renderProfile} />
-          <Route exact={true} path="/account" render={this.renderAccount} />
-          <Route
-            exact={true}
+          <ProtectedRoute
+            exact
+            path="/profile"
+            lgin={this.props.lgin}
+            component={Purchased}
+          />
+          <ProtectedRoute
+            exact
+            path="/account"
+            lgin={this.props.lgin}
+            component={Account}
+          />
+          <ProtectedRoute
+            exact
             path="/updateItems"
-            render={this.renderUpdateItem}
+            lgin={this.props.lgin}
+            component={SellSide}
           />
-          <Route
-            exact={true}
+          <ProtectedRoute
+            exact
             path="/shoppingcart"
-            render={this.renderShoppingCart}
+            lgin={this.props.lgin}
+            component={Cart}
           />
-          <Route
-            exact={true}
+          <ProtectedRoute
+            exact
             path="/stepcheck"
-            render={this.renderStepCheckout}
+            lgin={this.props.lgin}
+            component={StepCheckout}
           />
-          {/* <Route
-            exact={true}
-            path="/details/:itemId"
-            render={this.renderItemDetails}
-          /> */}
           <ProtectedRoute
             exact
             path="/details/:itemId"
             lgin={this.props.lgin}
             component={ItemDetails}
           />
-          {/* <Route
-            exact
-            path="/manager"
-            render={props => <StreamManager {...props} />}
-          /> */}
           <Route
             exact
             path="/stream/:lid"
-            render={props => <LiveSell {...props} />}
+            render={props => <LiveSell {...props} inManager={false} />}
           />
           <Route
             exact={true}
             path="/sign"
             render={props => <Sign {...props} />}
           />
-
           {/* <Route
             exact
             path="/settings"
@@ -174,9 +156,7 @@ class Root extends Component {
 }
 let mapStateToProps = state => {
   return {
-    lgin: state.loggedIn,
-    username: state.username,
-    items: state.items
+    lgin: state.loggedIn
   };
 };
 export default connect(mapStateToProps)(Root);

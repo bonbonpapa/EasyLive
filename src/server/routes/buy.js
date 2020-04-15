@@ -8,6 +8,7 @@ const express = require("express"),
   InitDb = require("../db.js").initDb,
   getDb = require("../db.js").getDb,
   fs = require("fs"),
+  stripe = require("stripe")("sk_test_rZR28FL1Dt5b68vcM0YzEHSt00dPZJ8Cxp"),
   cors = require("cors");
 
 let upload = multer({
@@ -51,7 +52,7 @@ router.get("/delete-cartitem", async (req, res) => {
       newCart = await dbo
         .collection("carts")
         .findOneAndUpdate(
-          { userId: String(user.userId), state: "active" },
+          { userId: String(user._id), state: "active" },
           { $pull: { products: { _id: String(pid) } } },
           { returnOriginal: false }
         );
@@ -73,10 +74,12 @@ router.post("/charge", cors(), async (req, res) => {
   // check if inventories can fullfil the order requirement
   // orderCheckfunc(req,res);
   console.log("in the orderCheck endpoiunt");
-  const sessionId = req.cookies.sid;
-  const user = sessions[sessionId];
-  const userId = user.userId;
-  const username = user.username;
+  //   const sessionId = req.cookies.sid;
+  //   const user = sessions[sessionId];
+
+  const user = req.user;
+  const userId = user._id;
+  //  const username = user.username;
   const inventory = dbo.collection("inventory");
   const carts = dbo.collection("carts");
   const orders = dbo.collection("orders");
@@ -178,7 +181,7 @@ router.post("/charge", cors(), async (req, res) => {
     created_on: new Date(),
     userId: userId,
     shipping: {
-      name: username,
+      name: "username",
       address: "Some street 1, NY 11223"
     },
     payment: {
@@ -217,19 +220,21 @@ router.post("/charge", cors(), async (req, res) => {
 });
 
 router.get("/get-orders", (req, res) => {
-  console.log("request to the get orders");
+  // console.log("request to the get orders", req);
 
-  console.log("in the orderCheck endpoiunt");
-  const sessionId = req.cookies.sid;
-  const user = sessions[sessionId];
-  const userId = user.userId;
+  console.log("in the orderCheck endpoiunt", req.user);
+  //   const sessionId = req.cookies.sid;
+  //   const user = sessions[sessionId];
 
-  const username = req.query.username;
-  console.log("username", username);
+  const user = req.user;
+  const userId = user._id;
+
+  //   const username = req.query.username;
+  //   console.log("username", username);
 
   dbo
     .collection("orders")
-    .find({ userId: ObjectID(userId) })
+    .find({ userId: userId })
     .toArray((err, orders) => {
       if (err) {
         console.log("/get orders", err);

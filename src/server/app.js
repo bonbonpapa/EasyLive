@@ -114,17 +114,37 @@ app.get("/", function(req, res) {
 
 io.on("connection", function(socket) {
   console.log("socket at connection,", socket.id);
-  socket.on("join", ({ name, room }, callback) => {
-    const { error, user } = addUser({ id: socket.id, name, room });
+
+  socket.on("create", ({ chatUser, room }, callback) => {
+    const { error, user } = addUser({ socketid: socket.id, chatUser, room });
     console.log("User added to the socket", user);
     if (error) return callback(error);
-    const { err, room_msg } = addMsgRoom({ id: socket.id, name, room });
+    const { err, room_msg } = addMsgRoom(room);
     console.log("Room messages added", room_msg);
     if (err) return callback(err);
     socket.join(user.room);
     socket.emit("message", {
       user: "admin",
-      text: `${user.name}, Welcome to room ${user.room}.`
+      text: `${user.username}, Chat room created.`
+    });
+    callback();
+  });
+
+  // this is the event for the join event from the client
+  // the user will join the room as defined user.room
+  // because user (in the room) has attached the room information
+
+  socket.on("join", ({ chatUser, room }, callback) => {
+    const { error, user } = addUser({ socketid: socket.id, chatUser, room });
+    console.log("User added to the socket", user);
+    if (error) return callback(error);
+    const { err, room_msg } = addMsgRoom(room);
+    console.log("Room messages added", room_msg);
+    if (err) return callback(err);
+    socket.join(user.room);
+    socket.emit("message", {
+      user: "admin",
+      text: `${user.username}, Welcome to room ${user.room}.`
     });
     socket.emit("msgs", room_msg);
     io.to(user.room).emit("roomData", {
@@ -139,7 +159,7 @@ io.on("connection", function(socket) {
 
     console.log("Send message in the socket,", socket.id);
     console.log("user corresponding to the socket id", user);
-    let msg = { user: user.name, text: message };
+    let msg = { user: user.username, text: message };
 
     io.to(user.room).emit("message", msg);
 
@@ -156,7 +176,7 @@ io.on("connection", function(socket) {
     if (user) {
       io.to(user.room).emit("message", {
         user: "Admin",
-        text: `${user.name} has left.`
+        text: `${user.username} has left.`
       });
 
       io.to(user.room).emit("roomData", {

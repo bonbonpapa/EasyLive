@@ -7,7 +7,9 @@ const express = require("express"),
   InitDb = require("../db.js").initDb,
   getDb = require("../db.js").getDb,
   fs = require("fs"),
-  { getMsgRoom } = require("../users.js");
+  util = require("util"),
+  mkdirp = require("mkdirp"),
+  { getMsgRoom, removeMsgRoom } = require("../users.js");
 
 let upload = multer({
   dest: __dirname + "/../uploads/"
@@ -21,33 +23,6 @@ InitDb(function(err) {
   }
   dbo = getDb();
 });
-
-// let create = async (sellObj, res) => {
-//   let new_live = null;
-
-//   try {
-//     new_live = await LiveSell.findOneAndUpdate(
-//       { email: sellObj.email, state: "active" },
-//       {
-//         $set: sellObj
-//       },
-//       { upsert: true, new: true }
-//     );
-//   } catch (err) {
-//     console.log("Error, ", err);
-//     res.send(JSON.stringify({ success: false, error: err }));
-//     return;
-//   }
-//   if (new_live) {
-//     console.log(
-//       "results afer updating the stream live, and if not existed, crrated the stream for the user",
-//       new_live
-//     );
-//     res.send(JSON.stringify({ success: true, livesell: new_live }));
-//     return;
-//   }
-//   res.send(JSON.stringify({ success: false }));
-// };
 
 let create = async sellObj => {
   let new_live = null;
@@ -141,22 +116,74 @@ router.get("/doneinfo", (req, res) => {
   let stream_key = req.query.stream;
   console.log("In the server endpoint to get the video files list", stream_key);
   let ouPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].app}/${stream_key}`;
+  let newPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].archive}/${stream_key}`;
   console.log("Video folder ", ouPath);
   let oufiles = [];
   fs.readdir(ouPath, function(err, files) {
     if (!err) {
       files.forEach(filename => {
         if (filename.endsWith(".mp4")) {
-          console.log(filename);
+          //      console.log(filename);
           //  oufiles.push(ouPath + "/" + filename);
           oufiles.push(filename);
         }
       });
-      console.log(oufiles);
+
+      // if (!fs.existsSync(newPath)) {
+      //   fs.mkdirSync(newPath);
+      // }
+      const made = mkdirp.sync(newPath);
+      console.log("dir created,", made);
+      let oldPath = `${ouPath}/${oufiles[oufiles.length - 1]}`;
+      let newP = `${newPath}/${oufiles[oufiles.length - 1]}`;
+      fs.rename(oldPath, newP, err => {
+        if (err) throw err;
+        console.log("successfully remove the video to archive location", newP);
+      });
+      //  console.log(oufiles);
       res.send(JSON.stringify({ success: true, files: oufiles }));
     } else res.send(JSON.stringify({ success: false }));
   });
 });
+
+let donesave = async stream_key => {
+  const rename = util.promisify(fs.rename);
+  const readdir = util.promisify(fs.readdir);
+  console.log("In the server endpoint to get the video files list", stream_key);
+  let ouPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].app}/${stream_key}`;
+  let newPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].archive}/${stream_key}`;
+  console.log("Video folder ", ouPath);
+  let oufiles = [];
+  let files;
+  try {
+    files = await readdir(ouPath);
+  } catch (err) {
+    console.log("error during read dir, ", err);
+  }
+
+  files.forEach(filename => {
+    if (filename.endsWith(".mp4")) {
+      //      console.log(filename);
+      //  oufiles.push(ouPath + "/" + filename);
+      oufiles.push(filename);
+    }
+  });
+
+  const made = mkdirp.sync(newPath);
+  if (made) console.log("dir created,", made);
+  else console.log("dir existed");
+
+  let oldPath = `${ouPath}/${oufiles[oufiles.length - 1]}`;
+  let newP = `${newPath}/${oufiles[oufiles.length - 1]}`;
+  let videofile = oufiles[oufiles.length - 1];
+  try {
+    await rename(oldPath, newP);
+  } catch (error) {
+    console.log(error);
+  }
+  console.log("Video file move to the new locaiton,", newP);
+  return videofile;
+};
 
 router.post("/livecreator", upload.array("mfiles", 9), async (req, res) => {
   // here to get the body about the formdata inforamtion from the request
@@ -231,18 +258,25 @@ router.post("/livesave", upload.none(), async (req, res) => {
   let liveid = req.body.liveid;
   console.log("id for the live sell, ", liveid);
 
-  let videopath = req.body.videofile;
+  // need to get stream_key from client
+  let stream_key = req.body.stream_key;
+  console.log("Steam key for user", stream_key);
+  let videopath = await donesave(stream_key);
   console.log("file selected by the server", videopath);
   let frontendPath = {
     frontendPath: videopath,
     filetype: "video/mp4"
   };
   console.log("video file location, ", frontendPath);
-  //  let messages = [{ name: "admin", message: "new user connection" }];
+
   let room = liveid;
-  const { err, room_msg } = getMsgRoom({ room });
-  if (err) console.log("Error to get the messages from", err);
-  console.log("Room messages added", room_msg);
+
+  // get messages from messages array for the room and save to the database
+  //
+
+  const { error, room_msg } = getMsgRoom(room);
+  if (error) console.log("Error to get the messages from", error);
+  console.log("Room messages saved", room_msg);
 
   let newLiveSell = null;
 
@@ -268,6 +302,13 @@ router.post("/livesave", upload.none(), async (req, res) => {
       "Return from update the live sell with video source and messages,",
       newLiveSell
     );
+
+    // after the live completed, the message will be removed from the messages array
+    //
+
+    const { error, room_msg } = removeMsgRoom(room);
+    if (error) console.log("Error to remove the messages room", error);
+    console.log("Room messages removed", room_msg);
 
     let sellObj = {
       description: "",

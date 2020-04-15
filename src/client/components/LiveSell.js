@@ -4,9 +4,11 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer.js";
+//import VPlayer from "./VPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import Chat from "./Chat/Chat.js";
 import styled from "styled-components";
+import config from "../../server/config/default.js";
 
 const LiveWrapper = styled.div`
   display: flex;
@@ -52,46 +54,85 @@ export default function LiveSell(props) {
 
   const dispatch = useDispatch();
 
-  let streamlive = useSelector(store => store.streamlive);
-  let liveId = "";
+  //  let streamlive = useSelector(store => store.streamlive);
+  const user = useSelector(state => state.user);
 
-  if (streamlive) {
-    liveId = streamlive._id;
-  }
-
-  let lid = match ? match.params.lid : liveId;
-
-  let [items, setItems] = useState([]);
-  let [livesell, setLivesell] = useState(null);
+  let [items, setItems] = useState(props.livesell ? props.livesell.items : []);
+  let [livesell, setLivesell] = useState(
+    props.livesell ? props.livesell : null
+  );
+  let [chatUser, setChatUser] = useState(
+    user ? { userId: user._id, username: user.username } : null
+  );
+  const [room, setRoom] = useState(props.livesell ? props.livesell._id : "");
+  const [isOwner, setIsOwner] = useState(props.inManager);
+  let video_src = [
+    {
+      src: "https://vjs.zencdn.net/v/oceans.mp4",
+      type: "application/x-mpegURL"
+    }
+  ];
+  const [sources, setSources] = useState([]);
+  const [poster, setPoster] = useState("");
 
   console.log("props for LiveSell hooks", props);
   async function reload() {
-    if (match) {
-      axios
-        .get("/sell", {
-          params: {
-            liveid: lid
-          }
-        })
-        .then(res => {
-          const liveselled = res.data.livesell;
-          //   console.log("response from server for user data", liveselled);
-          setLivesell(liveselled);
-          setItems(liveselled.items);
-
-          // dispatch({ type: "set-items", content: livesell.items });
-        })
-        .catch(err => {
-          console.log("error in hte Live Sell use effect,", err);
-        });
-    } else {
-      setLivesell(streamlive);
-      setItems(streamlive ? streamlive.items : []);
-    }
+    let response = await axios.get("/sell", {
+      params: { liveid: match.params.lid }
+    });
+    setLivesell(response.data.livesell);
+    setItems(response.data.livesell.items);
+    setRoom(response.data.livesell._id);
   }
   useEffect(() => {
-    reload();
-  }, [streamlive]);
+    if (props.inManager) {
+      setLivesell(props.livesell);
+      setItems(props.livesell ? props.livesell.items : []);
+      setRoom(props.livesell ? props.livesell._id : "");
+    } else reload();
+  }, [props.livesell]);
+
+  useEffect(() => {
+    console.log(livesell);
+    // debugger;
+    if (livesell === null) {
+      setSources([]);
+    } else {
+      setSources(
+        livesell.state === "active"
+          ? [
+              {
+                src:
+                  "http://127.0.0.1:" +
+                  config.rtmp_server.http.port +
+                  "/live/" +
+                  livesell.stream_key +
+                  "/index.m3u8",
+                type: "application/x-mpegURL"
+              }
+            ]
+          : [
+              {
+                // src: "https://vjs.zencdn.net/v/oceans.mp4",
+                src:
+                  "http://127.0.0.1:" +
+                  config.rtmp_server.http.port +
+                  "/archive/" +
+                  livesell.stream_key +
+                  "/" +
+                  livesell.source.frontendPath,
+                type: livesell.source.filetype
+              }
+            ]
+      );
+    }
+
+    setPoster(
+      livesell && livesell.poster
+        ? livesell.poster.frontendPath
+        : "https://images.unsplash.com/photo-1522327646852-4e28586a40dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2251&q=80"
+    );
+  }, [livesell]);
 
   if (livesell) {
     return (
@@ -99,13 +140,22 @@ export default function LiveSell(props) {
         <LiveWrapper>
           <Wrapper>
             <PlayerContainer>
-              <VideoPlayer contents={livesell} />
+              <VideoPlayer
+                contents={livesell}
+                poster={poster}
+                sources={sources}
+                isLive={livesell.state === "active"}
+              />
             </PlayerContainer>
             <CarouselContainer>
               <CarouelItem slides={items} />
             </CarouselContainer>
             <ChatContainer>
-              <Chat contents={livesell} />
+              {livesell && livesell.state === "active" ? (
+                <Chat cuser={chatUser} croom={room} isOwner={isOwner} />
+              ) : (
+                <></>
+              )}
             </ChatContainer>
           </Wrapper>
         </LiveWrapper>

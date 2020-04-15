@@ -26,32 +26,29 @@ passport.use(
       console.log("if Session ID existed? ", req.sessionID);
       console.log("Inforamtion for auth, email: ", email);
       console.log("Information for auth, passord, ", password);
-      User.findOne(
-        { $or: [{ email: email }, { username: req.body.username }] },
-        (err, user) => {
-          if (err) return done(err);
-          if (user) {
-            if (user.email === email) {
-              req.flash("email", "Email is already taken");
-            }
-            if (user.username === req.body.username) {
-              req.flash("username", "Username is already taken");
-            }
-
-            return done(null, false);
-          } else {
-            let user = new User();
-            user.email = email;
-            user.password = user.generateHash(password);
-            user.username = req.body.username;
-            user.stream_key = shortid.generate();
-            user.save(err => {
-              if (err) throw err;
-              return done(null, user);
-            });
+      User.findOne({ $or: [{ email: email }] }, (err, user) => {
+        if (err) return done(err);
+        if (user) {
+          if (user.email === email) {
+            req.flash("email", "Email is already taken");
           }
+          // if (user.username === req.body.username) {
+          //   req.flash("username", "Username is already taken");
+          // }
+
+          return done(null, false);
+        } else {
+          let user = new User();
+          user.email = email;
+          user.password = user.generateHash(password);
+          user.username = req.body.username;
+          user.stream_key = shortid.generate();
+          user.save(err => {
+            if (err) throw err;
+            return done(null, user);
+          });
         }
-      );
+      });
     }
   )
 );

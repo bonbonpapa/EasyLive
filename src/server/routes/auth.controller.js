@@ -22,15 +22,17 @@ exports.google = (req, res) => {
 
 exports.facebook = async (req, res) => {
   const io = req.app.get("io");
-  const name = req.user.facebook.name;
+  const username = req.user.facebook.name;
   const email = req.user.facebook.email;
   const stream_key = req.user.stream_key;
+  const userId = req.user._id;
   const photo = req.user.facebook.photo;
 
   let sellObj = {
     description: "",
     email: email,
     category: "",
+    username: username,
     stream_key: stream_key,
     items: [],
     state: "active"
@@ -40,7 +42,8 @@ exports.facebook = async (req, res) => {
   let items = await getItems(req.user.email);
 
   const user = {
-    name: name,
+    _id: userId,
+    username: username,
     stream_key: stream_key,
     photo: photo,
     email: email

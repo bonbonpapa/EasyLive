@@ -55,6 +55,7 @@ function Signin({ history, backto, providers, socket }) {
       dispatch({ type: "set-stream", content: body.streamlive });
       dispatch({ type: "set-items", content: body.items });
       dispatch({ type: "set-cart", content: body.cart });
+      dispatch({ type: "set-shippingaddress", payload: body.user.shipping });
       if (body.streamlive)
         dispatch({ type: "set-selected", content: body.streamlive.items });
 

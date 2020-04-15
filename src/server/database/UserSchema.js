@@ -8,6 +8,20 @@ let UserSchema = new Schema({
   email: String,
   password: String,
   stream_key: String,
+  shipping: {
+    name: {
+      firstname: String,
+      lastname: String
+    },
+    address: {
+      line1: String,
+      line2: String,
+      city: String,
+      address_state: String,
+      postal_code: String,
+      country: String
+    }
+  },
   facebook: {
     id: String,
     token: String,

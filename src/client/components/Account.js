@@ -6,6 +6,7 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import AddressForm from "./AddressForm.js";
+import Streamkey from "./Streamkey.js";
 
 const useStyles = makeStyles(theme => ({
   layout: {
@@ -46,9 +47,7 @@ export default function Account() {
   const classes = useStyles();
   const [show_form, setShowForm] = useState(false);
 
-  let username = useSelector(state => state.username);
   let shippingAddress = useSelector(state => state.shippingAddress);
-  console.log("username in Purchased function components", username);
 
   const handleClick = event => {
     setShowForm(!show_form);
@@ -93,8 +92,9 @@ export default function Account() {
                 </Button>
               </div>
             </Grid>
-            {show_form ? <AddressForm onSubmit={handleClick} /> : <></>}
           </Grid>
+          {show_form ? <AddressForm onSubmit={handleClick} /> : <></>}
+          <Streamkey />
         </Paper>
       </main>
     </div>

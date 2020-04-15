@@ -1,4 +1,5 @@
 import { createStore } from "redux";
+import Messages from "./client/components/Messages/Messages";
 let reducer = (state, action) => {
   if (action.type === "login-success") {
     return {
@@ -11,9 +12,7 @@ let reducer = (state, action) => {
   if (action.type === "set-items") {
     return { ...state, items: action.content };
   }
-  if (action.type === "set-messages") {
-    return { ...state, msgs: action.messages };
-  }
+
   if (action.type === "log-out") {
     return {
       ...state,
@@ -40,12 +39,6 @@ let reducer = (state, action) => {
       streamlive: action.content
     };
   }
-  if (action.type === "set-streamview") {
-    return {
-      ...state,
-      streamview: action.content
-    };
-  }
   if (action.type === "clear-stream") {
     return {
       ...state,
@@ -64,6 +57,76 @@ let reducer = (state, action) => {
       cart: action.content
     };
   }
+  if (action.type === "set-token") {
+    return {
+      ...state,
+      token: action.payload
+    };
+  }
+  if (action.type === "set-shippingaddress") {
+    let shippingCopy = { ...state.shippingAddress };
+    shippingCopy = action.payload;
+    return {
+      ...state,
+      shippingAddress: shippingCopy
+    };
+  }
+  if (action.type === "set-order") {
+    return {
+      ...state,
+      order: action.payload
+    };
+  }
+  if (action.type === "clear-shoppinglist") {
+    return {
+      ...state,
+      cart: null
+    };
+  }
+  if (action.type === "set-video") {
+    return {
+      ...state,
+      videosave: action.content
+    };
+  }
+  if (action.type === "create-room") {
+    return {
+      ...state,
+      msgs: [...state.msgs, { room: action.room, msgs: [] }]
+    };
+  }
+  if (action.type === "set-messages") {
+    return {
+      ...state,
+      msgs: state.msgs.map(msg =>
+        msg.room === action.room ? { ...msg, msgs: action.content } : msg
+      )
+    };
+  }
+  if (action.type === "add-message") {
+    return {
+      ...state,
+      msgs: state.msgs.map(msg =>
+        msg.room === action.room
+          ? { ...msg, msgs: [...msg.msgs, action.content] }
+          : msg
+      )
+    };
+  }
+  if (action.type === "clear-message") {
+    return {
+      ...state,
+      msgs: state.msgs.map(msg =>
+        msg.room === action.room ? { ...msg, msgs: [] } : msg
+      )
+    };
+  }
+  if (action.type === "set-live") {
+    return {
+      ...state,
+      sources: action.sources
+    };
+  }
   return state;
 };
 
@@ -80,13 +143,14 @@ const store = createStore(
     selected: [],
     liveselled: [],
     streamlive: null,
-    streamview: null,
     user: null,
     searchQuery: "",
     msgs: [],
     shippingAddress: null,
     token: null,
-    order: null
+    order: null,
+    videosave: "",
+    sources: []
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

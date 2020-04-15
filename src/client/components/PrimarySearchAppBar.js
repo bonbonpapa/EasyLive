@@ -5,6 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
 import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -31,6 +32,10 @@ const MenuLink = styled(Link)`
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
+  },
+  root: {
+    //backgroundColor: "#2196F3";
+    background: "linear-gradient(260deg, #2376ae 0%, #c16ecf 100%)"
   },
   menuButton: {
     marginRight: theme.spacing(2)
@@ -93,12 +98,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function PrimarySearchAppBar({ history }) {
+function PrimarySearchAppBar({ history, handleLogout }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const query = useSelector(state => state.searchQuery);
+  const lgin = useSelector(state => state.loggedIn);
+  const user = useSelector(state => state.user);
   const cart = useSelector(state => state.cart);
   const shoppingListCount = cart
     ? cart.products.reduce((total, product) => {
@@ -132,12 +139,12 @@ function PrimarySearchAppBar({ history }) {
     dispatch({ type: "query", content: event.target.value });
   };
 
-  const handleLogout = event => {
-    fetch("/logout", { method: "POST", credentials: "same-origin" });
-    history.push("/");
+  // const handleLogout = event => {
+  //   fetch("/logout", { method: "POST", credentials: "same-origin" });
+  //   history.push("/");
 
-    dispatch({ type: "log-out" });
-  };
+  //   dispatch({ type: "log-out" });
+  // };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -157,7 +164,11 @@ function PrimarySearchAppBar({ history }) {
         <MenuLink to="/account">My Account</MenuLink>
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>
-        <IconButton onClick={handleLogout}>Logout</IconButton>
+        {lgin ? (
+          <IconButton onClick={handleLogout}>Logout</IconButton>
+        ) : (
+          <MenuLink to="/sign">Sign</MenuLink>
+        )}
       </MenuItem>
     </Menu>
   );
@@ -203,7 +214,7 @@ function PrimarySearchAppBar({ history }) {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar className={classes.root} position="static">
         <Toolbar>
           <IconButton
             edge="start"
@@ -217,9 +228,6 @@ function PrimarySearchAppBar({ history }) {
               </div>
             </NavbarLink>
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            <NavbarLink to="/buy">EASY BAY</NavbarLink>
-          </Typography>
           <Typography className={classes.title} variant="h6" noWrap>
             <NavbarLink to="/">EASY LIVE</NavbarLink>
           </Typography>
@@ -240,8 +248,11 @@ function PrimarySearchAppBar({ history }) {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="sell items" color="inherit">
+            <IconButton aria-label="manager live" color="inherit">
               <NavbarLink to="/manager">STREAM MANAGER</NavbarLink>
+            </IconButton>
+            <IconButton aria-label="buy item" color="inherit">
+              <NavbarLink to="/buy">BUY</NavbarLink>
             </IconButton>
             <IconButton aria-label="sell items" color="inherit">
               <NavbarLink to="/updateItems">SELL</NavbarLink>
@@ -263,7 +274,11 @@ function PrimarySearchAppBar({ history }) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              {user && user.photo ? (
+                <Avatar alt="Remy Sharp" src={user.photo} />
+              ) : (
+                <AccountCircle />
+              )}
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

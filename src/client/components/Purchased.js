@@ -53,8 +53,8 @@ export default function Purchased() {
   const classes = useStyles();
 
   let [orders, setOrders] = useState([]);
-  let username = useSelector(state => state.username);
-  console.log("username in Purchased function components", username);
+  // let username = useSelector(state => state.username);
+  // console.log("username in Purchased function components", username);
 
   const [open, setOpen] = React.useState(true);
   const handleClick = () => {
@@ -63,7 +63,8 @@ export default function Purchased() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/buy/get-orders?username=" + username);
+      // const res = await fetch("/buy/get-orders?username=" + username);
+      const res = await fetch("/buy/get-orders");
       let body = await res.text();
       body = JSON.parse(body);
       console.log("Body returned from server", body);
@@ -85,10 +86,9 @@ export default function Purchased() {
           </Typography>
           <List disablePadding>
             {orders.map(order => (
-              <>
+              <div key={order._id}>
                 <ListItem
                   className={classes.listItem}
-                  key={order._id}
                   button
                   onClick={handleClick}
                 >
@@ -109,7 +109,11 @@ export default function Purchased() {
                 <Collapse in={open} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {order.products.map(product => (
-                      <ListItem button className={classes.nested}>
+                      <ListItem
+                        button
+                        key={product._id}
+                        className={classes.nested}
+                      >
                         <ListItemIcon>
                           <FormatListBulletedIcon />
                         </ListItemIcon>
@@ -121,7 +125,7 @@ export default function Purchased() {
                     ))}
                   </List>
                 </Collapse>
-              </>
+              </div>
             ))}
           </List>
         </Paper>

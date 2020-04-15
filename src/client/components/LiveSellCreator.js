@@ -39,6 +39,8 @@ export default function LiveSellCreator() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [poster, setPoster] = useState(null);
 
   const [stream_key, setStreamKey] = useState(user ? user.stream_key : "");
@@ -47,6 +49,8 @@ export default function LiveSellCreator() {
     setDescription(streamlive ? streamlive.description : "");
     setCategory(streamlive ? streamlive.category : "");
     setStreamKey(user ? user.stream_key : "");
+    setEmail(user ? user.email : "");
+    setUsername(user ? user.username : "");
   }, [streamlive, user]);
 
   async function handleSubmit(event) {
@@ -55,9 +59,9 @@ export default function LiveSellCreator() {
     let data = new FormData();
     data.append("description", description);
     data.append("category", category);
-    data.append("email", "aa@qq.com");
+    data.append("email", email);
     data.append("stream_key", stream_key);
-    data.append("username", "pi");
+    data.append("username", username);
     data.append("items", JSON.stringify(selected));
     data.append("mfiles", thumbnail);
     data.append("mfiles", poster);
