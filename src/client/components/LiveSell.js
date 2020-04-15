@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
-//import VideoPlayer from "./VideoPlayer.js";
 import VPlayer from "./VPlayer.js";
 import CarouelItem from "./CarouelItem.jsx";
 import Chat from "./Chat/Chat.js";
@@ -70,7 +69,7 @@ export default function LiveSell(props) {
   const dispatch = useDispatch();
 
   //  let streamlive = useSelector(store => store.streamlive);
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
 
   const [videoSave, setVideoSave] = useState(true);
 
@@ -84,26 +83,42 @@ export default function LiveSell(props) {
   const [room, setRoom] = useState(props.livesell ? props.livesell._id : "");
   const [isOwner, setIsOwner] = useState(props.inManager);
   const [stream_key, setStreamkey] = useState("");
-  const [videoJsOptions, setVideoJsOptions] = useState({
-    autoplay: false,
-    controls: true,
-    src: undefined,
-    poster:
-      "https://images.unsplash.com/photo-1522327646852-4e28586a40dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2251&q=80"
-  });
 
-  const [sources, setSources] = useState([]);
+  const [source, setSource] = useState("");
   const [poster, setPoster] = useState("");
+  const [control, setControl] = useState(false);
+  const [autoplay, setAutoplay] = useState(false);
+  const [title, setTitle] = useState(
+    props.livesell ? props.livesell.email : "live title"
+  );
+  const [description, setDescription] = useState(
+    props.livesell ? props.livesell.description : "live description"
+  );
 
+  const [videoJsOptions, setVideoJsOptions] = useState({
+    autoplay: autoplay,
+    controls: control,
+    src: "",
+    title: props.livesell ? props.livesell.email : "live title",
+    description: props.livesell
+      ? props.livesell.description
+      : "live description",
+    poster:
+      "https://images.unsplash.com/photo-1522327646852-4e28586a40dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2251&q=80",
+  });
   console.log("props for LiveSell hooks", props);
+
   async function reload() {
     let response = await axios.get("/sell", {
-      params: { liveid: match.params.lid }
+      params: { liveid: match.params.lid },
     });
     setLivesell(response.data.livesell);
     setItems(response.data.livesell.items);
     setRoom(response.data.livesell._id);
     setStreamkey(response.data.livesell.stream_key);
+    setControl(response.data.livesell.state === "active" ? false : true);
+    setTitle(response.data.livesell.email);
+    setDescription(response.data.livesell.description);
   }
   useEffect(() => {
     if (props.inManager) {
@@ -118,35 +133,21 @@ export default function LiveSell(props) {
     console.log(livesell);
     // debugger;
     if (livesell === null) {
-      setSources([]);
+      setSource("");
     } else {
-      setSources(
+      setSource(
         livesell.state === "active"
-          ? [
-              {
-                src:
-                  "http://127.0.0.1:" +
-                  config.rtmp_server.http.port +
-                  "/live/" +
-                  livesell.stream_key +
-                  "/index.m3u8",
-                type: "application/x-mpegURL"
-              }
-            ]
-          : [
-              {
-                // src: "https://vjs.zencdn.net/v/oceans.mp4",
-                src:
-                  "http://127.0.0.1:" +
-                  config.rtmp_server.http.port +
-                  "/archive/" +
-                  livesell.stream_key +
-                  "/" +
-                  livesell.source.frontendPath,
-                type: livesell.source.filetype
-              }
-            ]
+          ? ""
+          : "http://127.0.0.1:" +
+              config.rtmp_server.http.port +
+              "/archive/" +
+              livesell.stream_key +
+              "/" +
+              livesell.source.frontendPath
       );
+      setControl(livesell.state === "active" ? false : true);
+      setTitle(livesell.email);
+      setDescription(livesell.description);
     }
 
     setPoster(
@@ -156,11 +157,29 @@ export default function LiveSell(props) {
     );
   }, [livesell]);
 
-  const handleVideoSaveChange = event => {
+  useEffect(() => {
+    setVideoJsOptions({
+      ...videoJsOptions,
+      src: source,
+      poster: poster,
+      title: title,
+      description: description,
+      controls: control,
+    });
+  }, [source, poster, title, description, control]);
+
+  // useEffect(() => {
+  //   setVideoJsOptions({
+  //     ...videoJsOptions,
+  //     poster: poster,
+  //   });
+  // }, [poster]);
+
+  const handleVideoSaveChange = (event) => {
     setVideoSave(event.target.checked);
   };
 
-  const handleClickSave = async event => {
+  const handleClickSave = async (event) => {
     event.preventDefault();
 
     let data = new FormData();
@@ -169,7 +188,7 @@ export default function LiveSell(props) {
 
     const options = {
       method: "POST",
-      body: data
+      body: data,
     };
 
     let response = await fetch("/sell/livesave", options);
@@ -187,16 +206,25 @@ export default function LiveSell(props) {
     alert("live save failed");
   };
 
-  const handleClickGoLive = event => {
+  const handleClickGoLive = (event) => {
     event.preventDefault();
     setVideoJsOptions({
       ...videoJsOptions,
+      controls: true,
+      autoplay: true,
       src:
         "http://127.0.0.1:" +
         config.rtmp_server.http.port +
         "/live/" +
         livesell.stream_key +
-        "/index.m3u8"
+        "/index.m3u8",
+      // src:
+      //   "http://127.0.0.1:" +
+      //   config.rtmp_server.http.port +
+      //   "/live/" +
+      //   livesell.stream_key +
+      //   "/index.m3u8",
+      // src: "http://127.0.0.1:8888/archive/8pxPkPyD/2020-04-14-12-24.mp4",
     });
   };
 

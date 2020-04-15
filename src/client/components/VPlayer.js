@@ -6,7 +6,7 @@ import "videojs-dock";
 import config from "../../server/config/default.js";
 import "./VideoPlayer.css";
 
-const usePlayer = ({ src, controls, autoplay }) => {
+const usePlayer = ({ src, controls, autoplay, title, description }) => {
   const options = {
     fill: true,
     fluid: true,
@@ -15,21 +15,35 @@ const usePlayer = ({ src, controls, autoplay }) => {
       hls: {
         enableLowInitialPlaylist: true,
         smoothQualityChange: true,
-        overrideNative: true
-      }
-    }
+        overrideNative: true,
+      },
+    },
   };
   const videoRef = useRef(null);
   const [player, setPlayer] = useState(null);
 
   useEffect(() => {
-    const vjsPlayer = videojs(videoRef.current, {
-      ...options,
-      controls,
-      autoplay,
-      sources: [src]
+    const vjsPlayer = videojs(
+      videoRef.current,
+      {
+        ...options,
+        controls,
+        autoplay,
+        sources: src === "" ? [] : [src],
+        //sources: [src],
+      },
+      function onPlayerReady() {
+        console.log("onPlayerReady", this);
+        let reloadOptions = {};
+        reloadOptions.errorInterval = 10;
+        this.reloadSourceOnError(reloadOptions);
+      }
+    );
+    vjsPlayer.dock({ title: title, description: description });
+    vjsPlayer.on("error", function () {
+      this.pause();
+      console.log("Following error occured from the player:", this.error());
     });
-    vjsPlayer.dock({ title: "email", description: "description" });
     setPlayer(vjsPlayer);
 
     return () => {
@@ -38,21 +52,55 @@ const usePlayer = ({ src, controls, autoplay }) => {
       }
     };
   }, []);
+
   useEffect(() => {
     if (player !== null) {
       player.src({ src });
     }
   }, [src]);
+  useEffect(() => {
+    if (player !== null) {
+      player.controls(controls);
+    }
+  }, [controls]);
+  useEffect(() => {
+    if (player !== null) {
+      player.autoplay(autoplay);
+    }
+  }, [autoplay]);
+  useEffect(() => {
+    if (player !== null) {
+      player.dock({ title: title, description: description });
+    }
+  }, [title, description]);
 
   return videoRef;
 };
 
-const VPlayer = ({ src, controls, autoplay, poster }) => {
-  const playerRef = usePlayer({ src, controls, autoplay });
+const VPlayer = ({ src, controls, autoplay, poster, title, description }) => {
+  const playerRef = usePlayer({ src, controls, autoplay, title, description });
+
+  const handlErrorVideo = (event) => {
+    console.log(event);
+    event.stopPropagation();
+
+    let error = event.target.error;
+    console.log(
+      "Following error occured from the player:",
+      error.code,
+      error.type,
+      error.message
+    );
+  };
 
   return (
     <div data-vjs-player>
-      <video ref={playerRef} className="video-js" poster={poster} />
+      <video
+        ref={playerRef}
+        className="video-js"
+        poster={poster}
+        onError={handlErrorVideo}
+      />
     </div>
   );
 };
@@ -60,12 +108,12 @@ const VPlayer = ({ src, controls, autoplay, poster }) => {
 VPlayer.propTypes = {
   src: PropTypes.string.isRequired,
   controls: PropTypes.bool,
-  autoplay: PropTypes.bool
+  autoplay: PropTypes.bool,
 };
 
 VPlayer.defaultProps = {
   controls: true,
-  autoplay: false
+  autoplay: false,
 };
 
 export default VPlayer;
