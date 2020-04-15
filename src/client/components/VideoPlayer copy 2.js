@@ -18,25 +18,49 @@ class VideoPlayer extends Component {
   }
 
   componentDidMount() {
-    console.log(this.videoNode);
-    this.player = videojs(
-      this.videoNode,
-      this.props.videoJsOptions,
-      function onPlayerReady() {
-        console.log("onPlayerReady", this);
-        let reloadOptions = {};
-        reloadOptions.errorInterval = 10;
-        this.reloadSourceOnError(reloadOptions);
+    const livesell = this.props.contents;
+    const videoOption = this.props.isLive
+      ? {
+          autoplay: false,
+          controls: false,
+          sources: [],
+          fluid: true
+        }
+      : {
+          autoplay: false,
+          controls: true,
+          sources: this.props.sources,
+          fluid: true
+        };
+    console.log("Live sell components in video sell,", livesell);
+
+    this.setState(
+      {
+        stream: true,
+        videoJsOptions: videoOption
+      },
+      () => {
+        console.log(this.videoNode);
+        this.player = videojs(
+          this.videoNode,
+          this.state.videoJsOptions,
+          function onPlayerReady() {
+            console.log("onPlayerReady", this);
+            let reloadOptions = {};
+            reloadOptions.errorInterval = 10;
+            this.reloadSourceOnError(reloadOptions);
+          }
+        );
+        this.player.on("error", function() {
+          this.pause();
+          console.log("Following error occured from the player:", this.error());
+        });
+        this.player.dock({
+          title: livesell.email,
+          description: livesell.description
+        });
       }
     );
-    this.player.on("error", function() {
-      this.pause();
-      console.log("Following error occured from the player:", this.error());
-    });
-    this.player.dock({
-      title: "email",
-      description: "description"
-    });
   }
 
   componentWillUnmount() {
@@ -44,17 +68,6 @@ class VideoPlayer extends Component {
       this.player.dispose();
     }
   }
-  componentWillReceiveProps(newsProps) {
-    console.log(this.videoNode);
-    if (this.player) {
-      this.player.autoplay(false);
-      this.player.controls(true);
-      this.player.src(this.state.videoJsOptions.sources[0]);
-      this.player.fluid(true);
-      this.player.load();
-    }
-  }
-
   handlErrorVideo = event => {
     console.log(event);
     event.stopPropagation();

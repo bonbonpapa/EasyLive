@@ -121,12 +121,6 @@ let reducer = (state, action) => {
       )
     };
   }
-  if (action.type === "set-live") {
-    return {
-      ...state,
-      sources: action.sources
-    };
-  }
   return state;
 };
 
@@ -149,8 +143,7 @@ const store = createStore(
     shippingAddress: null,
     token: null,
     order: null,
-    videosave: "",
-    sources: []
+    videosave: ""
   },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );

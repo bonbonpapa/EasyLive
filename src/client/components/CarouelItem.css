@@ -11,7 +11,7 @@
   -webkit-box-direction: normal;
   flex-direction: column;
   -webkit-box-pack: center;
-  justify-content: center;
+  justify-content: flex-end;
   height: 160px;
 }
 
