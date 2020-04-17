@@ -27,7 +27,7 @@ let url = config.mongodb_url.url;
 mongoose.connect(url, {
   dbName: "easy-live",
   useNewUrlParser: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 });
 
 const dbgoo = mongoose.connection;
@@ -38,7 +38,7 @@ dbgoo.once("open", () => {
   console.log("> successfully opened the database");
 });
 
-InitDb(function(err) {
+InitDb(function (err) {
   if (err) {
     console.log("Error with the Mongodb database initializaion error ", err);
     return;
@@ -56,7 +56,7 @@ const {
   getUser,
   getUsersInRoom,
   addMsgRoom,
-  addMessage
+  addMessage,
 } = require("./users.js");
 
 // API for the socket IO connection here
@@ -89,30 +89,30 @@ app.use(bodyParse.urlencoded({ extended: true }));
 app.use(bodyParse.json());
 app.use(
   cors({
-    origin: ["http://127.0.0.1:3000", "http://localhost:3000"]
+    origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
   })
 );
 
 app.use(
   Session({
     store: new FileStore({
-      path: "server/sessions"
+      path: "server/sessions",
     }),
     secret: config.server.secret,
     maxAge: Date().now + 60 * 1000 * 30,
     resave: true,
-    saveUninitialized: false
+    saveUninitialized: false,
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-io.on("connection", function(socket) {
+io.on("connection", function (socket) {
   console.log("socket at connection,", socket.id);
 
   socket.on("create", ({ chatUser, room }, callback) => {
@@ -125,7 +125,7 @@ io.on("connection", function(socket) {
     socket.join(user.room);
     socket.emit("message", {
       user: "admin",
-      text: `${user.username}, Chat room created.`
+      text: `${user.username}, Chat room created.`,
     });
     callback();
   });
@@ -144,12 +144,12 @@ io.on("connection", function(socket) {
     socket.join(user.room);
     socket.emit("message", {
       user: "admin",
-      text: `${user.username}, Welcome to room ${user.room}.`
+      text: `${user.username}, Welcome to room ${user.room}.`,
     });
     socket.emit("msgs", room_msg);
     io.to(user.room).emit("roomData", {
       room: user.room,
-      users: getUsersInRoom(user.room)
+      users: getUsersInRoom(user.room),
     });
     callback();
   });
@@ -176,12 +176,12 @@ io.on("connection", function(socket) {
     if (user) {
       io.to(user.room).emit("message", {
         user: "Admin",
-        text: `${user.username} has left.`
+        text: `${user.username} has left.`,
       });
 
       io.to(user.room).emit("roomData", {
         room: user.room,
-        users: getUsersInRoom(user.room)
+        users: getUsersInRoom(user.room),
       });
     }
   });
@@ -203,11 +203,21 @@ app.get("/fail", (req, res) => {
   res.send(JSON.stringify({ success: false }));
 });
 
-// app.all("/*", (req, res, next) => {
-//   res.sendFile(__dirname + "/build/index.html");
-// });
+app.all("/*", (req, res, next) => {
+  res.sendFile(__dirname + "/build/index.html");
+});
 
+const { PORT = 4000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
 //app.listen(port, () => console.log(`Server app is listening on ${port}!`));
-server.listen(port, () => console.log(`Listening on port ${port}`));
+
+// server is created with app opton, so only listen to the server is necessart
+
+//server.listen(port, () => console.log(`Listening on port ${port}`));
+
+//Change with process.env on the port for deplyment
+server.listen(PORT, LOCAL_ADDRESS, () =>
+  console.log(`Listening on port ${port}`)
+);
+
 node_media_server.run();
 thumbnail_generator.start();
