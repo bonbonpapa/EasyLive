@@ -1,12 +1,23 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
+import OAuth from "./OAuth.js";
 
-function Signup({ history, backto }) {
+function Signup({ history, backto, providers, socket }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+
+  const buttons = (providers, socket) =>
+    providers.map((provider) => (
+      <OAuth
+        provider={provider}
+        key={provider}
+        socket={socket}
+        backto={backto}
+      />
+    ));
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -48,14 +59,7 @@ function Signup({ history, backto }) {
     <div className="form-container sign-up-container">
       <form className="signform" onSubmit={handleSubmit}>
         <h1 className="signH1">Create Account</h1>
-        <div className="social-container">
-          <a href="/#" className="social sign_a">
-            <i className="fab fa-facebook-f"></i>
-          </a>
-          <a href="/#" className="social sign_a">
-            <i className="fab fa-linkedin-in"></i>
-          </a>
-        </div>
+        <div className="social-container">{buttons(providers, socket)}</div>
         <span className="signSpan">or use your email for registration</span>
         <input
           className="signInput"

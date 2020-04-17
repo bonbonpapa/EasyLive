@@ -4,6 +4,79 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import FontAwesome from "react-fontawesome";
 import { API_URL } from "./config";
+import styled from "styled-components";
+import "./OAuth.css";
+
+const Buttonlg = styled.div`
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+  transition-timing-function: ease-in;
+  transition: 0.3s;
+  transform: scale(0.7);
+
+  &:hover {
+    box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+  &.disabled {
+    background-color: #999 !important;
+    cursor: no-drop;
+    disabled:hover {
+      box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  &.disabled:hover span {
+    text-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+  }
+
+  span {
+    font-size: 3em !important;
+    text-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+    transition: 0.3s;
+    color: #fff;
+  }
+
+  &:hover span {
+    text-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
+    transform: rotate(-1.1deg);
+  }
+
+  /* Facebook */
+  &.facebook {
+    border: 3px solid #ffffff;
+    background: #8b9dc3;
+  }
+
+  &.facebook:hover {
+    background: #3b5998;
+  }
+`;
+
+const Cardlg = styled.div`
+  background-color: #fff;
+  border-radius: 3%;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  word-wrap: break-word;
+  width: 100px;
+  height: 100%;
+  margin-bottom: 20px;
+  transition: 0.5s;
+
+  &:hover {
+    box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.45);
+  }
+  h4 {
+    font-size: 0.8em;
+    margin: 5px;
+    color: #757575;
+  }
+  img {
+    width: 100px;
+    border-radius: 3% 3% 0 0;
+  }
+`;
 
 class OAuth extends Component {
   _isMounted = false;
@@ -21,7 +94,7 @@ class OAuth extends Component {
 
     socket.on(provider, (userLogin) => {
       console.log(userLogin);
-      this.popup.close();
+      if (this.popup) this.popup.close();
       if (this._isMounted) {
         this.setState({ user: userLogin.user });
       }
@@ -33,7 +106,6 @@ class OAuth extends Component {
       this.props.dispatch({ type: "set-useritems", content: userLogin.items });
       if (userLogin.sell)
         this.props.dispatch({ type: "set-selected", content: userLogin.sell });
-      this.props.history.push(this.props.backto);
     });
   }
 
@@ -77,36 +149,38 @@ class OAuth extends Component {
 
   closeCard = () => {
     this.setState({ user: {} });
+    this.props.history.push(this.props.backto);
   };
   componentWillUnmount() {
     this._isMounted = false;
   }
 
   render() {
-    const { name, photo } = this.state.user;
+    const { username, photo } = this.state.user;
     const { provider } = this.props;
     const { disabled } = this.state;
 
     return (
       <div>
-        {name ? (
-          <div className="card">
-            <img src={photo} alt={name} />
+        {username ? (
+          <Cardlg className="lgcard">
+            <img src={photo} alt={username} />
             <FontAwesome
-              name="times-circle"
+              name="check-circle"
               className="close"
               onClick={this.closeCard}
             />
-          </div>
+            <h4>{username}</h4>
+          </Cardlg>
         ) : (
           <div className="button-wrapper fadein-fast">
-            <button
+            <Buttonlg
               type="button"
               onClick={this.startAuth}
               className={`${provider} ${disabled} button`}
             >
               <FontAwesome name={provider} />
-            </button>
+            </Buttonlg>
           </div>
         )}
       </div>

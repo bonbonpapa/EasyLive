@@ -146,9 +146,10 @@ router.get("/doneinfo", (req, res) => {
   });
 });
 
-let donesave = async (stream_key) => {
+let donesave = async (stream_key, isSave) => {
   const rename = util.promisify(fs.rename);
   const readdir = util.promisify(fs.readdir);
+  const unlink = util.promisify(fs.unlink);
   console.log("In the server endpoint to get the video files list", stream_key);
   let ouPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].app}/${stream_key}`;
   let newPath = `${config.rtmp_server.http.mediaroot}/${config.rtmp_server.trans.tasks[0].archive}/${stream_key}`;
@@ -169,20 +170,32 @@ let donesave = async (stream_key) => {
     }
   });
 
-  const made = mkdirp.sync(newPath);
-  if (made) console.log("dir created,", made);
-  else console.log("dir existed");
+  if (isSave) {
+    const made = mkdirp.sync(newPath);
+    if (made) console.log("dir created,", made);
+    else console.log("dir existed");
 
-  let oldPath = `${ouPath}/${oufiles[oufiles.length - 1]}`;
-  let newP = `${newPath}/${oufiles[oufiles.length - 1]}`;
-  let videofile = oufiles[oufiles.length - 1];
-  try {
-    await rename(oldPath, newP);
-  } catch (error) {
-    console.log(error);
+    let oldPath = `${ouPath}/${oufiles[oufiles.length - 1]}`;
+    let newP = `${newPath}/${oufiles[oufiles.length - 1]}`;
+    let videofile = oufiles[oufiles.length - 1];
+    try {
+      await rename(oldPath, newP);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("Video file move to the new locaiton,", newP);
+    return videofile;
+  } else {
+    let oldPath = `${ouPath}/${oufiles[oufiles.length - 1]}`;
+    let videofile = oufiles[oufiles.length - 1];
+    try {
+      await unlink(oldPath);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("Video stream deleted", oldPath);
+    return videofile;
   }
-  console.log("Video file move to the new locaiton,", newP);
-  return videofile;
 };
 
 router.post("/livecreator", upload.array("mfiles", 9), async (req, res) => {
@@ -260,8 +273,13 @@ router.post("/livesave", upload.none(), async (req, res) => {
 
   // need to get stream_key from client
   let stream_key = req.body.stream_key;
+  let videoSave = req.body.savevideo;
+  console.log("In server side for videoSave", videoSave);
+  let isSave = videoSave === "true" ? true : false;
+  console.log("In server side for isSave", isSave);
+
   console.log("Steam key for user", stream_key);
-  let videopath = await donesave(stream_key);
+  let videopath = await donesave(stream_key, isSave);
   console.log("file selected by the server", videopath);
   let frontendPath = {
     frontendPath: videopath,
@@ -287,7 +305,7 @@ router.post("/livesave", upload.none(), async (req, res) => {
         $set: {
           source: frontendPath,
           messages: room_msg.msgs,
-          state: "completed",
+          state: isSave ? "completed" : "archive",
         },
       },
       { new: true }

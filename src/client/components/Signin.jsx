@@ -70,7 +70,8 @@ function Signin({ history, backto, providers, socket }) {
     <div className="form-container sign-in-container">
       <form className="signform" onSubmit={handleSubmit}>
         <h1 className="signH1">Sign in</h1>
-        <div className="social-container">{buttons(providers, socket)}</div>
+        {/* <div className="social-container">{buttons(providers, socket)}</div> */}
+        {buttons(providers, socket)}
         <input
           className="signInput"
           type="email"
@@ -85,9 +86,6 @@ function Signin({ history, backto, providers, socket }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <a className="sign_a" href="/#">
-          Forgot your password?
-        </a>
         <button className="btn" type="submit">
           Sign In
         </button>

@@ -26,17 +26,24 @@ class ItemDetails extends Component {
     let itemCandidates = this.props.items.filter((item) => {
       return item._id === itemId;
     });
-    this.setState({
-      contents: itemCandidates[0],
-    });
+    if (itemCandidates.length >= 1)
+      this.setState({
+        contents: itemCandidates[0],
+      });
+    else this.reload(itemId);
+  };
+
+  reload = async (itemId) => {
+    let response = await fetch("/buy/get-item?itemId=" + itemId);
+    let body = await response.text();
+    console.log("/all-items response", body);
+    body = JSON.parse(body);
+    if (body.success) {
+      this.setState({ contents: body.items[0] });
+    }
   };
 
   addtoShoppingList = async () => {
-    // this.props.dispatch({
-    //   type: "add-shoppinglist",
-    //   content: this.props.contents
-    // });
-
     //check if the item existed in the cart, if yes, send the existed to backend end to increase the quantity
     // if the item not in the cart, send not existed to backend to push the product to the cart
     let existed = false;
@@ -69,14 +76,8 @@ class ItemDetails extends Component {
   };
 
   render() {
-    const {
-      description,
-      price,
-      inventory,
-      location,
-      seller,
-      frontendPaths,
-    } = this.state.contents;
+    const { description, price, inventory, location, seller, frontendPaths } =
+      this.state.contents || {};
 
     return (
       <Wrapper>

@@ -6,7 +6,7 @@ import "videojs-dock";
 import config from "../../server/config/default.js";
 import "./VideoPlayer.css";
 
-const usePlayer = ({ src, controls, autoplay, title, description }) => {
+const usePlayer = ({ src, controls, autoplay, poster, title, description }) => {
   const options = {
     fill: true,
     fluid: true,
@@ -30,6 +30,7 @@ const usePlayer = ({ src, controls, autoplay, title, description }) => {
         controls,
         autoplay,
         sources: src === "" ? [] : [src],
+
         //sources: [src],
       },
       function onPlayerReady() {
@@ -78,7 +79,14 @@ const usePlayer = ({ src, controls, autoplay, title, description }) => {
 };
 
 const VPlayer = ({ src, controls, autoplay, poster, title, description }) => {
-  const playerRef = usePlayer({ src, controls, autoplay, title, description });
+  const playerRef = usePlayer({
+    src,
+    controls,
+    autoplay,
+    poster,
+    title,
+    description,
+  });
 
   const handlErrorVideo = (event) => {
     console.log(event);

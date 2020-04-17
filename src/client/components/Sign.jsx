@@ -41,6 +41,8 @@ export default function Sign(props) {
       <div className={signClass.join(" ")}>
         <Signup
           backto={props.location.state ? props.location.state.from : "/"}
+          providers={providers}
+          socket={socket}
         />
         <Signin
           backto={props.location.state ? props.location.state.from : "/"}

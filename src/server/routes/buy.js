@@ -12,16 +12,33 @@ const express = require("express"),
   cors = require("cors");
 
 let upload = multer({
-  dest: __dirname + "/../uploads/"
+  dest: __dirname + "/../uploads/",
 });
 let dbo = undefined;
 
-InitDb(function(err) {
+InitDb(function (err) {
   if (err) {
     console.log("Error with the Mongodb database initializaion error ", err);
     return;
   }
   dbo = getDb();
+});
+
+router.get("/get-item", (req, res) => {
+  console.log("request to server to get item");
+  const itemId = req.query.itemId;
+  dbo
+    .collection("items")
+    .find({ _id: ObjectID(itemId) })
+    .toArray((err, items) => {
+      if (err) {
+        console.log("error", err);
+        res.send(JSON.stringify({ success: false }));
+        return;
+      }
+      // console.log("Items", items);
+      res.send(JSON.stringify({ success: true, items: items }));
+    });
 });
 
 router.get("/all-items", (req, res) => {
@@ -97,7 +114,7 @@ router.post("/charge", cors(), async (req, res) => {
       result = await inventory.findOneAndUpdate(
         {
           _id: ObjectID(product._id),
-          inventory: { $gte: parseInt(product.quantity) }
+          inventory: { $gte: parseInt(product.quantity) },
         },
         {
           $inc: { inventory: -parseInt(product.quantity) },
@@ -105,9 +122,9 @@ router.post("/charge", cors(), async (req, res) => {
             reservations: {
               quantity: parseInt(product.quantity),
               _id: cart._id,
-              createdOn: new Date()
-            }
-          }
+              createdOn: new Date(),
+            },
+          },
         }
       );
     } catch (err) {
@@ -131,11 +148,11 @@ router.post("/charge", cors(), async (req, res) => {
         result = await inventory.findOneAndUpdate(
           {
             _id: ObjectID(success[i]._id),
-            "reservations._id": cart._id
+            "reservations._id": cart._id,
           },
           {
             $inc: { inventory: parseInt(success[i].quantity) },
-            $pull: { reservations: { _id: cart._id } }
+            $pull: { reservations: { _id: cart._id } },
           },
           { returnOriginal: false }
         );
@@ -146,7 +163,7 @@ router.post("/charge", cors(), async (req, res) => {
     }
     // res.send(JSON.stringify({ success: false }));
     res.status(500).json({
-      message: "inventories cannot be reserved."
+      message: "inventories cannot be reserved.",
     });
     return;
   }
@@ -160,7 +177,7 @@ router.post("/charge", cors(), async (req, res) => {
       amount,
       currency: "usd",
       source,
-      receipt_email
+      receipt_email,
     });
 
     if (!charge) throw new Error("charge unsuccessful");
@@ -172,7 +189,7 @@ router.post("/charge", cors(), async (req, res) => {
     // });
   } catch (error) {
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 
@@ -182,31 +199,31 @@ router.post("/charge", cors(), async (req, res) => {
     userId: userId,
     shipping: {
       name: "username",
-      address: "Some street 1, NY 11223"
+      address: "Some street 1, NY 11223",
     },
     payment: {
       method: "visa",
-      transaction_id: "231221441XXXTD"
+      transaction_id: "231221441XXXTD",
     },
-    products: cart.products
+    products: cart.products,
   });
 
   carts.findOneAndUpdate(
     {
       _id: ObjectID(cart._id),
-      state: "active"
+      state: "active",
     },
     {
-      $set: { state: "completed" }
+      $set: { state: "completed" },
     }
   );
 
   inventory.updateMany(
     {
-      "reservations._id": cart._id
+      "reservations._id": cart._id,
     },
     {
-      $pull: { reservations: { _id: cart._id } }
+      $pull: { reservations: { _id: cart._id } },
     },
     { upsert: false }
   );
@@ -215,7 +232,7 @@ router.post("/charge", cors(), async (req, res) => {
 
   res.status(200).json({
     message: "charge posted successfully",
-    charge
+    charge,
   });
 });
 
@@ -267,7 +284,7 @@ router.post("/add-cart", upload.none(), async (req, res) => {
         { userId: userId, state: "active", "products._id": productId },
         {
           $set: { modificationOn: new Date() },
-          $inc: { "products.$.quantity": parseInt(quantity) }
+          $inc: { "products.$.quantity": parseInt(quantity) },
         },
         { returnOriginal: false }
       );
@@ -296,9 +313,9 @@ router.post("/add-cart", upload.none(), async (req, res) => {
             _id: productId,
             quantity: parseInt(quantity),
             description: description,
-            price: price
-          }
-        }
+            price: price,
+          },
+        },
       },
       { upsert: true, returnOriginal: false }
     );
@@ -334,7 +351,7 @@ router.get("/getmedia", (req, res) => {
   });
 });
 
-let getCart = async userId => {
+let getCart = async (userId) => {
   console.log("userID to get cart", userId);
   let results = await dbo
     .collection("carts")

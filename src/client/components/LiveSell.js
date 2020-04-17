@@ -54,6 +54,8 @@ const ChatContainer = styled.div`
   min-width: 220px;
   height: calc(33.75vw + 280px);
   min-height: calc(337.5px + 280px);
+  border: 1px #ddd solid;
+  border-top: none;
   display: flex;
 `;
 const ControlContainer = styled.div`
@@ -101,7 +103,7 @@ export default function LiveSell(props) {
     props.livesell ? props.livesell.description : "live description"
   );
 
-  const [videoJsOptions, setVideoJsOptions] = useState({
+  const initialOptions = {
     autoplay: autoplay,
     controls: control,
     src: "",
@@ -111,7 +113,9 @@ export default function LiveSell(props) {
       : "live description",
     poster:
       "https://images.unsplash.com/photo-1522327646852-4e28586a40dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2251&q=80",
-  });
+  };
+
+  const [videoJsOptions, setVideoJsOptions] = useState(initialOptions);
   console.log("props for LiveSell hooks", props);
 
   async function reload() {
@@ -137,7 +141,7 @@ export default function LiveSell(props) {
 
   useEffect(() => {
     console.log(livesell);
-    // debugger;
+
     if (livesell === null) {
       setSource("");
     } else {
@@ -171,6 +175,7 @@ export default function LiveSell(props) {
       title: title,
       description: description,
       controls: control,
+      poster: poster,
     });
   }, [source, poster, title, description, control]);
 
@@ -191,6 +196,7 @@ export default function LiveSell(props) {
     let data = new FormData();
     data.append("liveid", room);
     data.append("stream_key", stream_key);
+    data.append("savevideo", videoSave);
 
     const options = {
       method: "POST",
@@ -206,6 +212,7 @@ export default function LiveSell(props) {
 
       dispatch({ type: "set-stream", content: body.livesell });
       dispatch({ type: "clear-message", room: body.livesell._id });
+      setVideoJsOptions(initialOptions);
 
       return;
     }
@@ -224,14 +231,13 @@ export default function LiveSell(props) {
         "/live/" +
         livesell.stream_key +
         "/index.m3u8",
-      // src:
-      //   "http://127.0.0.1:" +
-      //   config.rtmp_server.http.port +
-      //   "/live/" +
-      //   livesell.stream_key +
-      //   "/index.m3u8",
-      // src: "http://127.0.0.1:8888/archive/8pxPkPyD/2020-04-14-12-24.mp4",
     });
+    // setVideoJsOptions({
+    //   ...videoJsOptions,
+    //   controls: true,
+    //   autoplay: true,
+    //   src: "http://127.0.0.1:8888/archive/OcH05kLhD/2020-04-15-17-52.mp4",
+    // });
   };
 
   if (livesell) {
@@ -240,12 +246,6 @@ export default function LiveSell(props) {
         <LiveWrapper>
           <Wrapper>
             <PlayerContainer>
-              {/* <VideoPlayer
-                contents={livesell}
-                poster={poster}
-                sources={sources}
-                isLive={livesell.state === "active"}
-              /> */}
               <VPlayer {...videoJsOptions} />
             </PlayerContainer>
             <CarouselContainer>
@@ -258,27 +258,34 @@ export default function LiveSell(props) {
                 <></>
               )}
             </ChatContainer>
-            <ControlContainer>
-              <button className="btn" onClick={handleClickGoLive}>
-                Go Live
-              </button>
-              <div>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={videoSave}
-                      onChange={handleVideoSaveChange}
-                      value="Archive"
-                      color="primary"
+            {livesell && livesell.state === "active" ? (
+              <ControlContainer>
+                <button className="btn" onClick={handleClickGoLive}>
+                  Go Live
+                </button>
+
+                {props.inManager && (
+                  <div>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={videoSave}
+                          onChange={handleVideoSaveChange}
+                          value="Archive"
+                          color="primary"
+                        />
+                      }
+                      label="Archive Stream Video"
                     />
-                  }
-                  label="Archive Stream Video"
-                />
-              </div>
-              <button className="btn" onClick={handleClickSave}>
-                Save Live
-              </button>
-            </ControlContainer>
+                    <button className="btn" onClick={handleClickSave}>
+                      Save Live
+                    </button>
+                  </div>
+                )}
+              </ControlContainer>
+            ) : (
+              <></>
+            )}
           </Wrapper>
         </LiveWrapper>
       </div>
