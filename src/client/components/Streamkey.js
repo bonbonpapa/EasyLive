@@ -2,12 +2,11 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   layout: {
     width: "auto",
     marginLeft: theme.spacing(2),
@@ -15,8 +14,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
       width: 600,
       marginLeft: "auto",
-      marginRight: "auto"
-    }
+      marginRight: "auto",
+    },
   },
   paper: {
     marginTop: theme.spacing(3),
@@ -25,24 +24,24 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(6),
-      padding: theme.spacing(3)
-    }
+      padding: theme.spacing(3),
+    },
   },
   listItem: {
-    padding: theme.spacing(1, 0)
+    padding: theme.spacing(1, 0),
   },
   total: {
-    fontWeight: "700"
+    fontWeight: "700",
   },
   title: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   remove: {
-    marginLeft: theme.spacing(2)
+    marginLeft: theme.spacing(2),
   },
   checkout: {
-    margin: theme.spacing(3, 0, 2)
-  }
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 export default function Streamkey() {
@@ -50,12 +49,12 @@ export default function Streamkey() {
 
   const dispatch = useDispatch();
 
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
 
   const stream_key = user ? user.stream_key : "";
 
   function generateStreamKey(e) {
-    axios.post("/settings/stream_key").then(res => {
+    axios.post("/settings/stream_key").then((res) => {
       dispatch({ type: "set-key", content: res.data.stream_key });
     });
   }

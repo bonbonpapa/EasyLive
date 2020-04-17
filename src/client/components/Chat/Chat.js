@@ -11,23 +11,18 @@ import "./Chat.css";
 let socket;
 
 const Chat = ({ cuser, croom, isOwner }) => {
-  // const user = useSelector(state => state.user);
-
-  let lgin = useSelector(state => state.loggedIn);
-  let msgs = useSelector(state => state.msgs);
-  const room_msg = msgs.find(msg => msg.room === croom);
+  let lgin = useSelector((state) => state.loggedIn);
+  let msgs = useSelector((state) => state.msgs);
+  const room_msg = msgs.find((msg) => msg.room === croom);
 
   const dispatch = useDispatch();
 
   const [chatUser, setChatUser] = useState(cuser || null);
-  const [created, setCreated] = useState(false);
   const [room, setRoom] = useState(croom || "");
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState(room_msg ? room_msg.msgs : []);
-  // const [roomDesc, setRoomDesc] = useState(
-  //   livesell ? livesell.description : "Live Description"
-  // );
+
   const ENDPOINT = "localhost:4000";
 
   useEffect(() => {
@@ -40,15 +35,15 @@ const Chat = ({ cuser, croom, isOwner }) => {
 
     if (lgin) {
       if (!room_msg && isOwner) {
-        socket.emit("create", { chatUser, room }, error => {
+        socket.emit("create", { chatUser, room }, (error) => {
           if (error) {
             alert(error);
           }
         });
-        // setCreated(true);
+
         dispatch({ type: "create-room", room: room });
       } else {
-        socket.emit("join", { chatUser, room }, error => {
+        socket.emit("join", { chatUser, room }, (error) => {
           if (error) {
             alert(error);
           }
@@ -58,8 +53,8 @@ const Chat = ({ cuser, croom, isOwner }) => {
         setMessages(msgs);
         dispatch({ type: "set-messages", room: room, content: msgs });
       });
-      socket.on("message", message => {
-        setMessages(messages => [...messages, message]);
+      socket.on("message", (message) => {
+        setMessages((messages) => [...messages, message]);
         dispatch({ type: "add-message", room: room, content: message });
       });
 
@@ -78,10 +73,9 @@ const Chat = ({ cuser, croom, isOwner }) => {
     setMessages(msgs);
     setChatUser(cuser);
     setRoom(croom);
-    setCreated(false);
   }, [croom]);
 
-  const sendMessage = event => {
+  const sendMessage = (event) => {
     event.preventDefault();
 
     if (lgin) {

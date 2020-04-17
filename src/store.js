@@ -1,5 +1,4 @@
 import { createStore } from "redux";
-import Messages from "./client/components/Messages/Messages";
 let reducer = (state, action) => {
   if (action.type === "login-success") {
     return {

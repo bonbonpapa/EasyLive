@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import { connect } from "react-redux";
-import NavbarNoStyle from "./NavbarNoStyle.js";
 import LiveStreams from "./LiveStreams.js";
 import Settings from "./Settings.js";
 import styled from "styled-components";
@@ -27,7 +26,7 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: false,
     };
   }
   componentDidMount() {
@@ -46,7 +45,7 @@ class Root extends Component {
       if (parsed.streamlive)
         this.props.dispatch({
           type: "set-selected",
-          content: parsed.streamlive.items
+          content: parsed.streamlive.items,
         });
     }
     this.setState({ loading: false });
@@ -56,7 +55,7 @@ class Root extends Component {
     return <AllItems />;
   };
 
-  handleLogout = async e => {
+  handleLogout = async (e) => {
     e.preventDefault();
 
     let response = await fetch("/login/logout");
@@ -82,7 +81,11 @@ class Root extends Component {
         <Wrapper>
           {/* <NavbarNoStyle handleLogout={this.handleLogout} /> */}
           <PrimarySearchAppBar handleLogout={this.handleLogout} />
-          <Route exact path="/" render={props => <LiveStreams {...props} />} />
+          <Route
+            exact
+            path="/"
+            render={(props) => <LiveStreams {...props} />}
+          />
           <Route exact={true} path="/buy" render={this.renderAllItems} />
           <ProtectedRoute
             exact
@@ -123,12 +126,12 @@ class Root extends Component {
           <Route
             exact
             path="/stream/:lid"
-            render={props => <LiveSell {...props} inManager={false} />}
+            render={(props) => <LiveSell {...props} inManager={false} />}
           />
           <Route
             exact={true}
             path="/sign"
-            render={props => <Sign {...props} />}
+            render={(props) => <Sign {...props} />}
           />
           {/* <Route
             exact
@@ -154,9 +157,9 @@ class Root extends Component {
     );
   }
 }
-let mapStateToProps = state => {
+let mapStateToProps = (state) => {
   return {
-    lgin: state.loggedIn
+    lgin: state.loggedIn,
   };
 };
 export default connect(mapStateToProps)(Root);

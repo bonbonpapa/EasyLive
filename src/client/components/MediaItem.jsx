@@ -14,7 +14,7 @@ class MediaItem extends Component {
     super(props);
 
     this.state = {
-      mpath: {}
+      mpath: {},
     };
   }
   componentDidMount = () => {
@@ -36,7 +36,7 @@ class MediaItem extends Component {
     if (filetype === "image/jpeg") {
       return (
         <Wrapper>
-          <img src={this.state.mpath.frontendPath} />
+          <img alt="item" src={this.state.mpath.frontendPath} />
         </Wrapper>
       );
     }

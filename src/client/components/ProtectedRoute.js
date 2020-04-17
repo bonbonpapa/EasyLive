@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import { Route, Redirect } from "react-router-dom";
 
 const ProtectedRoute = ({ component: Component, lgin, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props => {
+      render={(props) => {
         if (lgin) {
           return <Component {...rest} {...props} />;
         } else {
@@ -14,8 +14,8 @@ const ProtectedRoute = ({ component: Component, lgin, ...rest }) => {
               to={{
                 pathname: "/sign",
                 state: {
-                  from: props.location
-                }
+                  from: props.location,
+                },
               }}
             />
           );

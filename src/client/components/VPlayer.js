@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import videojs from "video.js";
 import "videojs-dock";
-import config from "../../server/config/default.js";
 import "./VideoPlayer.css";
 
 const usePlayer = ({ src, controls, autoplay, poster, title, description }) => {

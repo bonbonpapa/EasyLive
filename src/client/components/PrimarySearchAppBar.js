@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -29,37 +29,37 @@ const MenuLink = styled(Link)`
   text-decoration: none;
 `;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   root: {
     //backgroundColor: "#2196F3";
-    background: "linear-gradient(260deg, #2376ae 0%, #c16ecf 100%)"
+    background: "linear-gradient(260deg, #2376ae 0%, #c16ecf 100%)",
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
+      display: "block",
+    },
   },
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
+      backgroundColor: fade(theme.palette.common.white, 0.25),
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,
     width: "100%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(3),
-      width: "auto"
-    }
+      width: "auto",
+    },
   },
   searchIcon: {
     width: theme.spacing(7),
@@ -68,34 +68,34 @@ const useStyles = makeStyles(theme => ({
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   inputRoot: {
-    color: "inherit"
+    color: "inherit",
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: 200
-    }
+      width: 200,
+    },
   },
   cartIcon: {
-    paddingTop: 5
+    paddingTop: 5,
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
-  }
+      display: "none",
+    },
+  },
 }));
 
 function PrimarySearchAppBar({ history, handleLogout }) {
@@ -103,10 +103,10 @@ function PrimarySearchAppBar({ history, handleLogout }) {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const query = useSelector(state => state.searchQuery);
-  const lgin = useSelector(state => state.loggedIn);
-  const user = useSelector(state => state.user);
-  const cart = useSelector(state => state.cart);
+  const query = useSelector((state) => state.searchQuery);
+  const lgin = useSelector((state) => state.loggedIn);
+  const user = useSelector((state) => state.user);
+  const cart = useSelector((state) => state.cart);
   const shoppingListCount = cart
     ? cart.products.reduce((total, product) => {
         return total + product.quantity;
@@ -118,7 +118,7 @@ function PrimarySearchAppBar({ history, handleLogout }) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleProfileMenuOpen = event => {
+  const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -131,11 +131,11 @@ function PrimarySearchAppBar({ history, handleLogout }) {
     handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = event => {
+  const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleQuery = event => {
+  const handleQuery = (event) => {
     dispatch({ type: "query", content: event.target.value });
   };
 
@@ -239,7 +239,7 @@ function PrimarySearchAppBar({ history, handleLogout }) {
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
-                input: classes.inputInput
+                input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
               onChange={handleQuery}

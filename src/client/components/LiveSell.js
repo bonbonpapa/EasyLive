@@ -179,13 +179,6 @@ export default function LiveSell(props) {
     });
   }, [source, poster, title, description, control]);
 
-  // useEffect(() => {
-  //   setVideoJsOptions({
-  //     ...videoJsOptions,
-  //     poster: poster,
-  //   });
-  // }, [poster]);
-
   const handleVideoSaveChange = (event) => {
     setVideoSave(event.target.checked);
   };

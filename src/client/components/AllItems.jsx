@@ -10,9 +10,6 @@ const Main = styled.div`
 `;
 
 class AllItems extends Component {
-  constructor(props) {
-    super(props);
-  }
   componentDidMount = (event) => {
     this.reload();
   };

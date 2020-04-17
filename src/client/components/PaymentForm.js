@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import {
   CardNumberElement,
   CardExpiryElement,
   CardCVCElement,
-  injectStripe
+  injectStripe,
 } from "react-stripe-elements";
 import styled from "styled-components";
 
@@ -26,14 +25,14 @@ const CardName = styled.input`
 
 const PaymentForm = ({ stripe, onSubmit, handleBackCall }) => {
   const dispatch = useDispatch();
-  let token_store = useSelector(state => state.token);
+  let token_store = useSelector((state) => state.token);
   const [card_name, SetCardName] = useState("");
 
   useEffect(() => {
     SetCardName(token_store ? token_store.card.name : "");
   }, [token_store]);
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const { token } = await stripe.createToken({ name: card_name });
@@ -43,11 +42,11 @@ const PaymentForm = ({ stripe, onSubmit, handleBackCall }) => {
     dispatch({ type: "set-token", payload: token });
   };
 
-  const handleNameChange = event => {
+  const handleNameChange = (event) => {
     SetCardName(event.target.value);
   };
 
-  const handleBack = event => {
+  const handleBack = (event) => {
     handleBackCall();
   };
   return (

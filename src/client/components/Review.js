@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -7,27 +7,18 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
 import axios from "axios";
 
-const payments = [
-  { name: "Card type", detail: "Visa" },
-  { name: "Card holder", detail: "Mr John Smith" },
-  { name: "Card number", detail: "xxxx-xxxx-xxxx-1234" },
-  { name: "Expiry date", detail: "04/2024" }
-];
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   listItem: {
-    padding: theme.spacing(1, 0)
+    padding: theme.spacing(1, 0),
   },
   total: {
-    fontWeight: "700"
+    fontWeight: "700",
   },
   title: {
-    marginTop: theme.spacing(2)
-  }
+    marginTop: theme.spacing(2),
+  },
 }));
 
 export default function Review({ onSubmit, handleBackCall }) {
@@ -35,11 +26,11 @@ export default function Review({ onSubmit, handleBackCall }) {
 
   const dispatch = useDispatch();
 
-  const shippingAddress = useSelector(state => state.shippingAddress);
+  const shippingAddress = useSelector((state) => state.shippingAddress);
 
-  const token = useSelector(state => state.token);
+  const token = useSelector((state) => state.token);
 
-  const cart = useSelector(state => state.cart);
+  const cart = useSelector((state) => state.cart);
 
   const shoppingList = cart ? cart.products : [];
 
@@ -50,7 +41,7 @@ export default function Review({ onSubmit, handleBackCall }) {
     totalAmount += parseFloat(item.price) * parseInt(item.quantity);
   });
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // let response = await fetch("/orderCheck", { method: "POST" });
@@ -67,7 +58,7 @@ export default function Review({ onSubmit, handleBackCall }) {
       // amount: totalAmount.toString().replace(".", ""),
       amount: totalAmount * 100,
       source: token.id,
-      receipt_email: "customer@example.com"
+      receipt_email: "customer@example.com",
     });
 
     const { charge } = response.data;
@@ -78,7 +69,7 @@ export default function Review({ onSubmit, handleBackCall }) {
     onSubmit();
   };
   useEffect(() => {}, [shippingAddress]);
-  const handleBack = event => {
+  const handleBack = (event) => {
     handleBackCall();
   };
 

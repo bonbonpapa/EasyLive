@@ -28,7 +28,7 @@ class Item extends Component {
     return (
       <ItemCard>
         <div>
-          <img src={defaultPaths.frontendPath} />
+          <img alt="item" src={defaultPaths.frontendPath} />
         </div>
         <Info>
           <div>

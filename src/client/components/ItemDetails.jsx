@@ -76,7 +76,7 @@ class ItemDetails extends Component {
   };
 
   render() {
-    const { description, price, inventory, location, seller, frontendPaths } =
+    const { description, price, inventory, frontendPaths } =
       this.state.contents || {};
 
     return (
