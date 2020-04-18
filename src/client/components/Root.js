@@ -16,6 +16,8 @@ import Purchased from "./Purchased.js";
 import PrimarySearchAppBar from "./PrimarySearchAppBar.js";
 import Account from "./Account.js";
 import StepCheckout from "./StepCheckout.js";
+import Loading from "./Loading.js";
+import { API_URL } from "./config.js";
 
 const Wrapper = styled.div`
   display: grid;
@@ -26,11 +28,16 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
     };
   }
   componentDidMount() {
     // this.fetchSession();
+    fetch(`${API_URL}/wake-up`).then((res) => {
+      if (res.ok) {
+        this.setState({ loading: false });
+      }
+    });
   }
   fetchSession = async () => {
     this.setState({ loading: true });
@@ -76,85 +83,87 @@ class Root extends Component {
   };
 
   render() {
-    return (
-      <BrowserRouter>
-        <Wrapper>
-          {/* <NavbarNoStyle handleLogout={this.handleLogout} /> */}
-          <PrimarySearchAppBar handleLogout={this.handleLogout} />
-          <Route
-            exact
-            path="/"
-            render={(props) => <LiveStreams {...props} />}
-          />
-          <Route exact={true} path="/buy" render={this.renderAllItems} />
-          <ProtectedRoute
-            exact
-            path="/profile"
-            lgin={this.props.lgin}
-            component={Purchased}
-          />
-          <ProtectedRoute
-            exact
-            path="/account"
-            lgin={this.props.lgin}
-            component={Account}
-          />
-          <ProtectedRoute
-            exact
-            path="/updateItems"
-            lgin={this.props.lgin}
-            component={SellSide}
-          />
-          <ProtectedRoute
-            exact
-            path="/shoppingcart"
-            lgin={this.props.lgin}
-            component={Cart}
-          />
-          <ProtectedRoute
-            exact
-            path="/stepcheck"
-            lgin={this.props.lgin}
-            component={StepCheckout}
-          />
-          <ProtectedRoute
-            exact
-            path="/details/:itemId"
-            lgin={this.props.lgin}
-            component={ItemDetails}
-          />
-          <Route
-            exact
-            path="/stream/:lid"
-            render={(props) => <LiveSell {...props} inManager={false} />}
-          />
-          <Route
-            exact={true}
-            path="/sign"
-            render={(props) => <Sign {...props} />}
-          />
-          {/* <Route
+    if (this.state.loading) return <Loading />;
+    else
+      return (
+        <BrowserRouter>
+          <Wrapper>
+            {/* <NavbarNoStyle handleLogout={this.handleLogout} /> */}
+            <PrimarySearchAppBar handleLogout={this.handleLogout} />
+            <Route
+              exact
+              path="/"
+              render={(props) => <LiveStreams {...props} />}
+            />
+            <Route exact={true} path="/buy" render={this.renderAllItems} />
+            <ProtectedRoute
+              exact
+              path="/profile"
+              lgin={this.props.lgin}
+              component={Purchased}
+            />
+            <ProtectedRoute
+              exact
+              path="/account"
+              lgin={this.props.lgin}
+              component={Account}
+            />
+            <ProtectedRoute
+              exact
+              path="/updateItems"
+              lgin={this.props.lgin}
+              component={SellSide}
+            />
+            <ProtectedRoute
+              exact
+              path="/shoppingcart"
+              lgin={this.props.lgin}
+              component={Cart}
+            />
+            <ProtectedRoute
+              exact
+              path="/stepcheck"
+              lgin={this.props.lgin}
+              component={StepCheckout}
+            />
+            <ProtectedRoute
+              exact
+              path="/details/:itemId"
+              lgin={this.props.lgin}
+              component={ItemDetails}
+            />
+            <Route
+              exact
+              path="/stream/:lid"
+              render={(props) => <LiveSell {...props} inManager={false} />}
+            />
+            <Route
+              exact={true}
+              path="/sign"
+              render={(props) => <Sign {...props} />}
+            />
+            {/* <Route
             exact
             path="/settings"
             render={props => <Settings {...props} />}
           /> */}
-          <ProtectedRoute
-            exact
-            path="/settings"
-            lgin={this.props.lgin}
-            handleLogout={this.handleLogout}
-            component={Settings}
-          />
-          <ProtectedRoute
-            exact
-            path="/manager"
-            lgin={this.props.lgin}
-            handleLogout={this.handleLogout}
-            component={StreamManager}
-          />
-        </Wrapper>
-      </BrowserRouter>
-    );
+            <ProtectedRoute
+              exact
+              path="/settings"
+              lgin={this.props.lgin}
+              handleLogout={this.handleLogout}
+              component={Settings}
+            />
+            <ProtectedRoute
+              exact
+              path="/manager"
+              lgin={this.props.lgin}
+              handleLogout={this.handleLogout}
+              component={StreamManager}
+            />
+          </Wrapper>
+        </BrowserRouter>
+      );
   }
 }
 let mapStateToProps = (state) => {

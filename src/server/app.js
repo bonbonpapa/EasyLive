@@ -67,15 +67,12 @@ const io = socketIo(server);
 // so that we can access them later in the controller
 app.set("io", io);
 
-let messages = [];
-let sessions = {};
-
 // Add this on the top of app.js file
 // next to all imports
 const node_media_server = require("./media_server.js");
 
-app.use("/", express.static("build"));
-app.use("/", express.static("public"));
+app.use("/", express.static("../../build"));
+app.use("/", express.static("../../public"));
 app.use("/uploads", express.static("uploads"));
 app.use("/thumbnails", express.static("thumbnails"));
 app.use("/images", express.static(__dirname + "/uploads"));
@@ -202,6 +199,10 @@ app.get("/succeed", (req, res) => {
 app.get("/fail", (req, res) => {
   res.send(JSON.stringify({ success: false }));
 });
+
+// Catch a start up request so that a sleepy Heroku instance can
+// be responsive as soon as possible
+app.get("/wake-up", (req, res) => res.send("👍"));
 
 app.all("/*", (req, res, next) => {
   res.sendFile(__dirname + "/build/index.html");
