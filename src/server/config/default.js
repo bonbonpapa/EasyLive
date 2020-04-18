@@ -1,7 +1,7 @@
 const config = {
   server: {
     secret: "kjVkuti2xAyF3JGCzSZTk0YWM5JhI9mgQW4rytXc",
-    port: 3333
+    port: 3333,
   },
   rtmp_server: {
     rtmp: {
@@ -9,15 +9,16 @@ const config = {
       chunk_size: 60000,
       gop_cache: true,
       ping: 60,
-      ping_timeout: 30
+      ping_timeout: 30,
     },
     http: {
       port: 8888,
       mediaroot: "./server/media",
-      allow_origin: "*"
+      allow_origin: "*",
     },
     trans: {
-      ffmpeg: "C:/Users/willw/Documents/ffmpeg/ffmpeg/bin/ffmpeg.exe",
+      // ffmpeg: "C:/Users/willw/Documents/ffmpeg/ffmpeg/bin/ffmpeg.exe",
+      ffmpeg: "/app/vendor/ffmpeg/ffmpeg",
       tasks: [
         {
           app: "live",
@@ -27,19 +28,19 @@ const config = {
           dash: true,
           dashFlags: "[f=dash:window_size=3:extra_window_size=5]",
           mp4: true,
-          mp4Flags: "[movflags=faststart]"
-        }
-      ]
-    }
+          mp4Flags: "[movflags=faststart]",
+        },
+      ],
+    },
   },
   mongodb_url: {
     url:
-      "mongodb+srv://bob:bobnosue@cluster0-peipd.mongodb.net/test?retryWrites=true&w=majority"
+      "mongodb+srv://bob:bobnosue@cluster0-peipd.mongodb.net/test?retryWrites=true&w=majority",
   },
   FACEBOOK: {
     clientID: "208032163651073",
-    clientSecret: "8e5d1816b28724edcac97e2ea72f00e8"
-  }
+    clientSecret: "8e5d1816b28724edcac97e2ea72f00e8",
+  },
 };
 
 module.exports = config;
