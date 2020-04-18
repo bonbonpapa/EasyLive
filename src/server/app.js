@@ -105,9 +105,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
-});
+// app.get("/", function (req, res) {
+//   res.sendFile(__dirname + "/index.html");
+// });
 
 io.on("connection", function (socket) {
   console.log("socket at connection,", socket.id);
