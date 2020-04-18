@@ -219,7 +219,7 @@ const { PORT = 4000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
 
 //Change with process.env on the port for deplyment
 server.listen(PORT, LOCAL_ADDRESS, () =>
-  console.log(`Listening on port ${port}`)
+  console.log(`Listening on port ${PORT}`)
 );
 
 node_media_server.run();
