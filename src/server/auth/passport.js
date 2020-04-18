@@ -19,7 +19,7 @@ passport.use(
     {
       usernameField: "email",
       passwordField: "password",
-      passReqToCallback: true
+      passReqToCallback: true,
     },
     (req, email, password, done) => {
       //    console.log("informatoon in the req: ", req);
@@ -43,7 +43,7 @@ passport.use(
           user.password = user.generateHash(password);
           user.username = req.body.username;
           user.stream_key = shortid.generate();
-          user.save(err => {
+          user.save((err) => {
             if (err) throw err;
             return done(null, user);
           });
@@ -59,7 +59,7 @@ passport.use(
     {
       usernameField: "email",
       passwordField: "password",
-      passReqToCallback: true
+      passReqToCallback: true,
     },
     (req, email, password, done) => {
       console.log("informatoon in the req: ", req.body);
@@ -91,10 +91,10 @@ passport.use(
     {
       clientID: config.FACEBOOK.clientID,
       clientSecret: config.FACEBOOK.clientSecret,
-      callbackURL: "http://localhost:4000/login/facebook/callback",
-      profileFields: ["id", "displayName", "emails", "name", "photos"]
+      callbackURL: config.Facebookcallback,
+      profileFields: ["id", "displayName", "emails", "name", "photos"],
     },
-    function(accessToken, refreshToken, profile, done) {
+    function (accessToken, refreshToken, profile, done) {
       console.log("in the Facebook strategy, profile data", profile);
       User.findOne({ "facebook.id": profile.id }, (err, user) => {
         if (err) return done(err);
@@ -126,7 +126,7 @@ passport.use(
           }
 
           user.stream_key = shortid.generate();
-          user.save(err => {
+          user.save((err) => {
             if (err) throw err;
             return done(null, user);
           });

@@ -40,6 +40,14 @@ const config = {
     clientID: "208032163651073",
     clientSecret: "8e5d1816b28724edcac97e2ea72f00e8",
   },
+  Facebookcallback:
+    process.env.NODE_ENV === "production"
+      ? `https://secure-scrubland-97842.herokuapp.com/facebook/callback`
+      : `http://localhost:4000/login/facebook/callback`,
+  CLIENT_ORIGIN:
+    process.env.NODE_ENV === "production"
+      ? "https://secure-scrubland-97842.herokuapp.com"
+      : ["http://127.0.0.1:3000", "http://localhost:3000"],
 };
 
 module.exports = config;

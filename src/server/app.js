@@ -21,6 +21,8 @@ const express = require("express"),
   LiveSell = require("./database/Schema.js").LiveSell,
   thumbnail_generator = require("./cron/thumbnails.js");
 
+const { CLIENT_ORIGIN } = require("./config/default.js");
+
 let dbo = undefined;
 let url = config.mongodb_url.url;
 
@@ -86,7 +88,7 @@ app.use(bodyParse.urlencoded({ extended: true }));
 app.use(bodyParse.json());
 app.use(
   cors({
-    origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
+    origin: CLIENT_ORIGIN,
   })
 );
 

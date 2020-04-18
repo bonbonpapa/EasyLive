@@ -39,24 +39,6 @@ class Root extends Component {
       }
     });
   }
-  fetchSession = async () => {
-    this.setState({ loading: true });
-
-    const response = await fetch("/login/session");
-    const body = await response.text();
-    const parsed = JSON.parse(body);
-    if (parsed.success) {
-      this.props.dispatch({ type: "login-success", content: parsed.user });
-      this.props.dispatch({ type: "set-stream", content: parsed.streamlive });
-      this.props.dispatch({ type: "set-items", content: parsed.items });
-      if (parsed.streamlive)
-        this.props.dispatch({
-          type: "set-selected",
-          content: parsed.streamlive.items,
-        });
-    }
-    this.setState({ loading: false });
-  };
 
   renderAllItems = () => {
     return <AllItems />;
