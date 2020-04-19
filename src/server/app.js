@@ -206,8 +206,8 @@ app.get("/fail", (req, res) => {
 // be responsive as soon as possible
 app.get("/wake-up", (req, res) => res.send("👍"));
 
-app.all("/*", (req, res, next) => {
-  res.sendFile(__dirname + "/build/index.html");
+app.all("/*", (req, res) => {
+  res.sendFile(__dirname + "../../build/index.html");
 });
 
 const { PORT = 4000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;

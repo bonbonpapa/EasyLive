@@ -22,7 +22,7 @@ router.post("/", (req, res, next) => {
       );
     }
 
-    req.login(user, async err => {
+    req.login(user, async (err) => {
       console.log("Inside req.login() callback");
       console.log(
         `req.session.passport: ${JSON.stringify(req.session.passport)}`
@@ -41,7 +41,7 @@ router.post("/", (req, res, next) => {
           streamlive: streamLive,
           user: req.user,
           items: items.slice(),
-          cart: cart
+          cart: cart,
         })
       );
     });
@@ -57,18 +57,18 @@ router.get("/session", async (req, res) => {
         success: true,
         streamlive: streamLive,
         user: req.user,
-        items: items.slice()
+        items: items.slice(),
       })
     );
   }
   res.send(JSON.stringify({ success: false }));
 });
 
-router.get("/logout", function(req, res) {
+router.get("/logout", function (req, res) {
   console.log("in the logout endpoint, ", req.user);
   if (req.user !== undefined) {
     // req.logout();
-    req.session.destroy(err => {
+    req.session.destroy((err) => {
       if (!err)
         res.send(
           JSON.stringify({ success: true, message: "User logout successfully" })

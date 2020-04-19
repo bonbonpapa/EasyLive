@@ -42,7 +42,7 @@ const config = {
   },
   Facebookcallback:
     process.env.NODE_ENV === "production"
-      ? `https://secure-scrubland-97842.herokuapp.com/facebook/callback`
+      ? `https://secure-scrubland-97842.herokuapp.com/login/facebook/callback`
       : `http://localhost:4000/login/facebook/callback`,
   CLIENT_ORIGIN:
     process.env.NODE_ENV === "production"
