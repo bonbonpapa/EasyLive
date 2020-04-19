@@ -73,8 +73,8 @@ app.set("io", io);
 // next to all imports
 const node_media_server = require("./media_server.js");
 
-app.use("/", express.static("../../build"));
-app.use("/", express.static("../../public"));
+app.use("/", express.static("../../../build"));
+app.use("/", express.static("../../../public"));
 app.use("/uploads", express.static("uploads"));
 app.use("/thumbnails", express.static("thumbnails"));
 app.use("/images", express.static(__dirname + "/uploads"));
@@ -207,7 +207,7 @@ app.get("/fail", (req, res) => {
 app.get("/wake-up", (req, res) => res.send("👍"));
 
 app.all("/*", (req, res) => {
-  res.sendFile(__dirname + "../../build/index.html");
+  res.sendFile(__dirname + "../../../build/index.html");
 });
 
 const { PORT = 4000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
