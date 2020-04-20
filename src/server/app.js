@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express"),
   path = require("path"),
   Session = require("express-session"),
@@ -210,6 +209,9 @@ app.get("/wake-up", (req, res) => res.send("👍"));
 app.all("/*", (req, res) => {
   res.sendFile(__dirname + "../../build/index.html");
 });
+
+// console.log("Process environment, ", process.env);
+// console.log("Process environment, ", process.env.NODE_ENV);
 
 const { PORT = 4000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
 //app.listen(port, () => console.log(`Server app is listening on ${port}!`));

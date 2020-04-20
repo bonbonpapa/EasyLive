@@ -1,6 +1,7 @@
 {
   "name": "easy-live",
   "version": "0.1.0",
+  "proxy": "http://localhost:4000",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.5",
@@ -62,7 +63,7 @@
     "videojs-overlay": "^2.1.4"
   },
   "scripts": {
-    "start": "cd src/server/ && node app.js",
+    "start": "cd src/server/ && set NODE_ENV=production && node app.js",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
