@@ -32,8 +32,10 @@ class Root extends Component {
     };
   }
   componentDidMount() {
-    // this.fetchSession();
-    fetch(`${API_URL}/wake-up`).then((res) => {
+    console.log("process env", process.env);
+    console.log("process env", process.env.NODE_DEV);
+    // fetch(`${API_URL}/wake-up`).then((res) => {
+    fetch("localhost:4000/wake-up").then((res) => {
       if (res.ok) {
         this.setState({ loading: false });
       }

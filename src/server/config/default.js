@@ -44,10 +44,12 @@ const config = {
     process.env.NODE_ENV === "production"
       ? `https://secure-scrubland-97842.herokuapp.com/login/facebook/callback`
       : `http://localhost:4000/login/facebook/callback`,
+  // Facebookcallback: "http://localhost:4000/login/facebook/callback",
   CLIENT_ORIGIN:
     process.env.NODE_ENV === "production"
       ? "https://secure-scrubland-97842.herokuapp.com"
-      : ["http://127.0.0.1:3000", "http://localhost:3000"],
+      : ["http://127.0.0.1:4000", "http://localhost:4000"],
+  // CLIENT_ORIGIN: ["http://127.0.0.1:4000", "http://localhost:4000"],
 };
 
 module.exports = config;
