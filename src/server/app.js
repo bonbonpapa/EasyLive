@@ -204,7 +204,10 @@ app.get("/fail", (req, res) => {
 
 // Catch a start up request so that a sleepy Heroku instance can
 // be responsive as soon as possible
-app.get("/wake-up", (req, res) => res.send("👍"));
+app.get("/wake-up", (req, res) => {
+  console.log("in the server endpoint, wake-up");
+  res.send("ok");
+});
 
 app.all("/*", (req, res) => {
   res.sendFile(__dirname + "../../build/index.html");
