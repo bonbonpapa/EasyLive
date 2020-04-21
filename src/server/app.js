@@ -74,7 +74,7 @@ app.set("io", io);
 const node_media_server = require("./media_server.js");
 
 app.use("/", express.static("../../build"));
-app.use("/", express.static("../../public"));
+// app.use("/", express.static("../../public"));
 app.use("/uploads", express.static("uploads"));
 app.use("/thumbnails", express.static("thumbnails"));
 app.use("/images", express.static(__dirname + "/uploads"));
