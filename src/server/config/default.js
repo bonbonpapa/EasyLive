@@ -17,7 +17,10 @@ const config = {
       allow_origin: "*",
     },
     trans: {
-      ffmpeg: "C:/Users/willw/Documents/ffmpeg/ffmpeg/bin/ffmpeg.exe",
+      ffmpeg:
+        process.env.NODE_ENV === "production"
+          ? "/app/vendor/ffmpeg/ffmpeg"
+          : "C:/Users/willw/Documents/ffmpeg/ffmpeg/bin/ffmpeg.exe",
       tasks: [
         {
           app: "live",
