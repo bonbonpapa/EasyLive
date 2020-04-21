@@ -1,5 +1,6 @@
 {
   "name": "easy-live",
+  "proxy": "http://localhost:4000",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -62,7 +63,7 @@
     "videojs-overlay": "^2.1.4"
   },
   "scripts": {
-    "start": "cd src/server/ && set NODE_ENV=production && node app.js",
+    "start": "cd src/server/ && set NODE_ENV=development && node app.js",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import io from "socket.io-client";
-
+import { API_URL } from "./config.js";
 import Messages from "../Messages/Messages";
 import InfoBar from "../InfoBar/InfoBar";
 import Input from "../Input/Input";
@@ -23,7 +23,8 @@ const Chat = ({ cuser, croom, isOwner }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState(room_msg ? room_msg.msgs : []);
 
-  const ENDPOINT = "localhost:4000";
+  // const ENDPOINT = "localhost:4000";
+  const ENDPOINT = API_URL;
 
   useEffect(() => {
     socket = io(ENDPOINT);
