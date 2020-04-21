@@ -210,7 +210,7 @@ app.get("/wake-up", (req, res) => {
 });
 
 app.all("/*", (req, res) => {
-  res.sendFile(__dirname + "../../build/index.html");
+  res.sendFile(path.resolve(__dirname + "../../build/index.html"));
 });
 
 // console.log("Process environment, ", process.env);
