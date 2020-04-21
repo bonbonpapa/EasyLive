@@ -73,7 +73,8 @@ app.set("io", io);
 // next to all imports
 const node_media_server = require("./media_server.js");
 
-app.use("/", express.static("../../build"));
+app.use("/", express.static(path.resolve(__dirname + "../../build")));
+console.log("build folder location, ", path.resolve(__dirname + "../../build"));
 // app.use("/", express.static("../../public"));
 app.use("/uploads", express.static("uploads"));
 app.use("/thumbnails", express.static("thumbnails"));
@@ -210,7 +211,11 @@ app.get("/wake-up", (req, res) => {
 });
 
 app.all("/*", (req, res) => {
-  res.sendFile(path.resolve(__dirname + "../../build/index.html"));
+  console.log(
+    "Index html location, ",
+    path.resolve(__dirname + "../../index.html")
+  );
+  res.sendFile(path.resolve(__dirname + "../../index.html"));
 });
 
 // console.log("Process environment, ", process.env);
