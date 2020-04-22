@@ -218,7 +218,7 @@ app.all("/*", (req, res) => {
     "Index html location, ",
     path.resolve(__dirname + "../../../index.html")
   );
-  res.sendFile(path.resolve(__dirname + "../../../index.html"));
+  res.sendFile(path.resolve(__dirname + "../../../build/index.html"));
 });
 
 // console.log("Process environment, ", process.env);
