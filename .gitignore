@@ -5,6 +5,7 @@
 /src/server/config
 /src/server/uploads
 /src/server/server
+/src/server/config/default.js
 /.pnp
 .pnp.js
 
