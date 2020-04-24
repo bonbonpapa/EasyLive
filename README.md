@@ -1,5 +1,25 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+Easy Live: e-commerce with video live streaming and real time chat;
+
+Concordia Bootcamps Full-stack Web Development final project
+
+Features:
+Fully functional e-commerce project with following features: video live streaming (creator and viewer), chat, items creation, purchasing and payment, inventory reservation and release, orders handling, etc. 
+
+Technologies: 
+React, Redux, Hooks, material-ui, Video.js, Node-Media-Server, socket.io, Passport.js (local strategy and Facebook strategy), Stripe, MongoDB, Mongoose, Express
+
+Solutions:
+1) Video Streaming: 
+Technologies: 
+React + Video.js + Hooks for the video player in front end
+Node-Media-Server (A Node.js implementation of RTMP / HTTP-FLV / WS-FLV / HLS / DASH Media Server) for back end.
+The user can use OBS software to stream the video to the server through RTMP protocol, and the server is streaming to viewers with HLS protocols. 
+
+2) Chat
+Technologies: React on the front end, NodeJS + Socket.io web socket library on the back end.
+
 ## Available Scripts
 
 In the project directory, you can run:
