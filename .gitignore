@@ -2,8 +2,6 @@
 
 # dependencies
 /node_modules
-/src/server/config
-/src/server/uploads
 /src/server/server
 
 /.pnp
