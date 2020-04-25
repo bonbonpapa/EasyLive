@@ -17,7 +17,7 @@ code {
 }
 
 /* Loading Icon */
-.loading-wrapper,
+/* .loading-wrapper,
 .loading {
   display: flex;
   align-items: center;
@@ -39,4 +39,4 @@ code {
   height: 200px;
   box-sizing: border-box;
   animation: pulse-colors 2s infinite alternate linear;
-}
+} */
